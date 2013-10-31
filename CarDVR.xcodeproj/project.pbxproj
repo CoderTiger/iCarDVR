@@ -19,6 +19,8 @@
 		F6B0FA081820EC3500A46E3C /* CarDVRSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6B0FA061820EC3500A46E3C /* CarDVRSettingsViewController.xib */; };
 		F6B0FA0A1821F6F400A46E3C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA091821F6F400A46E3C /* MapKit.framework */; };
 		F6B0FA0D1821F72900A46E3C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA0C1821F72900A46E3C /* StoreKit.framework */; };
+		F6B0FA54182224CD00A46E3C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0FA50182224CD00A46E3C /* InfoPlist.strings */; };
+		F6B0FA55182224CD00A46E3C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0FA52182224CD00A46E3C /* Localizable.strings */; };
 		F6D3720C180BE9C00076B2EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720B180BE9C00076B2EC /* Foundation.framework */; };
 		F6D3720E180BE9C00076B2EC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */; };
 		F6D37210180BE9C00076B2EC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720F180BE9C00076B2EC /* UIKit.framework */; };
@@ -54,8 +56,6 @@
 		F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRHomeViewController.m; sourceTree = "<group>"; };
 		F677D934181963AC00C57AE0 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = CarDVRHomeViewController.xib; sourceTree = "<group>"; };
 		F6B0F9D51820AAA200A46E3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
-		F6B0F9D91820AB1600A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Localizable.strings; sourceTree = "<group>"; };
-		F6B0F9DD1820ABEF00A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = InfoPlist.strings; sourceTree = "<group>"; };
 		F6B0F9EF1820AF5A00A46E3C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = CarDVRCameraViewController.xib; sourceTree = "<group>"; };
 		F6B0F9F11820CB1800A46E3C /* CarDVRRecentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRRecentsViewController.h; sourceTree = "<group>"; };
 		F6B0F9F21820CB1800A46E3C /* CarDVRRecentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRRecentsViewController.m; sourceTree = "<group>"; };
@@ -69,6 +69,8 @@
 		F6B0FA091821F6F400A46E3C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		F6B0FA0B1821F71900A46E3C /* CarDVR.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CarDVR.entitlements; sourceTree = "<group>"; };
 		F6B0FA0C1821F72900A46E3C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		F6B0FA51182224CD00A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = InfoPlist.strings; sourceTree = "<group>"; };
+		F6B0FA53182224CD00A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Localizable.strings; sourceTree = "<group>"; };
 		F6D37208180BE9C00076B2EC /* CarDVR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarDVR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D3720B180BE9C00076B2EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -125,11 +127,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F6B0F9D71820AB1600A46E3C /* zh-Hans.lproj */ = {
+		F6B0FA4F182224CD00A46E3C /* zh-Hans.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				F6B0F9DC1820ABEF00A46E3C /* InfoPlist.strings */,
-				F6B0F9D81820AB1600A46E3C /* Localizable.strings */,
+				F6B0FA50182224CD00A46E3C /* InfoPlist.strings */,
+				F6B0FA52182224CD00A46E3C /* Localizable.strings */,
 			);
 			path = "zh-Hans.lproj";
 			sourceTree = "<group>";
@@ -213,7 +215,7 @@
 			isa = PBXGroup;
 			children = (
 				F6D37249180BEBC40076B2EC /* en.lproj */,
-				F6B0F9D71820AB1600A46E3C /* zh-Hans.lproj */,
+				F6B0FA4F182224CD00A46E3C /* zh-Hans.lproj */,
 				F6D37242180BEBAA0076B2EC /* CarDVR-Info.plist */,
 				F6D37259180BFCFE0076B2EC /* Images.xcassets */,
 			);
@@ -368,8 +370,10 @@
 				F6B0F9F01820AF5A00A46E3C /* CarDVRCameraViewController.xib in Resources */,
 				F6B0FA001820CCEC00A46E3C /* CarDVRStarredViewController.xib in Resources */,
 				F6D3725A180BFCFE0076B2EC /* Images.xcassets in Resources */,
+				F6B0FA55182224CD00A46E3C /* Localizable.strings in Resources */,
 				F6B0F9F81820CB4800A46E3C /* CarDVRRecentsViewController.xib in Resources */,
 				F6D3724C180BEBC40076B2EC /* InfoPlist.strings in Resources */,
+				F6B0FA54182224CD00A46E3C /* InfoPlist.strings in Resources */,
 				F677D935181963AC00C57AE0 /* CarDVRHomeViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -438,22 +442,6 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
-		F6B0F9D81820AB1600A46E3C /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F6B0F9D91820AB1600A46E3C /* zh-Hans */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		F6B0F9DC1820ABEF00A46E3C /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F6B0F9DD1820ABEF00A46E3C /* zh-Hans */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		F6B0F9EE1820AF5A00A46E3C /* CarDVRCameraViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -484,6 +472,22 @@
 				F6B0FA071820EC3500A46E3C /* en */,
 			);
 			name = CarDVRSettingsViewController.xib;
+			sourceTree = "<group>";
+		};
+		F6B0FA50182224CD00A46E3C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F6B0FA51182224CD00A46E3C /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		F6B0FA52182224CD00A46E3C /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F6B0FA53182224CD00A46E3C /* zh-Hans */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 		F6D3722D180BE9C00076B2EC /* InfoPlist.strings */ = {
@@ -542,7 +546,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "";
-				PROVISIONING_PROFILE = "AD8A6C01-700F-4993-9B25-C394DB4C7EED";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -577,7 +581,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "";
-				PROVISIONING_PROFILE = "AD8A6C01-700F-4993-9B25-C394DB4C7EED";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
