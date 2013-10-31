@@ -1,0 +1,6 @@
+/* Localized versions of UI text */
+"homeViewTitle"="Home";
+"cameraViewTitle"="Camera";
+"recentsViewTitle"="Recents";
+"starredViewTitle"="Starred";
+"settingsViewTitle"="Settings";
