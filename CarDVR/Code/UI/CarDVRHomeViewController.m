@@ -25,7 +25,7 @@
     if (self)
     {
         self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
-        UIBarButtonItem *settingsButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Settings"
+        UIBarButtonItem *settingsButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString( @"settingsViewTitle", @"Settings" )
                                                                                style:UIBarButtonItemStylePlain
                                                                               target:self action:@selector(settingsButtonItemTouched)];
         self.navigationItem.rightBarButtonItem = settingsButtonItem;

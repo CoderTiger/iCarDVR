@@ -71,7 +71,7 @@
 		F6B0FA0C1821F72900A46E3C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F6B0FA51182224CD00A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = InfoPlist.strings; sourceTree = "<group>"; };
 		F6B0FA53182224CD00A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Localizable.strings; sourceTree = "<group>"; };
-		F6D37208180BE9C00076B2EC /* CarDVR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarDVR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6D37208180BE9C00076B2EC /* iCarDVR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iCarDVR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D3720B180BE9C00076B2EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F6D3720F180BE9C00076B2EC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -149,7 +149,7 @@
 		F6D37209180BE9C00076B2EC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F6D37208180BE9C00076B2EC /* CarDVR.app */,
+				F6D37208180BE9C00076B2EC /* iCarDVR.app */,
 				F6D37223180BE9C00076B2EC /* CarDVRTests.xctest */,
 			);
 			name = Products;
@@ -292,7 +292,7 @@
 			);
 			name = CarDVR;
 			productName = CarDVR;
-			productReference = F6D37208180BE9C00076B2EC /* CarDVR.app */;
+			productReference = F6D37208180BE9C00076B2EC /* iCarDVR.app */;
 			productType = "com.apple.product-type.application";
 		};
 		F6D37222180BE9C00076B2EC /* CarDVRTests */ = {
@@ -598,8 +598,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVR/Resource/CarDVR-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PRODUCT_NAME = "i$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "D5EBF12E-A081-441D-AB83-A415B5CCEB61";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -615,8 +615,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVR/Resource/CarDVR-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PRODUCT_NAME = "i$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "D5EBF12E-A081-441D-AB83-A415B5CCEB61";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
