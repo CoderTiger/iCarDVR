@@ -67,8 +67,7 @@
 - (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
 {
     AVCaptureDevice *currentCamera = [self currentCamera];
-    if ( currentCamera.hasFlash && currentCamera.isFlashAvailable
-        && currentCamera.hasTorch && currentCamera.isTorchAvailable )
+    if ( currentCamera.hasFlash && currentCamera.hasTorch )
     {
         NSError *error = nil;
         [currentCamera lockForConfiguration:&error];
@@ -79,21 +78,29 @@
                 switch ( cameraFlashMode )
                 {
                     case CarDVRCameraFlashModeOn:
-                        currentCamera.flashMode = AVCaptureFlashModeOn;
-                        currentCamera.torchMode = AVCaptureTorchModeOn;
+                        if ( currentCamera.isFlashAvailable && currentCamera.isTorchAvailable )
+                        {
+                            currentCamera.flashMode = AVCaptureFlashModeOn;
+                            currentCamera.torchMode = AVCaptureTorchModeOn;
+                            _cameraFlashMode = cameraFlashMode;
+                        }
                         break;
                     case CarDVRCameraFlashModeAuto:
-                        currentCamera.flashMode = AVCaptureFlashModeAuto;
-                        currentCamera.torchMode = AVCaptureTorchModeAuto;
+                        if ( currentCamera.isFlashAvailable && currentCamera.isTorchAvailable )
+                        {
+                            currentCamera.flashMode = AVCaptureFlashModeAuto;
+                            currentCamera.torchMode = AVCaptureTorchModeAuto;
+                            _cameraFlashMode = cameraFlashMode;
+                        }
                         break;
                     case CarDVRCameraFlashModeOff:
                         currentCamera.flashMode = AVCaptureFlashModeOff;
                         currentCamera.torchMode = AVCaptureTorchModeOff;
+                        _cameraFlashMode = cameraFlashMode;
                         break;
                     default:
                         break;
                 }
-                _cameraFlashMode = cameraFlashMode;
             }
             @catch (NSException *exception)
             {
