@@ -69,40 +69,49 @@
     AVCaptureDevice *currentCamera = [self currentCamera];
     if ( currentCamera.hasFlash && currentCamera.hasTorch )
     {
+        AVCaptureFlashMode flashMode = AVCaptureFlashModeOff;
+        AVCaptureTorchMode torchMode = AVCaptureTorchModeOff;
+        switch ( cameraFlashMode )
+        {
+            case CarDVRCameraFlashModeOn:
+                flashMode = AVCaptureFlashModeOn;
+                torchMode = AVCaptureTorchModeOn;
+                break;
+            case CarDVRCameraFlashModeAuto:
+                flashMode = AVCaptureFlashModeAuto;
+                torchMode = AVCaptureTorchModeAuto;
+                break;
+            case CarDVRCameraFlashModeOff:
+                break;
+            default:
+                NSAssert1( NO, @"Unsupported camera flash mode: %d", (int)cameraFlashMode );
+                break;
+        }
+        
         NSError *error = nil;
         [currentCamera lockForConfiguration:&error];
         if ( !error )
         {
             @try
             {
-                switch ( cameraFlashMode )
+                if ( cameraFlashMode != CarDVRCameraFlashModeOff )
                 {
-                    case CarDVRCameraFlashModeOn:
-                        if ( currentCamera.isFlashAvailable && currentCamera.isTorchAvailable )
-                        {
-                            currentCamera.flashMode = AVCaptureFlashModeOn;
-                            currentCamera.torchMode = AVCaptureTorchModeOn;
-                            _cameraFlashMode = cameraFlashMode;
-                        }
-                        break;
-                    case CarDVRCameraFlashModeAuto:
-                        if ( currentCamera.isFlashAvailable && currentCamera.isTorchAvailable )
-                        {
-                            currentCamera.flashMode = AVCaptureFlashModeAuto;
-                            currentCamera.torchMode = AVCaptureTorchModeAuto;
-                            _cameraFlashMode = cameraFlashMode;
-                        }
-                        break;
-                    case CarDVRCameraFlashModeOff:
-                        currentCamera.flashMode = AVCaptureFlashModeOff;
-                        currentCamera.torchMode = AVCaptureTorchModeOff;
-                        _cameraFlashMode = cameraFlashMode;
-                        break;
-                    default:
-                        break;
+                    if ( !currentCamera.isFlashAvailable || !currentCamera.isTorchAvailable )
+                    {
+                        // The device overheats and needs to cool off.
+                        flashMode = AVCaptureFlashModeOff;
+                        torchMode = AVCaptureTorchModeOff;
+                    }
+                }
+                if ( [currentCamera isFlashModeSupported:flashMode]
+                    && [currentCamera isTorchModeSupported:torchMode] )
+                {
+                    currentCamera.flashMode = flashMode;
+                    currentCamera.torchMode = torchMode;
+                    _cameraFlashMode = cameraFlashMode;
                 }
             }
-            @catch (NSException *exception)
+            @catch ( NSException *exception )
             {
                 // TODO: handle exception
             }
@@ -111,6 +120,10 @@
                 [currentCamera unlockForConfiguration];
             }
         }
+    }
+    else
+    {
+        _cameraFlashMode = CarDVRCameraFlashModeOff;
     }
 }
 
