@@ -40,6 +40,8 @@
 #pragma mark - private methods
 - (void)constructVideoCapturer;
 - (void)layoutSubviews;
+- (void)startRecordingVideo;
+- (void)stopRecordingVideo;
 
 @end
 
@@ -99,6 +101,27 @@
     [self.videoCapturer fitDeviceOrientation];
 }
 
+- (void)startRecordingVideo
+{
+    if ( self.videoCapturer.isRunning )
+    {
+        [self.videoCapturer stop];
+    }
+    [self.videoCapturer start];
+    self.startButton.hidden = self.videoCapturer.isRunning;
+    self.stopButton.hidden = !self.startButton.hidden;
+}
+
+- (void)stopRecordingVideo
+{
+    if ( self.videoCapturer.isRunning )
+    {
+        [self.videoCapturer stop];
+    }
+    self.startButton.hidden = self.videoCapturer.isRunning;
+    self.stopButton.hidden = !self.startButton.hidden;
+}
+
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     [self layoutSubviews];
@@ -106,6 +129,7 @@
 
 - (IBAction)homeButtonTouched:(id)sender
 {
+    [self stopRecordingVideo];
     if ( !_homeViewController )
     {
         _homeViewController = [[CarDVRHomeViewController alloc] initWithNibName:@"CarDVRHomeViewController"
@@ -142,23 +166,12 @@
 
 - (IBAction)startButtonTouched:(id)sender
 {
-    if ( self.videoCapturer.isRunning )
-    {
-        [self.videoCapturer stop];
-    }
-    [self.videoCapturer start];
-    self.startButton.hidden = self.videoCapturer.isRunning;
-    self.stopButton.hidden = !self.startButton.hidden;
+    [self startRecordingVideo];
 }
 
 - (IBAction)stopButtonTouched:(id)sender
 {
-    if ( self.videoCapturer.isRunning )
-    {
-        [self.videoCapturer stop];
-    }
-    self.startButton.hidden = self.videoCapturer.isRunning;
-    self.stopButton.hidden = !self.startButton.hidden;
+    [self stopRecordingVideo];
 }
 
 - (IBAction)starButtonTouched:(id)sender
