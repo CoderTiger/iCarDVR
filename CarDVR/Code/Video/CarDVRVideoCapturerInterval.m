@@ -64,6 +64,49 @@
     return ( _frontCamera != nil );
 }
 
+- (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
+{
+    AVCaptureDevice *currentCamera = [self currentCamera];
+    if ( currentCamera.hasFlash && currentCamera.isFlashAvailable
+        && currentCamera.hasTorch && currentCamera.isTorchAvailable )
+    {
+        NSError *error = nil;
+        [currentCamera lockForConfiguration:&error];
+        if ( !error )
+        {
+            @try
+            {
+                switch ( cameraFlashMode )
+                {
+                    case CarDVRCameraFlashModeOn:
+                        currentCamera.flashMode = AVCaptureFlashModeOn;
+                        currentCamera.torchMode = AVCaptureTorchModeOn;
+                        break;
+                    case CarDVRCameraFlashModeAuto:
+                        currentCamera.flashMode = AVCaptureFlashModeAuto;
+                        currentCamera.torchMode = AVCaptureTorchModeAuto;
+                        break;
+                    case CarDVRCameraFlashModeOff:
+                        currentCamera.flashMode = AVCaptureFlashModeOff;
+                        currentCamera.torchMode = AVCaptureTorchModeOff;
+                        break;
+                    default:
+                        break;
+                }
+                _cameraFlashMode = cameraFlashMode;
+            }
+            @catch (NSException *exception)
+            {
+                // TODO: handle exception
+            }
+            @finally
+            {
+                [currentCamera unlockForConfiguration];
+            }
+        }
+    }
+}
+
 - (NSString *const)videoResolutionPreset
 {
     switch ( self.videoQuality )
@@ -88,6 +131,7 @@
     {
         _workQueue = aQueue;
         _pathHelper = aPathHelper;
+        _cameraFlashMode = CarDVRCameraFlashModeOff;
         _starred = NO;
         _batchConfiguration = NO;
         

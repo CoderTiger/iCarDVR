@@ -13,11 +13,13 @@
 
 @interface CarDVRCameraViewController ()
 
+@property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
+@property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
+@property (weak, nonatomic) IBOutlet UIButton *flashOffButton;
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 @property (weak, nonatomic) IBOutlet UIButton *stopButton;
 @property (weak, nonatomic) IBOutlet UIButton *starButton;
 @property (weak, nonatomic) IBOutlet UIButton *starredButton;
-
 
 @property (strong, nonatomic) CarDVRVideoCapturer *videoCapturer;
 @property (strong, nonatomic) CarDVRHomeViewController *homeViewController;
@@ -25,7 +27,9 @@
 @property (weak, nonatomic) IBOutlet UIView *previewerView;
 
 - (IBAction)homeButtonTouched:(id)sender;
-- (IBAction)flashButtonTouched:(id)sender;
+- (IBAction)flashOnButtonTouched:(id)sender;
+- (IBAction)flashAutoButtonTouched:(id)sender;
+- (IBAction)flashOffButtonTouched:(id)sender;
 - (IBAction)fotoButtonTouched:(id)sender;
 - (IBAction)startButtonTouched:(id)sender;
 - (IBAction)stopButtonTouched:(id)sender;
@@ -110,9 +114,25 @@
     [self.navigationController pushViewController:self.homeViewController animated:YES];
 }
 
-- (IBAction)flashButtonTouched:(id)sender
+- (IBAction)flashOnButtonTouched:(id)sender
 {
-    // TODO: complete
+    self.videoCapturer.cameraFlashMode = CarDVRCameraFlashModeOn;
+    self.flashOnButton.hidden = ( self.videoCapturer.cameraFlashMode == CarDVRCameraFlashModeOn );
+    self.flashAutoButton.hidden = !self.flashOnButton.hidden;
+}
+
+- (IBAction)flashAutoButtonTouched:(id)sender
+{
+    self.videoCapturer.cameraFlashMode = CarDVRCameraFlashModeAuto;
+    self.flashAutoButton.hidden = ( self.videoCapturer.cameraFlashMode == CarDVRCameraFlashModeAuto );
+    self.flashOffButton.hidden = !self.flashAutoButton.hidden;
+}
+
+- (IBAction)flashOffButtonTouched:(id)sender
+{
+    self.videoCapturer.cameraFlashMode = CarDVRCameraFlashModeOff;
+    self.flashOffButton.hidden = ( self.videoCapturer.cameraFlashMode == CarDVRCameraFlashModeOff );
+    self.flashOnButton.hidden = !self.flashOffButton.hidden;
 }
 
 - (IBAction)fotoButtonTouched:(id)sender

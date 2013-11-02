@@ -44,6 +44,16 @@
     return _interval.hasFrontCamera;
 }
 
+- (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
+{
+    [_interval setCameraFlashMode:cameraFlashMode];
+}
+
+- (CarDVRCameraFlashMode)cameraFlashMode
+{
+    return _interval.cameraFlashMode;
+}
+
 - (void)setStarred:(BOOL)starred
 {
     [_interval setStarred:starred];

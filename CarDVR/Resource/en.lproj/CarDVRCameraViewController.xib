@@ -7,6 +7,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CarDVRCameraViewController">
             <connections>
+                <outlet property="flashAutoButton" destination="7vi-Wv-sLc" id="xBW-tI-qZw"/>
+                <outlet property="flashOffButton" destination="hdu-4a-Z65" id="LZL-ZZ-Ns2"/>
+                <outlet property="flashOnButton" destination="NtQ-4t-0jI" id="YdB-Hj-xb2"/>
                 <outlet property="previewerView" destination="yyk-Vk-Bim" id="6rk-9b-vRD"/>
                 <outlet property="starButton" destination="lf4-As-eP5" id="ahI-7C-SWb"/>
                 <outlet property="starredButton" destination="86j-0m-1Dg" id="i1r-bD-gm6"/>
@@ -24,14 +27,34 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="hdu-4a-Z65">
-                    <rect key="frame" x="20" y="20" width="46" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="NtQ-4t-0jI">
+                    <rect key="frame" x="20" y="20" width="62" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" title="Flash">
+                    <state key="normal" title="FlashOn">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="flashButtonTouched:" destination="-1" eventType="touchUpInside" id="oNe-K3-7rl"/>
+                        <action selector="flashOnButtonTouched:" destination="-1" eventType="touchUpInside" id="1ah-Dg-uri"/>
+                    </connections>
+                </button>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7vi-Wv-sLc">
+                    <rect key="frame" x="20" y="20" width="74" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <state key="normal" title="FlashAuto">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="flashAutoButtonTouched:" destination="-1" eventType="touchUpInside" id="xMn-02-grd"/>
+                    </connections>
+                </button>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="hdu-4a-Z65">
+                    <rect key="frame" x="20" y="20" width="62" height="30"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <state key="normal" title="FlashOff">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="flashOffButtonTouched:" destination="-1" eventType="touchUpInside" id="dOw-Ek-cUC"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="i1I-qn-SGy">
