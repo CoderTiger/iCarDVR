@@ -4,3 +4,4 @@
 "recentsViewTitle"="最近视频";
 "starredViewTitle"="收藏夹";
 "settingsViewTitle"="设置";
+"playerViewTitleFormat"="%@";

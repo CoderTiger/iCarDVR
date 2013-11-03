@@ -4,3 +4,4 @@
 "recentsViewTitle"="Recents";
 "starredViewTitle"="Starred";
 "settingsViewTitle"="Settings";
+"playerViewTitleFormat"="%@";

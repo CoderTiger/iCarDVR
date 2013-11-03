@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CarDVRPathHelper.h"
 
 @interface CarDVRHomeViewController : UITabBarController
 

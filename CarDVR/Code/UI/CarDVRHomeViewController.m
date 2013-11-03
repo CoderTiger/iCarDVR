@@ -13,6 +13,8 @@
 
 @interface CarDVRHomeViewController ()
 
+@property (weak, nonatomic) CarDVRPathHelper *pathHelper;
+
 - (void)settingsButtonItemTouched;
 
 @end
@@ -30,9 +32,9 @@
                                                                               target:self action:@selector(settingsButtonItemTouched)];
         self.navigationItem.rightBarButtonItem = settingsButtonItem;
         CarDVRRecentsViewController *recentsViewController =
-            [[CarDVRRecentsViewController alloc] initWithNibName:@"CarDVRRecentsViewController" bundle:nil];
+        [[CarDVRRecentsViewController alloc] initWithNibName:@"CarDVRRecentsViewController" bundle:nil];
         CarDVRStarredViewController *starredViewController =
-            [[CarDVRStarredViewController alloc] initWithNibName:@"CarDVRStarredViewController" bundle:nil];
+        [[CarDVRStarredViewController alloc] initWithNibName:@"CarDVRStarredViewController" bundle:nil];
         self.viewControllers = @[recentsViewController, starredViewController];
     }
     return self;
