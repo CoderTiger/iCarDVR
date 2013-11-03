@@ -49,10 +49,8 @@ static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
 - (void)viewWillAppear:(BOOL)animated
 {
 #pragma unused( animated )
-    if ( !self.recentVideos )
-    {
-        [self loadRecentsVideoAsync];
-    }
+    self.recentVideos = nil;
+    [self loadRecentsVideoAsync];
 }
 
 - (void)didReceiveMemoryWarning
@@ -89,6 +87,32 @@ static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
         cell.detailTextLabel.text = [NSString stringWithFormat:@"Created: %@", videoItem.createdDate];
     }
     return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+#pragma unused( tableView, indexPath )
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView
+commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
+    {
+        if ( editingStyle == UITableViewCellEditingStyleDelete )
+        {
+            CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
+            NSError *error = nil;
+            [[NSFileManager defaultManager] removeItemAtPath:videoItem.filePath error:&error];
+            if ( !error )
+            {
+                [self.recentVideos removeObjectAtIndex:indexPath.row];
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+        }
+    }
 }
 
 #pragma mark - from UITableViewDelegate
