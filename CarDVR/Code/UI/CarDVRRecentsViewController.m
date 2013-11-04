@@ -13,6 +13,7 @@
 
 static const NSInteger kRecentVideosSection = 0;
 static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
+static const CGFloat kRecentVideoCellHeight = 60.0f;
 
 @interface CarDVRRecentsViewController ()<UITableViewDataSource, UITableViewDelegate>
 
@@ -57,12 +58,13 @@ static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-    self.recentVideos = nil;
+//    self.recentVideos = nil;
 }
 
 #pragma mark - from UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+#pragma unused( tableView )
     NSInteger numberOfRows = 0;
     if ( section == kRecentVideosSection )
     {
@@ -73,6 +75,8 @@ static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+#pragma unused( tableView )
+    // TODO: use customized cell view
     UITableViewCell *cell = nil;
     if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
     {
@@ -85,6 +89,7 @@ static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
         CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
         cell.textLabel.text = videoItem.fileName;
         cell.detailTextLabel.text = [NSString stringWithFormat:@"Created: %@", videoItem.createdDate];
+        cell.imageView.image = videoItem.thumbnail;
     }
     return cell;
 }
@@ -99,6 +104,7 @@ static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
 commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+#pragma unused( tableView )
     if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
     {
         if ( editingStyle == UITableViewCellEditingStyleDelete )
@@ -118,6 +124,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 #pragma mark - from UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+#pragma unused( tableView )
     if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
     {
         CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
@@ -127,6 +134,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
                                                       videoItem:videoItem];
         [self.navigationController pushViewController:playerViewController animated:YES];
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+#pragma unused( tableView, indexPath )
+    return kRecentVideoCellHeight;
 }
 
 #pragma mark - private methods
