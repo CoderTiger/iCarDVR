@@ -24,6 +24,7 @@
 		F6D17D87182687C1003D965C /* CarDVRVideoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D17D86182687C1003D965C /* CarDVRVideoItem.m */; };
 		F6D17D8B1826970A003D965C /* CarDVRPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D17D891826970A003D965C /* CarDVRPlayerViewController.m */; };
 		F6D17D8F18269769003D965C /* CarDVRPlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6D17D8D18269769003D965C /* CarDVRPlayerViewController.xib */; };
+		F6D17D9118279931003D965C /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D17D9018279931003D965C /* MediaPlayer.framework */; };
 		F6D3720C180BE9C00076B2EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720B180BE9C00076B2EC /* Foundation.framework */; };
 		F6D3720E180BE9C00076B2EC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */; };
 		F6D37210180BE9C00076B2EC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720F180BE9C00076B2EC /* UIKit.framework */; };
@@ -80,6 +81,7 @@
 		F6D17D881826970A003D965C /* CarDVRPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRPlayerViewController.h; sourceTree = "<group>"; };
 		F6D17D891826970A003D965C /* CarDVRPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRPlayerViewController.m; sourceTree = "<group>"; };
 		F6D17D8E18269769003D965C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = CarDVRPlayerViewController.xib; sourceTree = "<group>"; };
+		F6D17D9018279931003D965C /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		F6D37208180BE9C00076B2EC /* iCarDVR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iCarDVR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D3720B180BE9C00076B2EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -114,6 +116,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6D17D9118279931003D965C /* MediaPlayer.framework in Frameworks */,
 				F6D37258180BF90B0076B2EC /* AVFoundation.framework in Frameworks */,
 				F6D3720E180BE9C00076B2EC /* CoreGraphics.framework in Frameworks */,
 				F6B0FA0A1821F6F400A46E3C /* MapKit.framework in Frameworks */,
@@ -167,6 +170,7 @@
 		F6D3720A180BE9C00076B2EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6D17D9018279931003D965C /* MediaPlayer.framework */,
 				F6B0FA0C1821F72900A46E3C /* StoreKit.framework */,
 				F6B0FA091821F6F400A46E3C /* MapKit.framework */,
 				F6D37257180BF90B0076B2EC /* AVFoundation.framework */,
