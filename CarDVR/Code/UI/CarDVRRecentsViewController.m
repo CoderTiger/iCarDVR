@@ -10,6 +10,7 @@
 #import "CarDVRAppDelegate.h"
 #import "CarDVRVideoItem.h"
 #import "CarDVRPlayerViewController.h"
+#import "CarDVRVideoCapturerConstants.h"
 
 static const NSInteger kRecentVideosSection = 0;
 static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
@@ -26,6 +27,8 @@ static const CGFloat kRecentVideoCellHeight = 60.0f;
 - (void)loadRecentsVideoAsync;
 - (NSMutableArray *)loadRecentsVideo;
 
+- (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
+
 @end
 
 @implementation CarDVRRecentsViewController
@@ -36,21 +39,23 @@ static const CGFloat kRecentVideoCellHeight = 60.0f;
     if ( self )
     {
         self.title = NSLocalizedString( @"recentsViewTitle", @"Recents" );
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
+                                                     name:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                   object:nil];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self loadRecentsVideoAsync];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-#pragma unused( animated )
-    self.recentVideos = nil;
     [self loadRecentsVideoAsync];
 }
 
@@ -173,6 +178,11 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         }
     }
     return ( recentVideos.count > 0 ? recentVideos : nil );
+}
+
+- (void)handleCarDVRVideoCapturerDidStopRecordingNotification
+{
+    [self loadRecentsVideoAsync];
 }
 
 @end

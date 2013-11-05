@@ -43,6 +43,9 @@
 - (void)startRecordingVideo;
 - (void)stopRecordingVideo;
 
+- (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
+- (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
+
 @end
 
 @implementation CarDVRCameraViewController
@@ -54,6 +57,15 @@
     {
         [self setTitle:NSLocalizedString( @"cameraViewTitle", @"Camera" )];
         [self constructVideoCapturer];
+        NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
+        [defaultNC addObserver:self
+                      selector:@selector(handleCarDVRVideoCapturerDidStartRecordingNotification)
+                          name:kCarDVRVideoCapturerDidStartRecordingNotification
+                        object:nil];
+        [defaultNC addObserver:self
+                      selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
+                          name:kCarDVRVideoCapturerDidStopRecordingNotification
+                        object:nil];
     }
     return self;
 }
@@ -118,8 +130,6 @@
     {
         [self.videoCapturer stop];
     }
-    self.startButton.hidden = self.videoCapturer.isRunning;
-    self.stopButton.hidden = !self.startButton.hidden;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -186,6 +196,18 @@
     [self.videoCapturer setStarred:NO];
     self.starButton.hidden = self.videoCapturer.starred;
     self.starredButton.hidden = !self.starredButton.hidden;
+}
+
+- (void)handleCarDVRVideoCapturerDidStartRecordingNotification
+{
+    self.startButton.hidden = YES;
+    self.stopButton.hidden = NO;
+}
+
+- (void)handleCarDVRVideoCapturerDidStopRecordingNotification
+{
+    self.startButton.hidden = NO;
+    self.stopButton.hidden = YES;
 }
 
 @end

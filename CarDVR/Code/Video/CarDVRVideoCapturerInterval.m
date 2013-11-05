@@ -8,12 +8,17 @@
 
 #import "CarDVRVideoCapturerInterval.h"
 #import <AVFoundation/AVFoundation.h>
+#import "CarDVRPathHelper.h"
+
+static const NSUInteger kCountOfMovieFileOutputs = 2;
 
 @interface CarDVRVideoCapturerInterval ()<AVCaptureFileOutputRecordingDelegate>
 {
     dispatch_queue_t _workQueue;
+    NSUInteger _nextMovieFileOutputIndex;
 }
 
+@property (weak, nonatomic) id capturer;
 @property (weak, nonatomic) CarDVRPathHelper *pathHelper;
 @property (readonly, copy, nonatomic) NSString *const videoResolutionPreset;
 
@@ -22,6 +27,8 @@
 @property (strong, nonatomic) AVCaptureDevice *frontCamera;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 @property (strong, nonatomic) AVCaptureMovieFileOutput *movieFileOutput;
+
+@property (strong, nonatomic) NSArray *movieFileOutputs;
 
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
@@ -33,6 +40,7 @@
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
+- (void)handleUIApplicationDidEnterBackgroundNotification;
 
 @end
 
@@ -144,11 +152,12 @@
     return AVCaptureSessionPresetHigh;// return AVCaptureSessionPresetHigh by default.
 }
 
-- (id)initWithQueue:(dispatch_queue_t)aQueue pathHelper:(CarDVRPathHelper *)aPathHelper
+- (id)initWithCapturer:(id)aCapturer queue:(dispatch_queue_t)aQueue pathHelper:(CarDVRPathHelper *)aPathHelper
 {
     self = [super init];
     if ( self )
     {
+        _capturer = aCapturer;
         _workQueue = aQueue;
         _pathHelper = aPathHelper;
         _cameraFlashMode = CarDVRCameraFlashModeOff;
@@ -166,6 +175,10 @@
         [defaultNC addObserver:self
                       selector:@selector(handleUIApplicationDidBecomeActiveNotification)
                           name:UIApplicationDidBecomeActiveNotification
+                        object:nil];
+        [defaultNC addObserver:self
+                      selector:@selector(handleUIApplicationDidEnterBackgroundNotification)
+                          name:UIApplicationDidEnterBackgroundNotification
                         object:nil];
     }
     return self;
@@ -191,6 +204,8 @@
     NSURL *movieFileOuputURL = [NSURL fileURLWithPath:movieFileOuputPath];
     [self.movieFileOutput startRecordingToOutputFileURL:movieFileOuputURL recordingDelegate:self];
     _running = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
+                                                        object:self.capturer];
 }
 
 - (void)stop
@@ -202,6 +217,8 @@
         [self.movieFileOutput stopRecording];
     }
     _running = NO;
+    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                        object:self.capturer];
 }
 
 - (void)fitDeviceOrientation
@@ -397,6 +414,14 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     if ( ![_captureSession isRunning] )
     {
         [_captureSession startRunning];
+    }
+}
+
+- (void)handleUIApplicationDidEnterBackgroundNotification
+{
+    if ( self.isRunning )
+    {
+        [self stop];
     }
 }
 

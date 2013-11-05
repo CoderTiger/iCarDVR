@@ -8,28 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CarDVRPathHelper.h"
-
-typedef enum
-{
-    CarDVRVideoQualityHigh,
-    CarDVRVideoQualityMiddle,
-    CarDVRVideoQualityLow
-}
-CarDVRVideoQuality;
-
-typedef enum
-{
-    CarDVRCameraPositionBack,
-    CarDVRCameraPositionFront
-}
-CarDVRCameraPosition;
-
-typedef enum
-{
-    CarDVRCameraFlashModeOff,
-    CarDVRCameraFlashModeOn,
-    CarDVRCameraFlashModeAuto
-}CarDVRCameraFlashMode;
+#import "CarDVRVideoCapturerConstants.h"
 
 @interface CarDVRVideoCapturer : NSObject
 

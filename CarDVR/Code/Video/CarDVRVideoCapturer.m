@@ -10,6 +10,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import "CarDVRVideoCapturerInterval.h"
 
+NSString *const kCarDVRVideoCapturerDidStartRecordingNotification = @"kCarDVRVideoCapturerDidStartRecordingNotification";
+NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVideoCapturerDidStopRecordingNotification";
+
 @interface CarDVRVideoCapturer ()
 {
     dispatch_queue_t _workQueue;
@@ -85,7 +88,9 @@
             @throw exception;
         }
         _workQueue = dispatch_queue_create( "CarDVRVideoCapturerWorkQueue", NULL );
-        _interval = [[CarDVRVideoCapturerInterval alloc] initWithQueue:_workQueue pathHelper:aPathHelper];
+        _interval = [[CarDVRVideoCapturerInterval alloc] initWithCapturer:self
+                                                                    queue:_workQueue
+                                                               pathHelper:aPathHelper];
     }
     return self;
 }

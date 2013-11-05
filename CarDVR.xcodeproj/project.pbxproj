@@ -82,6 +82,7 @@
 		F6D17D891826970A003D965C /* CarDVRPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRPlayerViewController.m; sourceTree = "<group>"; };
 		F6D17D8E18269769003D965C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = CarDVRPlayerViewController.xib; sourceTree = "<group>"; };
 		F6D17D9018279931003D965C /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		F6D17D921828CF3B003D965C /* CarDVRVideoCapturerConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRVideoCapturerConstants.h; sourceTree = "<group>"; };
 		F6D37208180BE9C00076B2EC /* iCarDVR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iCarDVR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D3720B180BE9C00076B2EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -277,6 +278,7 @@
 			children = (
 				F6FEE819180CE75400034B6A /* CarDVRVideoCapturer.h */,
 				F6FEE81A180CE75400034B6A /* CarDVRVideoCapturer.m */,
+				F6D17D921828CF3B003D965C /* CarDVRVideoCapturerConstants.h */,
 				F6F0FC20181E7760000562DF /* CarDVRVideoCapturerInterval.h */,
 				F6F0FC21181E7760000562DF /* CarDVRVideoCapturerInterval.m */,
 			);
