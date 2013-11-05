@@ -20,6 +20,7 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
 
 @property (weak, nonatomic) id capturer;
 @property (weak, nonatomic) CarDVRPathHelper *pathHelper;
+@property (weak, nonatomic) CarDVRSettings *settings;
 @property (readonly, copy, nonatomic) NSString *const videoResolutionPreset;
 
 @property (strong, nonatomic) AVCaptureSession *captureSession;
@@ -35,7 +36,7 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
 #pragma mark - private methods
 - (void)initConfigurations;
 - (AVCaptureDevice *)currentCamera;
-- (void)constructAVObjects;
+- (void)installAVObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
@@ -152,7 +153,10 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
     return AVCaptureSessionPresetHigh;// return AVCaptureSessionPresetHigh by default.
 }
 
-- (id)initWithCapturer:(id)aCapturer queue:(dispatch_queue_t)aQueue pathHelper:(CarDVRPathHelper *)aPathHelper
+- (id)initWithCapturer:(id)aCapturer
+                 queue:(dispatch_queue_t)aQueue
+            pathHelper:(CarDVRPathHelper *)aPathHelper
+              settings:(CarDVRSettings *)aSettings
 {
     self = [super init];
     if ( self )
@@ -160,12 +164,13 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
         _capturer = aCapturer;
         _workQueue = aQueue;
         _pathHelper = aPathHelper;
+        _settings = aSettings;
         _cameraFlashMode = CarDVRCameraFlashModeOff;
         _starred = NO;
         _batchConfiguration = NO;
         
         [self initConfigurations];
-        [self constructAVObjects];
+        [self installAVObjects];
         
         NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
         [defaultNC addObserver:self
@@ -304,7 +309,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     _cameraPosition = CarDVRCameraPositionBack;
 }
 
-- (void)constructAVObjects
+- (void)installAVObjects
 {
     if ( _captureSession )
         return;
@@ -312,6 +317,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     _captureSession = [[AVCaptureSession alloc] init];
     _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
     _movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
+    _movieFileOutputs = [NSArray arrayWithObjects:[[AVCaptureMovieFileOutput alloc] init], nil];
     
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for ( AVCaptureDevice *device in devices )

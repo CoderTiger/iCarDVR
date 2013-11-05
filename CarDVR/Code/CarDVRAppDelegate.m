@@ -9,6 +9,7 @@
 #import "CarDVRAppDelegate.h"
 #import "CarDVRCameraViewController.h"
 #import "CarDVRPathHelper.h"
+#import "CarDVRSettings.h"
 
 @interface CarDVRAppDelegate ()
 
@@ -21,6 +22,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     _pathHelper = [[CarDVRPathHelper alloc] init];
+    _settings = [[CarDVRSettings alloc] initWithPathHelper:_pathHelper];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.

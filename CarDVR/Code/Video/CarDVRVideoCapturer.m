@@ -75,7 +75,7 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVide
     @throw exception;
 }
 
-- (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper
+- (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper settings:(CarDVRSettings *)aSettings
 {
     self = [super init];
     if ( self )
@@ -87,10 +87,18 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVide
                                                            userInfo:nil];
             @throw exception;
         }
+        if ( !aSettings )
+        {
+            NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException
+                                                             reason:@"aSettings is nil"
+                                                           userInfo:nil];
+            @throw exception;
+        }
         _workQueue = dispatch_queue_create( "CarDVRVideoCapturerWorkQueue", NULL );
         _interval = [[CarDVRVideoCapturerInterval alloc] initWithCapturer:self
                                                                     queue:_workQueue
-                                                               pathHelper:aPathHelper];
+                                                               pathHelper:aPathHelper
+                                                                 settings:aSettings];
     }
     return self;
 }

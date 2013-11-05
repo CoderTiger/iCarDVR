@@ -7,23 +7,51 @@
 //
 
 #import "CarDVRSettings.h"
+#import "CarDVRPathHelper.h"
 
-static const NSTimeInterval kDefaultMaxRecordingDuration = 180.00;// 3 minutes
+static const NSTimeInterval kDefaultMaxRecordingDuration = 180.0f;// 3 minutes
 static NSString *const kKeyMaxRecordingDuration = @"maxRecordingDuration";
+static const NSTimeInterval kDefaultOverlappedRecordingDuration = 1.0f;// 1 second
+static NSString *const kKeyOverlappedRecordingDuration = @"overlappedRecordingDuration";
 
 @interface CarDVRSettings ()
 
+@property (weak, nonatomic) CarDVRPathHelper *pathHelper;
 @property (strong, nonatomic) NSMutableDictionary *settings;
 
 @end
 
 @implementation CarDVRSettings
 
+- (id)init
+{
+    NSException *exception = [NSException exceptionWithName:NSGenericException
+                                                     reason:@""
+                                                   userInfo:nil];
+    @throw exception;
+}
+
+- (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper
+{
+    self = [super init];
+    if ( self )
+    {
+        _pathHelper = aPathHelper;
+        _settings = [NSMutableDictionary dictionary];
+    }
+    return self;
+}
+
 - (NSTimeInterval)maxRecordingDuration
 {
     NSNumber *maxRecordingDuration = [_settings valueForKey:kKeyMaxRecordingDuration];
     if ( !maxRecordingDuration )
     {
+        maxRecordingDuration = [NSNumber numberWithDouble:kDefaultMaxRecordingDuration];
+        if ( maxRecordingDuration )
+        {
+            [_settings setValue:maxRecordingDuration forKey:kKeyMaxRecordingDuration];
+        }
         return kDefaultMaxRecordingDuration;
     }
     return maxRecordingDuration.doubleValue;
@@ -35,18 +63,39 @@ static NSString *const kKeyMaxRecordingDuration = @"maxRecordingDuration";
     {
         maxRecordingDuration = kDefaultMaxRecordingDuration;
     }
-    [_settings setValue:[NSNumber numberWithDouble:maxRecordingDuration]
-                 forKey:kKeyMaxRecordingDuration];
+    NSNumber *value = [NSNumber numberWithDouble:maxRecordingDuration];
+    if ( value )
+    {
+        [_settings setValue:value forKey:kKeyMaxRecordingDuration];
+    }
 }
 
-- (id)init
+- (NSTimeInterval)overlappedRecordingDuration
 {
-    self = [super init];
-    if ( self )
+    NSNumber *overlappedRecordingDuration = [_settings valueForKey:kKeyOverlappedRecordingDuration];
+    if ( !overlappedRecordingDuration )
     {
-        _settings = [NSMutableDictionary dictionary];
+        overlappedRecordingDuration = [NSNumber numberWithDouble:kDefaultOverlappedRecordingDuration];
+        if ( overlappedRecordingDuration )
+        {
+            [_settings setValue:overlappedRecordingDuration forKey:kKeyOverlappedRecordingDuration];
+        }
+        return kDefaultOverlappedRecordingDuration;
     }
-    return self;
+    return overlappedRecordingDuration.doubleValue;
+}
+
+- (void)setOverlappedRecordingDuration:(NSTimeInterval)overlappedRecordingDuration
+{
+    if ( overlappedRecordingDuration < 0 )
+    {
+        overlappedRecordingDuration = 0.0f;
+    }
+    NSNumber *value = [NSNumber numberWithDouble:overlappedRecordingDuration];
+    if ( value )
+    {
+        [_settings setValue:value forKey:kKeyOverlappedRecordingDuration];
+    }
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key

@@ -103,7 +103,8 @@
     if ( _videoCapturer )
         return;
     CarDVRAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    _videoCapturer = [[CarDVRVideoCapturer alloc] initWithPathHelper:appDelegate.pathHelper];
+    _videoCapturer = [[CarDVRVideoCapturer alloc] initWithPathHelper:appDelegate.pathHelper
+                                                            settings:nil];
 }
 
 - (void)layoutSubviews

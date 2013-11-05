@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "CarDVRPathHelper.h"
 #import "CarDVRVideoCapturerConstants.h"
 
+@class CarDVRPathHelper;
+@class CarDVRSettings;
 @interface CarDVRVideoCapturer : NSObject
 
 @property (weak, nonatomic) UIView *previewerView;
@@ -23,7 +24,7 @@
 @property (assign, nonatomic) CarDVRVideoQuality videoQuality;
 @property (assign, nonatomic) CarDVRCameraPosition cameraPosition;
 
-- (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
+- (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper settings:(CarDVRSettings *)aSettings;
 
 - (void)start;
 - (void)stop;
