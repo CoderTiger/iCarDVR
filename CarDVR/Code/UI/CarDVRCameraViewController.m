@@ -104,7 +104,7 @@
         return;
     CarDVRAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     _videoCapturer = [[CarDVRVideoCapturer alloc] initWithPathHelper:appDelegate.pathHelper
-                                                            settings:nil];
+                                                            settings:appDelegate.settings];
 }
 
 - (void)layoutSubviews
@@ -203,12 +203,14 @@
 {
     self.startButton.hidden = YES;
     self.stopButton.hidden = NO;
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification
 {
     self.startButton.hidden = NO;
     self.stopButton.hidden = YES;
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
 }
 
 @end
