@@ -44,12 +44,15 @@ static const CGFloat kThumbnailHeight = 60.00f;
         _createdDate = [CarDVRPathHelper dateFromString:[_fileName stringByDeletingPathExtension]];
         if ( !_fileName || !_createdDate )
         {
+            NSLog( @"[Error] Failed to create CarDVRVideoItem with nil file name(%pt) or nil created date(%pt)",
+                  _fileName, _createdDate );
             return nil;
         }
         NSURL *videoURL = [NSURL fileURLWithPath:_filePath];
         AVAsset *asset = [AVAsset assetWithURL:videoURL];
         if ( !asset )
         {
+            NSLog( @"[Error] Failed to create CarDVRVideoItem with nil AVAsset object." );
             return nil;
         }
         AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
@@ -57,36 +60,19 @@ static const CGFloat kThumbnailHeight = 60.00f;
         imageGenerator.maximumSize = CGSizeMake( kThumbnailWidth, kThumbnailHeight );
         
         // TODO: get thumbnail when displaying it in cell view
-#if GENERATE_VIDEO_THUMBNAIL_ASYNC
-        NSValue *timeValue = [NSValue valueWithCMTime:CMTimeMake( 1, 60 )];
-        dispatch_queue_t current_queue = dispatch_get_current_queue();
-        [imageGenerator generateCGImagesAsynchronouslyForTimes:@[timeValue]
-                                             completionHandler:^(CMTime requestedTime,
-                                                                 CGImageRef image,
-                                                                 CMTime actualTime,
-                                                                 AVAssetImageGeneratorResult result,
-                                                                 NSError *error)
-         {
-             if ( result == AVAssetImageGeneratorSucceeded )
-             {
-                 dispatch_async( dispatch_get_main_queue(), ^{
-                     self.thumbnail = [UIImage imageWithCGImage:image];
-                     CFRelease( image );
-                 });
-             }
-         }];
-#else// !GENERATE_VIDEO_THUMBNAIL_ASYNC
         CMTime time = CMTimeMake( 1, 60 );
         CMTime actualTime;
         NSError *error = nil;
         CGImageRef imageRef = [imageGenerator copyCGImageAtTime:time actualTime:&actualTime error:&error];
         if ( NULL == imageRef )
         {
-            return nil;
+            NSLog( @"[Error] Failed to create CarDVRVideoItem with nil CGImageRef object" );
         }
-        _thumbnail = [[UIImage alloc] initWithCGImage:imageRef];
-        CFRelease( imageRef );
-#endif// #if GENERATE_VIDEO_THUMBNAIL_ASYNC
+        else
+        {
+            _thumbnail = [[UIImage alloc] initWithCGImage:imageRef];
+            CFRelease( imageRef );
+        }
     }
     return self;
 }

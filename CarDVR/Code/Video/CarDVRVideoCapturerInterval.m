@@ -10,12 +10,11 @@
 #import <AVFoundation/AVFoundation.h>
 #import "CarDVRPathHelper.h"
 
-static const NSUInteger kCountOfMovieFileOutputs = 2;
+static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 
 @interface CarDVRVideoCapturerInterval ()<AVCaptureFileOutputRecordingDelegate>
 {
     dispatch_queue_t _workQueue;
-    NSUInteger _nextMovieFileOutputIndex;
 }
 
 @property (weak, nonatomic) id capturer;
@@ -29,14 +28,14 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 @property (strong, nonatomic) AVCaptureMovieFileOutput *movieFileOutput;
 
-@property (strong, nonatomic) NSArray *movieFileOutputs;
-
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
 #pragma mark - private methods
 - (void)initConfigurations;
 - (AVCaptureDevice *)currentCamera;
-- (void)installAVObjects;
+- (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession;
+- (void)installAVCaptureMovieFileOutputWithSession:(AVCaptureSession *)aSession;
+- (void)installAVCaptureObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
@@ -170,7 +169,7 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
         _batchConfiguration = NO;
         
         [self initConfigurations];
-        [self installAVObjects];
+        [self installAVCaptureObjects];
         
         NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
         [defaultNC addObserver:self
@@ -203,9 +202,25 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
     {
         [self.movieFileOutput stopRecording];
     }
+    // remove the recorded clips before.
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtPath:self.pathHelper.recentsFolderPath
+                                                                    error:nil];
+    if ( recentRecordedClips )
+    {
+//        dispatch_async( _workQueue, ^{
+            for ( NSString *clipFileName in recentRecordedClips )
+            {
+                [fileManager removeItemAtPath:[self.pathHelper.recentsFolderPath stringByAppendingPathComponent:clipFileName]
+                                        error:nil];
+            }
+//        });
+    }
+    
+    // start recording new clip
     NSDate *currentDate = [NSDate date];
     NSString *movieFileOuputName = [NSString stringWithFormat:@"%@.mov", [CarDVRPathHelper stringFromDate:currentDate]];
-    NSString *movieFileOuputPath = [self.pathHelper.recordingFolderPath stringByAppendingPathComponent:movieFileOuputName];
+    NSString *movieFileOuputPath = [self.pathHelper.recentsFolderPath stringByAppendingPathComponent:movieFileOuputName];
     NSURL *movieFileOuputURL = [NSURL fileURLWithPath:movieFileOuputPath];
     [self.movieFileOutput startRecordingToOutputFileURL:movieFileOuputURL recordingDelegate:self];
     _running = YES;
@@ -309,6 +324,60 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     _cameraPosition = CarDVRCameraPositionBack;
 }
 
+- (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession
+{
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for ( AVCaptureDevice *device in devices )
+    {
+        if ( device.position == AVCaptureDevicePositionBack )
+        {
+            _backCamera = device;
+            continue;
+        }
+        if ( device.position == AVCaptureDevicePositionFront )
+        {
+            _frontCamera = device;
+            continue;
+        }
+    }
+    
+    AVCaptureDevice *currentCamera = [self currentCamera];
+    NSError *error = nil;
+    AVCaptureDeviceInput *currentCameraInput = [[AVCaptureDeviceInput alloc] initWithDevice:currentCamera error:&error];
+    if ( !currentCameraInput )
+    {
+        // TODO: handle error
+    }
+    else
+    {
+        if ( [aSession canAddInput:currentCameraInput] )
+        {
+            [aSession addInput:currentCameraInput];
+        }
+        else
+        {
+            // TODO: handle error
+        }
+    }
+}
+
+- (void)installAVCaptureMovieFileOutputWithSession:(AVCaptureSession *)aSession
+{
+    AVCaptureMovieFileOutput *output = [[AVCaptureMovieFileOutput alloc] init];
+    if ( output )
+    {
+        if ( [aSession canAddOutput:output] )
+        {
+            [aSession addOutput:output];
+            _movieFileOutput = output;
+        }
+        else
+        {
+            // TODO: handle error
+        }
+    }
+}
+
 - (void)installAVObjects
 {
     if ( _captureSession )
@@ -317,7 +386,6 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     _captureSession = [[AVCaptureSession alloc] init];
     _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
     _movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
-    _movieFileOutputs = [NSArray arrayWithObjects:[[AVCaptureMovieFileOutput alloc] init], nil];
     
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for ( AVCaptureDevice *device in devices )
@@ -365,6 +433,25 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     }
     [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     [_captureSession commitConfiguration];
+    [self fitDeviceOrientation];
+    [_captureSession startRunning];
+}
+
+- (void)installAVCaptureObjects
+{
+    if ( _captureSession )
+        return;
+    
+    _captureSession = [[AVCaptureSession alloc] init];
+    _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
+    
+    [_captureSession beginConfiguration];
+    [_captureSession setSessionPreset:self.videoResolutionPreset];
+    [self installAVCaptureDeviceWithSession:_captureSession];
+    [self installAVCaptureMovieFileOutputWithSession:_captureSession];
+    [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    [_captureSession commitConfiguration];
+    
     [self fitDeviceOrientation];
     [_captureSession startRunning];
 }

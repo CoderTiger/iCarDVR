@@ -11,12 +11,16 @@
 static CarDVRPathHelper *singleton;
 static NSDateFormatter *dateFormatter;
 
+static NSString *const kRecentsFolderName = @"Recents";
+static NSString *const kStarredFolderName = @"Starred";
+
 @interface CarDVRPathHelper ()
 {
     NSDateFormatter *_dateFormatter;
 }
 
 #pragma mark - private methods
+- (void)constructFolderAtPath:(NSString *)aPath withFileManager:(NSFileManager *)aFileManager;
 - (void)constructFolders;
 
 @end
@@ -51,12 +55,31 @@ static NSDateFormatter *dateFormatter;
 }
 
 #pragma mark - private methods
+- (void)constructFolderAtPath:(NSString *)aPath withFileManager:(NSFileManager *)aFileManager
+{
+    if ( ![aFileManager fileExistsAtPath:_recentsFolderPath] )
+    {
+        NSError *error = nil;
+        [aFileManager createDirectoryAtPath:_recentsFolderPath
+                withIntermediateDirectories:NO
+                                 attributes:nil
+                                      error:&error];
+        if ( error )
+        {
+            NSLog( @"[Error] failed to create %@ folder with error: %@", _recentsFolderPath, error );
+        }
+    }
+}
+
 - (void)constructFolders
 {
     NSArray *documentDirectories = NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES );
     _storageFolderPath = [documentDirectories objectAtIndex:0];
-    _recordingFolderPath = [_storageFolderPath copy];
-    _starredFolderPath = [_storageFolderPath copy];
+    _recentsFolderPath = [_storageFolderPath stringByAppendingPathComponent:kRecentsFolderName];
+    _starredFolderPath = [_storageFolderPath stringByAppendingPathComponent:kStarredFolderName];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [self constructFolderAtPath:_recentsFolderPath withFileManager:fileManager];
+    [self constructFolderAtPath:_starredFolderPath withFileManager:fileManager];
 }
 
 @end
