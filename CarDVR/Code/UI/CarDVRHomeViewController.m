@@ -29,8 +29,8 @@
         self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
         UIBarButtonItem *settingsButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString( @"settingsViewTitle", @"Settings" )
                                                                                style:UIBarButtonItemStylePlain
-                                                                              target:self action:@selector(settingsButtonItemTouched)];
                                                                               target:self
+                                                                              action:@selector(settingsButtonItemTouched)];
         self.navigationItem.rightBarButtonItem = settingsButtonItem;
         CarDVRRecentsViewController *recentsViewController =
         [[CarDVRRecentsViewController alloc] initWithNibName:@"CarDVRRecentsViewController" bundle:nil];
