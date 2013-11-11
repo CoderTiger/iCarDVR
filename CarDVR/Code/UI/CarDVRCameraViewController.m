@@ -85,7 +85,11 @@
 {
 #pragma unused(animated)
     self.navigationController.navigationBarHidden = YES;
-    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+#pragma unused(animated)
     [self.videoCapturer setPreviewerView:self.previewerView];
     [self layoutSubviews];
 }

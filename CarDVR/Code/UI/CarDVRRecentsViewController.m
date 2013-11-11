@@ -74,11 +74,6 @@ static const CGFloat kRecentVideoCellHeight = 60.0f;
     {
         numberOfRows = self.recentVideos.count;
     }
-#ifdef DEBUG
-    NSLog( @"%pt.clips: %pt", self, self.recentVideos );
-    NSLog( @"clip count: %u", self.recentVideos.count );
-    NSLog( @"row count: %d", numberOfRows );
-#endif
     return numberOfRows;
 }
 
@@ -100,9 +95,6 @@ static const CGFloat kRecentVideoCellHeight = 60.0f;
         cell.detailTextLabel.text = [NSString stringWithFormat:@"Created: %@", videoItem.createdDate];
         cell.imageView.image = videoItem.thumbnail;
     }
-#ifdef DEBUG
-    NSLog( @"cell: %pt", cell );
-#endif
     return cell;
 }
 
@@ -160,10 +152,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     dispatch_async( dispatch_get_current_queue(), ^{
         self.recentVideos = [self loadRecentsVideo];
         dispatch_async( dispatch_get_current_queue(), ^{
-#ifdef DEBUG
-            NSLog( @"%pt.clips: %pt", self, self.recentVideos );
-            NSLog( @"%pt.clipsView: %pt", self, self.recentVideoTableView  );
-#endif
             [self.recentVideoTableView reloadData];
         });
     });
@@ -185,13 +173,11 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 #endif
         CarDVRVideoItem *videoItem =
             [[CarDVRVideoItem alloc] initWithPath:[recentsFolderPath stringByAppendingPathComponent:fileName]];
-        NSLog( @"videoItem: %pt", videoItem );
         if ( videoItem )
         {
             [recentVideos addObject:videoItem];
         }
     }
-    NSLog( @"scanned clip count: %u", recentVideos.count );
     return ( recentVideos.count > 0 ? recentVideos : nil );
 }
 

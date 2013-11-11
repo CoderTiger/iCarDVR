@@ -290,12 +290,15 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     {
         // A problem occurred: Find out if the recording was successful.
         id value = [[error userInfo] objectForKey:AVErrorRecordingSuccessfullyFinishedKey];
-        if (value)
+        if ( value )
         {
             recordedSuccessfully = [value boolValue];
         }
     }
-    
+    if ( !recordedSuccessfully )
+    {
+        NSLog( @"[Error] failed to record video with error: %@", error );
+    }
     // Continue as appropriate...
     // TODO: complete
 }
