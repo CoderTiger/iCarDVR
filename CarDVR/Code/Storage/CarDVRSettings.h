@@ -12,7 +12,7 @@
 @interface CarDVRSettings : NSObject
 
 @property (assign, nonatomic) NSTimeInterval maxRecordingDuration;// second
-@property (assign, nonatomic) NSTimeInterval overlappedRecordingDuration;// second
+//@property (assign, nonatomic) NSTimeInterval overlappedRecordingDuration;// second
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
 

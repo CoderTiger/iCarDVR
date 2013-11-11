@@ -145,7 +145,7 @@
 - (IBAction)homeButtonTouched:(id)sender
 {
     [self stopRecordingVideo];
-//    if ( !_homeViewController )
+    if ( !self.homeViewController )
     {
         self.homeViewController = [[CarDVRHomeViewController alloc] initWithNibName:@"CarDVRHomeViewController"
                                                                          bundle:nil];

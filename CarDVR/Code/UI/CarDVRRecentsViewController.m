@@ -27,6 +27,7 @@ static const CGFloat kRecentVideoCellHeight = 60.0f;
 - (void)loadRecentsVideoAsync;
 - (NSMutableArray *)loadRecentsVideo;
 
+- (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
 
 @end
@@ -39,10 +40,11 @@ static const CGFloat kRecentVideoCellHeight = 60.0f;
     if ( self )
     {
         self.title = NSLocalizedString( @"recentsViewTitle", @"Recents" );
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
-                                                     name:kCarDVRVideoCapturerDidStopRecordingNotification
-                                                   object:nil];
+        NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
+        [defaultNC addObserver:self
+                      selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
+                          name:kCarDVRVideoCapturerDidStopRecordingNotification
+                        object:nil];
     }
     return self;
 }
@@ -168,9 +170,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     NSString *fileName = nil;
     while ( ( fileName = [dirEnum nextObject] ) )
     {
-#ifdef DEBUG
-        NSLog( @"%@", fileName );
-#endif
         CarDVRVideoItem *videoItem =
             [[CarDVRVideoItem alloc] initWithPath:[recentsFolderPath stringByAppendingPathComponent:fileName]];
         if ( videoItem )
@@ -181,9 +180,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     return ( recentVideos.count > 0 ? recentVideos : nil );
 }
 
+- (void)handleCarDVRVideoCapturerDidStartRecordingNotification
+{
+    self.recentVideos = nil;
+    [self.recentVideoTableView reloadData];
+}
+
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification
 {
-//    [self loadRecentsVideoAsync];
+    [self loadRecentsVideoAsync];
 }
 
 @end

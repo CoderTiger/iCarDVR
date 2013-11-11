@@ -9,6 +9,7 @@
 #import "CarDVRVideoCapturerInterval.h"
 #import <AVFoundation/AVFoundation.h>
 #import "CarDVRPathHelper.h"
+#import "CarDVRSettings.h"
 
 static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 
@@ -28,6 +29,8 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 @property (strong, nonatomic) AVCaptureMovieFileOutput *movieFileOutput;
 
+@property (strong, nonatomic) NSTimer *recordingLoopTimer;
+
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
 #pragma mark - private methods
@@ -38,9 +41,11 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 - (void)installAVCaptureObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
+- (NSURL *)newRecordingMovieFileOutputURL;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
+- (void)handleRecordingLoopTimer:(NSTimer *)aTimer;
 
 @end
 
@@ -202,43 +207,53 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
     {
         [self.movieFileOutput stopRecording];
     }
+    
     // remove the recorded clips before.
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtPath:self.pathHelper.recentsFolderPath
                                                                     error:nil];
     if ( recentRecordedClips )
     {
-//        dispatch_async( _workQueue, ^{
+        dispatch_async( _workQueue, ^{
             for ( NSString *clipFileName in recentRecordedClips )
             {
                 [fileManager removeItemAtPath:[self.pathHelper.recentsFolderPath stringByAppendingPathComponent:clipFileName]
                                         error:nil];
             }
-//        });
+        });
     }
     
     // start recording new clip
-    NSDate *currentDate = [NSDate date];
-    NSString *movieFileOuputName = [NSString stringWithFormat:@"%@.mov", [CarDVRPathHelper stringFromDate:currentDate]];
-    NSString *movieFileOuputPath = [self.pathHelper.recentsFolderPath stringByAppendingPathComponent:movieFileOuputName];
-    NSURL *movieFileOuputURL = [NSURL fileURLWithPath:movieFileOuputPath];
+    NSURL *movieFileOuputURL = [self newRecordingMovieFileOutputURL];
     [self.movieFileOutput startRecordingToOutputFileURL:movieFileOuputURL recordingDelegate:self];
     _running = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
                                                         object:self.capturer];
+    
+    if ( !self.recordingLoopTimer )
+    {
+        self.recordingLoopTimer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration
+                                                                   target:self
+                                                                 selector:@selector(handleRecordingLoopTimer:)
+                                                                 userInfo:nil
+                                                                  repeats:YES];
+    }
+    else
+    {
+        [self.recordingLoopTimer fire];
+    }
 }
 
 - (void)stop
 {
     if ( !_running )
         return;
+    [self.recordingLoopTimer invalidate];
     if ( [self.movieFileOutput isRecording] )
     {
         [self.movieFileOutput stopRecording];
     }
     _running = NO;
-    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
-                                                        object:self.capturer];
 }
 
 - (void)fitDeviceOrientation
@@ -299,8 +314,11 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     {
         NSLog( @"[Error] failed to record video with error: %@", error );
     }
-    // Continue as appropriate...
-    // TODO: complete
+    if ( !self.isRunning )
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                            object:self.capturer];
+    }
 }
 
 #pragma mark - private methods
@@ -459,6 +477,15 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     [_captureSession startRunning];
 }
 
+- (NSURL *)newRecordingMovieFileOutputURL
+{
+    NSDate *currentDate = [NSDate date];
+    NSString *movieFileOuputName = [NSString stringWithFormat:@"%@.mov", [CarDVRPathHelper stringFromDate:currentDate]];
+    NSString *movieFileOuputPath = [self.pathHelper.recentsFolderPath stringByAppendingPathComponent:movieFileOuputName];
+    NSURL *movieFileOuputURL = [NSURL fileURLWithPath:movieFileOuputPath];
+    return movieFileOuputURL;
+}
+
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput
 {
@@ -518,6 +545,25 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     if ( self.isRunning )
     {
         [self stop];
+    }
+}
+
+- (void)handleRecordingLoopTimer:(NSTimer *)aTimer
+{
+#ifdef DEBUG
+    NSDate *currentDate = [NSDate date];
+    NSLog( @"\nrecording loop timer: %@", currentDate );
+#endif
+#pragma unused( aTimer )
+    if ( self.isRunning )
+    {
+//        NSURL *movieFileOuputURL = [self newRecordingMovieFileOutputURL];
+//        [self.movieFileOutput stopRecording];
+//        [self.movieFileOutput startRecordingToOutputFileURL:movieFileOuputURL recordingDelegate:self];
+    }
+    else
+    {
+        [self.recordingLoopTimer invalidate];
     }
 }
 
