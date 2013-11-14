@@ -9,10 +9,11 @@
 #import "CarDVRSettings.h"
 #import "CarDVRPathHelper.h"
 
-static const NSTimeInterval kDefaultMaxRecordingDuration = 5.0f;//180.0f;// 3 minutes
 static NSString *const kKeyMaxRecordingDuration = @"maxRecordingDuration";
-//static const NSTimeInterval kDefaultOverlappedRecordingDuration = 1.0f;// 1 second
-//static NSString *const kKeyOverlappedRecordingDuration = @"overlappedRecordingDuration";
+static NSString *const kKeyOverlappedRecordingDuration = @"overlappedRecordingDuration";
+
+static NSNumber *defaultMaxRecordingDuration;// 2 minutes
+static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 
 @interface CarDVRSettings ()
 
@@ -22,6 +23,19 @@ static NSString *const kKeyMaxRecordingDuration = @"maxRecordingDuration";
 @end
 
 @implementation CarDVRSettings
+
++ (void)initialize
+{
+    defaultMaxRecordingDuration = @5.0f;// 5 seconds, TODO: set appropriate value
+    defaultOverlappedRecordingDuration = @1.0f;// 1 second
+    if ( !defaultMaxRecordingDuration || !defaultOverlappedRecordingDuration )
+    {
+        NSException *exception = [NSException exceptionWithName:NSMallocException
+                                                         reason:@"Fault on CarDVRSettings::initialize due to out of memory"
+                                                       userInfo:nil];
+        @throw exception;
+    }
+}
 
 - (id)init
 {
@@ -42,61 +56,62 @@ static NSString *const kKeyMaxRecordingDuration = @"maxRecordingDuration";
     return self;
 }
 
-- (NSTimeInterval)maxRecordingDuration
+- (NSNumber *)maxRecordingDuration
 {
     NSNumber *maxRecordingDuration = [_settings valueForKey:kKeyMaxRecordingDuration];
     if ( !maxRecordingDuration )
     {
-        maxRecordingDuration = [NSNumber numberWithDouble:kDefaultMaxRecordingDuration];
+        maxRecordingDuration = defaultMaxRecordingDuration;
         if ( maxRecordingDuration )
         {
             [_settings setValue:maxRecordingDuration forKey:kKeyMaxRecordingDuration];
         }
-        return kDefaultMaxRecordingDuration;
     }
-    return maxRecordingDuration.doubleValue;
+    return maxRecordingDuration;
 }
 
-- (void)setMaxRecordingDuration:(NSTimeInterval)maxRecordingDuration
+- (void)setMaxRecordingDuration:(NSNumber *)maxRecordingDuration
 {
-    if ( maxRecordingDuration < kDefaultMaxRecordingDuration )
+    if ( !maxRecordingDuration )
     {
-        maxRecordingDuration = kDefaultMaxRecordingDuration;
+        return;
     }
-    NSNumber *value = [NSNumber numberWithDouble:maxRecordingDuration];
-    if ( value )
+    if ( [maxRecordingDuration compare:defaultMaxRecordingDuration] == NSOrderedAscending )
     {
-        [_settings setValue:value forKey:kKeyMaxRecordingDuration];
+        maxRecordingDuration = defaultMaxRecordingDuration;
     }
+    [_settings setValue:maxRecordingDuration forKey:kKeyMaxRecordingDuration];
 }
 
-//- (NSTimeInterval)overlappedRecordingDuration
-//{
-//    NSNumber *overlappedRecordingDuration = [_settings valueForKey:kKeyOverlappedRecordingDuration];
-//    if ( !overlappedRecordingDuration )
-//    {
-//        overlappedRecordingDuration = [NSNumber numberWithDouble:kDefaultOverlappedRecordingDuration];
-//        if ( overlappedRecordingDuration )
-//        {
-//            [_settings setValue:overlappedRecordingDuration forKey:kKeyOverlappedRecordingDuration];
-//        }
-//        return kDefaultOverlappedRecordingDuration;
-//    }
-//    return overlappedRecordingDuration.doubleValue;
-//}
-//
-//- (void)setOverlappedRecordingDuration:(NSTimeInterval)overlappedRecordingDuration
-//{
-//    if ( overlappedRecordingDuration < 0 )
-//    {
-//        overlappedRecordingDuration = 0.0f;
-//    }
-//    NSNumber *value = [NSNumber numberWithDouble:overlappedRecordingDuration];
-//    if ( value )
-//    {
-//        [_settings setValue:value forKey:kKeyOverlappedRecordingDuration];
-//    }
-//}
+- (NSNumber *)overlappedRecordingDuration
+{
+    NSNumber *overlappedRecordingDuration = [_settings valueForKey:kKeyOverlappedRecordingDuration];
+    if ( !overlappedRecordingDuration )
+    {
+        overlappedRecordingDuration = defaultOverlappedRecordingDuration;
+        if ( overlappedRecordingDuration )
+        {
+            [_settings setValue:overlappedRecordingDuration forKey:kKeyOverlappedRecordingDuration];
+        }
+    }
+    return overlappedRecordingDuration;
+}
+
+- (void)setOverlappedRecordingDuration:(NSNumber *)overlappedRecordingDuration
+{
+    if ( !overlappedRecordingDuration )
+    {
+        return;
+    }
+    NSComparisonResult result = [overlappedRecordingDuration compare:self.maxRecordingDuration];
+    if ( ( [overlappedRecordingDuration compare:@0.0f] == NSOrderedAscending )
+        || ( result == NSOrderedDescending )
+        || ( result == NSOrderedSame ) )
+    {
+        overlappedRecordingDuration = defaultOverlappedRecordingDuration;
+    }
+    [_settings setValue:overlappedRecordingDuration forKey:kKeyOverlappedRecordingDuration];
+}
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {

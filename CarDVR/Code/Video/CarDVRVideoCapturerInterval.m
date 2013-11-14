@@ -232,7 +232,7 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
     
     if ( !self.recordingLoopTimer )
     {
-        self.recordingLoopTimer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration
+        self.recordingLoopTimer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
                                                                    target:self
                                                                  selector:@selector(handleRecordingLoopTimer:)
                                                                  userInfo:nil
