@@ -11,9 +11,11 @@
 
 static NSString *const kKeyMaxRecordingDuration = @"maxRecordingDuration";
 static NSString *const kKeyOverlappedRecordingDuration = @"overlappedRecordingDuration";
+static NSString *const kKeyMaxCountOfRecordingClips = @"maxCountOfRecordingClips";
 
 static NSNumber *defaultMaxRecordingDuration;// 2 minutes
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
+static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 @interface CarDVRSettings ()
 
@@ -28,7 +30,10 @@ static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 {
     defaultMaxRecordingDuration = @5.0f;// 5 seconds, TODO: set appropriate value
     defaultOverlappedRecordingDuration = @1.0f;// 1 second
-    if ( !defaultMaxRecordingDuration || !defaultOverlappedRecordingDuration )
+    defaultMaxCountOfRecordingClips = @2;// 2 clips
+    if ( !defaultMaxRecordingDuration
+        || !defaultOverlappedRecordingDuration
+        || !defaultMaxCountOfRecordingClips )
     {
         NSException *exception = [NSException exceptionWithName:NSMallocException
                                                          reason:@"Fault on CarDVRSettings::initialize due to out of memory"

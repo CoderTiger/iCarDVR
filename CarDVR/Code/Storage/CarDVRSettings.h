@@ -11,8 +11,9 @@
 @class CarDVRPathHelper;
 @interface CarDVRSettings : NSObject
 
-@property (assign, nonatomic) NSNumber *maxRecordingDuration;// second, NSTimeInterval
-@property (assign, nonatomic) NSNumber *overlappedRecordingDuration;// second, NSTimeInterval
+@property (copy, nonatomic) NSNumber *maxRecordingDuration;// second, NSTimeInterval
+@property (copy, nonatomic) NSNumber *overlappedRecordingDuration;// second, NSTimeInterval
+@property (copy, nonatomic) NSNumber *maxCountOfRecordingClips;
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
 

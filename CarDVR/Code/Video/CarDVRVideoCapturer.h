@@ -14,7 +14,7 @@
 @interface CarDVRVideoCapturer : NSObject
 
 @property (weak, nonatomic) UIView *previewerView;
-@property (readonly, nonatomic, getter = isRunning) BOOL running;
+@property (readonly, nonatomic, getter = isRecording) BOOL recording;
 @property (readonly, nonatomic) BOOL hasBackCamera;
 @property (readonly, nonatomic) BOOL hasFrontCamera;
 @property (assign, nonatomic) CarDVRCameraFlashMode cameraFlashMode;
@@ -26,8 +26,8 @@
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper settings:(CarDVRSettings *)aSettings;
 
-- (void)start;
-- (void)stop;
+- (void)startRecording;
+- (void)stopRecording;
 - (void)fitDeviceOrientation;
 - (void)focus;
 

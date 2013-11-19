@@ -13,6 +13,8 @@
 NSString *const kCarDVRVideoCapturerDidStartRecordingNotification = @"kCarDVRVideoCapturerDidStartRecordingNotification";
 NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVideoCapturerDidStopRecordingNotification";
 
+static const char kCapturerWorkQueueName[] = "com.iAutoD.capturer.workQueue";
+
 @interface CarDVRVideoCapturer ()
 {
     dispatch_queue_t _workQueue;
@@ -32,9 +34,9 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVide
     return _interval.previewerView;
 }
 
-- (BOOL)isRunning
+- (BOOL)isRecording
 {
-    return _interval.isRunning;
+    return _interval.isRecording;
 }
 
 - (BOOL)hasBackCamera
@@ -94,7 +96,7 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVide
                                                            userInfo:nil];
             @throw exception;
         }
-        _workQueue = dispatch_queue_create( "CarDVRVideoCapturerWorkQueue", NULL );
+        _workQueue = dispatch_queue_create( kCapturerWorkQueueName, NULL );
         _interval = [[CarDVRVideoCapturerInterval alloc] initWithCapturer:self
                                                                     queue:_workQueue
                                                                pathHelper:aPathHelper
@@ -103,14 +105,14 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVide
     return self;
 }
 
-- (void)start
+- (void)startRecording
 {
-    [_interval start];
+    [_interval startRecording];
 }
 
-- (void)stop
+- (void)stopRecording
 {
-    [_interval stop];
+    [_interval stopRecording];
 }
 
 - (void)fitDeviceOrientation

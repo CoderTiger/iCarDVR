@@ -120,20 +120,20 @@
 
 - (void)startRecordingVideo
 {
-    if ( self.videoCapturer.isRunning )
+    if ( self.videoCapturer.isRecording )
     {
-        [self.videoCapturer stop];
+        [self.videoCapturer stopRecording];
     }
-    [self.videoCapturer start];
-    self.startButton.hidden = self.videoCapturer.isRunning;
+    [self.videoCapturer startRecording];
+    self.startButton.hidden = self.videoCapturer.isRecording;
     self.stopButton.hidden = !self.startButton.hidden;
 }
 
 - (void)stopRecordingVideo
 {
-    if ( self.videoCapturer.isRunning )
+    if ( self.videoCapturer.isRecording )
     {
-        [self.videoCapturer stop];
+        [self.videoCapturer stopRecording];
     }
 }
 

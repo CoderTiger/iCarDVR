@@ -11,11 +11,12 @@
 #import "CarDVRPathHelper.h"
 #import "CarDVRSettings.h"
 
-static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
+static const NSUInteger kCountOfMovieFileOutputs = 2;
 
 @interface CarDVRVideoCapturerInterval ()<AVCaptureFileOutputRecordingDelegate>
 {
     dispatch_queue_t _workQueue;
+    BOOL _willStopRecording;
 }
 
 @property (weak, nonatomic) id capturer;
@@ -27,9 +28,11 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 @property (strong, nonatomic) AVCaptureDevice *backCamera;
 @property (strong, nonatomic) AVCaptureDevice *frontCamera;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
-@property (strong, nonatomic) AVCaptureMovieFileOutput *movieFileOutput;
 
-@property (strong, nonatomic) NSTimer *recordingLoopTimer;
+@property (strong, nonatomic) NSMutableArray *duoRecordingClips;// AVCaptureMovieFileOutput
+@property (strong, nonatomic) NSMutableArray *duoRecordingLoopTimers;// NSTimer
+@property (readonly, nonatomic) NSUInteger nextRecordingClip;
+@property (strong, nonatomic) NSMutableArray *recentRecordedClipURLs;// NSURL
 
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
@@ -37,11 +40,11 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 - (void)initConfigurations;
 - (AVCaptureDevice *)currentCamera;
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession;
-- (void)installAVCaptureMovieFileOutputWithSession:(AVCaptureSession *)aSession;
+- (void)installAVCaptureMovieFileOutputsWithSession:(AVCaptureSession *)aSession;
 - (void)installAVCaptureObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
-- (NSURL *)newRecordingMovieFileOutputURL;
+- (NSURL *)newRecordingClipURL;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
@@ -53,6 +56,7 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 
 @synthesize hasBackCamera = _hasBackCamera;
 @synthesize hasFrontCamera = _hasFrontCamera;
+@synthesize nextRecordingClip = _nextRecordingClip;
 
 - (void)setPreviewerView:(UIView *)previewerView
 {
@@ -75,6 +79,17 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 - (BOOL)hasFrontCamera
 {
     return ( _frontCamera != nil );
+}
+
+- (NSUInteger)nextRecordingClip
+{
+    NSUInteger clip = _nextRecordingClip;
+    if ( clip >= kCountOfMovieFileOutputs )
+    {
+        clip = 0;
+    }
+    _nextRecordingClip = ( clip + 1 ) % kCountOfMovieFileOutputs;
+    return clip;
 }
 
 - (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
@@ -172,6 +187,8 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
         _cameraFlashMode = CarDVRCameraFlashModeOff;
         _starred = NO;
         _batchConfiguration = NO;
+        _recording = NO;
+        _willStopRecording = NO;
         
         [self initConfigurations];
         [self installAVCaptureObjects];
@@ -199,16 +216,14 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
     [_captureSession stopRunning];
 }
 
-- (void)start
+- (void)startRecording
 {
-    if ( _running )
+    if ( _recording || _willStopRecording )
         return;
-    if ( [self.movieFileOutput isRecording] )
-    {
-        [self.movieFileOutput stopRecording];
-    }
+    _recording = YES;
+    _willStopRecording = NO;
     
-    // remove the recorded clips before.
+    // Remove the recent recorded clips.
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtPath:self.pathHelper.recentsFolderPath
                                                                     error:nil];
@@ -223,37 +238,68 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
         });
     }
     
-    // start recording new clip
-    NSURL *movieFileOuputURL = [self newRecordingMovieFileOutputURL];
-    [self.movieFileOutput startRecordingToOutputFileURL:movieFileOuputURL recordingDelegate:self];
-    _running = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
-                                                        object:self.capturer];
+    // Prepare recent recoreded clips
+    _recentRecordedClipURLs = [NSMutableArray arrayWithCapacity:self.settings.maxCountOfRecordingClips.unsignedIntegerValue];
     
-    if ( !self.recordingLoopTimer )
+    // Start recording timer
+    _nextRecordingClip = 0;
+    if ( !self.duoRecordingLoopTimers )
     {
-        self.recordingLoopTimer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
-                                                                   target:self
-                                                                 selector:@selector(handleRecordingLoopTimer:)
-                                                                 userInfo:nil
-                                                                  repeats:YES];
+        self.duoRecordingLoopTimers = [NSMutableArray arrayWithCapacity:kCountOfMovieFileOutputs];
+        for ( NSUInteger i = 0; i < kCountOfMovieFileOutputs; i++ )
+        {
+            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
+                                                              target:self
+                                                            selector:@selector(handleRecordingLoopTimer:)
+                                                            userInfo:nil
+                                                             repeats:YES];
+            [self.duoRecordingLoopTimers addObject:timer];
+        }
+        NSDate *firstRecordingDate = [NSDate date];
+        NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
+                                                                    - self.settings.overlappedRecordingDuration.doubleValue)
+                                                         sinceDate:firstRecordingDate];
+        [self.duoRecordingLoopTimers[0] setFireDate:firstRecordingDate];
+        [self.duoRecordingLoopTimers[1] setFireDate:secondRecordingDate];
     }
     else
     {
-        [self.recordingLoopTimer fire];
+        NSAssert1( self.duoRecordingLoopTimers.count == kCountOfMovieFileOutputs,
+                  @"Wrong count of recording loop timers: %u", self.duoRecordingLoopTimers.count );
+        NSDate *firstRecordingDate = [NSDate date];
+        NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
+                                                                    - self.settings.overlappedRecordingDuration.doubleValue)
+                                                         sinceDate:firstRecordingDate];
+        [self.duoRecordingLoopTimers[0] setFireDate:firstRecordingDate];
+        [self.duoRecordingLoopTimers[1] setFireDate:secondRecordingDate];
     }
 }
 
-- (void)stop
+- (void)stopRecording
 {
-    if ( !_running )
+    if ( !_recording )
         return;
-    [self.recordingLoopTimer invalidate];
-    if ( [self.movieFileOutput isRecording] )
+    _willStopRecording = YES;
+    
+    BOOL delaySettingRecordingFlag = NO;
+    for ( NSUInteger i = 0; i < kCountOfMovieFileOutputs; i++ )
     {
-        [self.movieFileOutput stopRecording];
+        [self.duoRecordingLoopTimers[i] invalidate];
+        AVCaptureMovieFileOutput *clip = self.duoRecordingClips[i];
+        if ( clip.isRecording )
+        {
+            [clip stopRecording];
+            delaySettingRecordingFlag = YES;
+        }
     }
-    _running = NO;
+    if ( !delaySettingRecordingFlag )
+    {
+        _recording = NO;
+        _willStopRecording = NO;
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                            object:self.capturer];
+    }
 }
 
 - (void)fitDeviceOrientation
@@ -279,7 +325,8 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
     _previewLayer.frame = self.previewerView.bounds;
     
     // adjust the orientation of the current output movie.
-    [self setOrientation:statusBarOrientation forMovieFileOutput:self.movieFileOutput];
+    // TODO:
+//    [self setOrientation:statusBarOrientation forMovieFileOutput:self.movieFileOutput];
 }
 
 - (void)focus
@@ -292,7 +339,23 @@ static const NSUInteger kMaxCountOfRecordingMovieClips = 2;
 didStartRecordingToOutputFileAtURL:(NSURL *)fileURL
       fromConnections:(NSArray *)connections
 {
-    // TODO: complete
+#ifdef DEBUG
+    NSLog( @"Recording clip: \n%@", captureOutput.outputFileURL );
+#endif// DEBUG
+    [self.recentRecordedClipURLs addObject:captureOutput.outputFileURL];
+    if ( self.recentRecordedClipURLs.count > self.settings.maxCountOfRecordingClips.unsignedIntegerValue )
+    {
+        NSURL *oldestClipURL = self.recentRecordedClipURLs[0];
+        [self.recentRecordedClipURLs removeObjectAtIndex:0];
+        dispatch_async( _workQueue, ^{
+            NSError *error;
+            [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:&error];
+            if ( error )
+            {
+                NSLog( @"[Error] %@", error );
+            }
+        });
+    }
 }
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput
@@ -314,11 +377,39 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     {
         NSLog( @"[Error] failed to record video with error: %@", error );
     }
-    if ( !self.isRunning )
+#ifndef USE_DUO_MOVIE_FILE_OUTPUTS
+    if ( !self.isRecording )
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
                                                             object:self.capturer];
     }
+#else// USE_DUO_MOVIE_FILE_OUTPUTS
+    if ( self.isRecording )
+    {
+        if ( _willStopRecording )
+        {
+            BOOL isRecording = NO;
+            for ( AVCaptureMovieFileOutput *clip in self.duoRecordingClips )
+            {
+                if ( clip.isRecording )
+                {
+                    isRecording = YES;
+                }
+            }
+            if ( !isRecording )
+            {
+                _recording = NO;
+                _willStopRecording = NO;
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                                    object:self.capturer];
+            }
+        }
+        else
+        {
+            [captureOutput startRecordingToOutputFileURL:[self newRecordingClipURL] recordingDelegate:self];
+        }
+    }
+#endif// USE_DUO_MOVIE_FILE_OUTPUTS
 }
 
 #pragma mark - private methods
@@ -347,6 +438,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession
 {
+    // Install video input devices
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for ( AVCaptureDevice *device in devices )
     {
@@ -382,80 +474,36 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     }
 }
 
-- (void)installAVCaptureMovieFileOutputWithSession:(AVCaptureSession *)aSession
+- (void)installAVCaptureMovieFileOutputsWithSession:(AVCaptureSession *)aSession
 {
-    AVCaptureMovieFileOutput *output = [[AVCaptureMovieFileOutput alloc] init];
-    if ( output )
+    if ( _duoRecordingClips )
     {
-        if ( [aSession canAddOutput:output] )
+        for ( AVCaptureMovieFileOutput *output in _duoRecordingClips )
         {
-            [aSession addOutput:output];
-            _movieFileOutput = output;
+            [aSession removeOutput:output];
+        }
+    }
+    _duoRecordingClips = [NSMutableArray arrayWithCapacity:kCountOfMovieFileOutputs];
+    for ( NSUInteger i = 0; i < kCountOfMovieFileOutputs; i++ )
+    {
+        AVCaptureMovieFileOutput *output = [[AVCaptureMovieFileOutput alloc] init];
+        if ( output )
+        {
+            if ( [aSession canAddOutput:output] )
+            {
+                [aSession addOutput:output];
+                [_duoRecordingClips addObject:output];
+            }
+            else
+            {
+                // TODO: handle error
+            }
         }
         else
         {
             // TODO: handle error
         }
     }
-}
-
-- (void)installAVObjects
-{
-    if ( _captureSession )
-        return;
-    
-    _captureSession = [[AVCaptureSession alloc] init];
-    _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
-    _movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
-    
-    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    for ( AVCaptureDevice *device in devices )
-    {
-        if ( device.position == AVCaptureDevicePositionBack )
-        {
-            _backCamera = device;
-            continue;
-        }
-        if ( device.position == AVCaptureDevicePositionFront )
-        {
-            _frontCamera = device;
-            continue;
-        }
-    }
-    
-    [_captureSession beginConfiguration];
-    [_captureSession setSessionPreset:self.videoResolutionPreset];
-    AVCaptureDevice *currentCamera = [self currentCamera];
-    NSError *error = nil;
-    AVCaptureDeviceInput *currentCameraInput = [[AVCaptureDeviceInput alloc] initWithDevice:currentCamera error:&error];
-    if ( !currentCameraInput )
-    {
-        // TODO: handle error
-    }
-    else
-    {
-        if ( [_captureSession canAddInput:currentCameraInput] )
-        {
-            [_captureSession addInput:currentCameraInput];
-        }
-        else
-        {
-            // TODO: handle error
-        }
-        
-        if ( [_captureSession canAddOutput:self.movieFileOutput] )
-        {
-            [_captureSession addOutput:self.movieFileOutput];
-        }
-        else
-        {
-            // TODO: handle error
-        }
-    }
-    [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [_captureSession commitConfiguration];
-    [self fitDeviceOrientation];
-    [_captureSession startRunning];
 }
 
 - (void)installAVCaptureObjects
@@ -469,7 +517,7 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     [_captureSession beginConfiguration];
     [_captureSession setSessionPreset:self.videoResolutionPreset];
     [self installAVCaptureDeviceWithSession:_captureSession];
-    [self installAVCaptureMovieFileOutputWithSession:_captureSession];
+    [self installAVCaptureMovieFileOutputsWithSession:_captureSession];
     [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     [_captureSession commitConfiguration];
     
@@ -477,13 +525,13 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     [_captureSession startRunning];
 }
 
-- (NSURL *)newRecordingMovieFileOutputURL
+- (NSURL *)newRecordingClipURL
 {
     NSDate *currentDate = [NSDate date];
-    NSString *movieFileOuputName = [NSString stringWithFormat:@"%@.mov", [CarDVRPathHelper stringFromDate:currentDate]];
-    NSString *movieFileOuputPath = [self.pathHelper.recentsFolderPath stringByAppendingPathComponent:movieFileOuputName];
-    NSURL *movieFileOuputURL = [NSURL fileURLWithPath:movieFileOuputPath];
-    return movieFileOuputURL;
+    NSString *clipName = [NSString stringWithFormat:@"%@.mov", [CarDVRPathHelper stringFromDate:currentDate]];
+    NSString *clipPath = [self.pathHelper.recentsFolderPath stringByAppendingPathComponent:clipName];
+    NSURL *clipURL = [NSURL fileURLWithPath:clipPath];
+    return clipURL;
 }
 
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
@@ -542,28 +590,27 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 
 - (void)handleUIApplicationDidEnterBackgroundNotification
 {
-    if ( self.isRunning )
+    if ( self.isRecording )
     {
-        [self stop];
+        [self stopRecording];
     }
 }
 
 - (void)handleRecordingLoopTimer:(NSTimer *)aTimer
 {
-#ifdef DEBUG
-    NSDate *currentDate = [NSDate date];
-    NSLog( @"\nrecording loop timer: %@", currentDate );
-#endif
 #pragma unused( aTimer )
-    if ( self.isRunning )
+#ifdef DEBUG
+    NSLog( @"[Timer] %pt", aTimer );
+#endif// DEBUG
+    NSUInteger nextRecordingClip = self.nextRecordingClip;
+    AVCaptureMovieFileOutput *clip = self.duoRecordingClips[nextRecordingClip];
+    if ( clip.isRecording )
     {
-//        NSURL *movieFileOuputURL = [self newRecordingMovieFileOutputURL];
-//        [self.movieFileOutput stopRecording];
-//        [self.movieFileOutput startRecordingToOutputFileURL:movieFileOuputURL recordingDelegate:self];
+        [clip stopRecording];
     }
     else
     {
-        [self.recordingLoopTimer invalidate];
+        [clip startRecordingToOutputFileURL:[self newRecordingClipURL] recordingDelegate:self];
     }
 }
 
