@@ -11,24 +11,24 @@
 
 typedef enum
 {
-    CarDVRVideoQualityHigh,
-    CarDVRVideoQualityMiddle,
-    CarDVRVideoQualityLow
+    kCarDVRVideoQualityHigh,
+    kCarDVRVideoQualityMiddle,
+    kCarDVRVideoQualityLow
 }
 CarDVRVideoQuality;
 
 typedef enum
 {
-    CarDVRCameraPositionBack,
-    CarDVRCameraPositionFront
+    kCarDVRCameraPositionBack,
+    kCarDVRCameraPositionFront
 }
 CarDVRCameraPosition;
 
 typedef enum
 {
-    CarDVRCameraFlashModeOff,
-    CarDVRCameraFlashModeOn,
-    CarDVRCameraFlashModeAuto
+    kCarDVRCameraFlashModeOff,
+    kCarDVRCameraFlashModeOn,
+    kCarDVRCameraFlashModeAuto
 }CarDVRCameraFlashMode;
 
 FOUNDATION_EXTERN NSString *const kCarDVRVideoCapturerDidStartRecordingNotification;

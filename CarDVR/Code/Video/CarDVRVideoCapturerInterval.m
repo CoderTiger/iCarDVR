@@ -11,12 +11,20 @@
 #import "CarDVRPathHelper.h"
 #import "CarDVRSettings.h"
 
-static const NSUInteger kCountOfMovieFileOutputs = 2;
+static const NSUInteger kCountOfDuoRecordingClips = 2;
+static const char kVideoCaptureQueueName[] = "com.iAutoD.videoCaptureQueue";
+static const char kAudioCaptureQueueName[] = "com.iAutoD.audioCaptureQueue";
+static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
-@interface CarDVRVideoCapturerInterval ()<AVCaptureFileOutputRecordingDelegate>
+@interface CarDVRVideoCapturerInterval ()<AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
 {
     dispatch_queue_t _workQueue;
     BOOL _willStopRecording;
+    
+    dispatch_queue_t _clipWriterQueue;
+    AVCaptureSession *_captureSession;
+    AVCaptureConnection *_audioConnection;
+	AVCaptureConnection *_videoConnection;
 }
 
 @property (weak, nonatomic) id capturer;
@@ -24,12 +32,10 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
 @property (weak, nonatomic) CarDVRSettings *settings;
 @property (readonly, copy, nonatomic) NSString *const videoResolutionPreset;
 
-@property (strong, nonatomic) AVCaptureSession *captureSession;
-@property (strong, nonatomic) AVCaptureDevice *backCamera;
-@property (strong, nonatomic) AVCaptureDevice *frontCamera;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
 @property (strong, nonatomic) NSMutableArray *duoRecordingClips;// AVCaptureMovieFileOutput
+@property (strong, nonatomic) NSMutableArray *duoRecordingWriter;// AVAssetWriter
 @property (strong, nonatomic) NSMutableArray *duoRecordingLoopTimers;// NSTimer
 @property (readonly, nonatomic) NSUInteger nextRecordingClip;
 @property (strong, nonatomic) NSMutableArray *recentRecordedClipURLs;// NSURL
@@ -37,10 +43,7 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
 #pragma mark - private methods
-- (void)initConfigurations;
-- (AVCaptureDevice *)currentCamera;
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession;
-- (void)installAVCaptureMovieFileOutputsWithSession:(AVCaptureSession *)aSession;
 - (void)installAVCaptureObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
@@ -49,6 +52,9 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
 - (void)handleRecordingLoopTimer:(NSTimer *)aTimer;
+
+- (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPosition;
+- (AVCaptureDevice *)audioDevice;
 
 @end
 
@@ -73,43 +79,45 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
 
 - (BOOL)hasBackCamera
 {
-    return ( _backCamera != nil );
+    AVCaptureDevice *backCamera = [self videoDeviceWithPosition:kCarDVRCameraPositionBack];
+    return ( backCamera != nil );
 }
 
 - (BOOL)hasFrontCamera
 {
-    return ( _frontCamera != nil );
+    AVCaptureDevice *frontCamera = [self videoDeviceWithPosition:kCarDVRCameraPositionFront];
+    return ( frontCamera != nil );
 }
 
 - (NSUInteger)nextRecordingClip
 {
     NSUInteger clip = _nextRecordingClip;
-    if ( clip >= kCountOfMovieFileOutputs )
+    if ( clip >= kCountOfDuoRecordingClips )
     {
         clip = 0;
     }
-    _nextRecordingClip = ( clip + 1 ) % kCountOfMovieFileOutputs;
+    _nextRecordingClip = ( clip + 1 ) % kCountOfDuoRecordingClips;
     return clip;
 }
 
 - (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
 {
-    AVCaptureDevice *currentCamera = [self currentCamera];
+    AVCaptureDevice *currentCamera = [self videoDeviceWithPosition:self.settings.cameraPosition.integerValue];
     if ( currentCamera.hasFlash && currentCamera.hasTorch )
     {
         AVCaptureFlashMode flashMode = AVCaptureFlashModeOff;
         AVCaptureTorchMode torchMode = AVCaptureTorchModeOff;
         switch ( cameraFlashMode )
         {
-            case CarDVRCameraFlashModeOn:
+            case kCarDVRCameraFlashModeOn:
                 flashMode = AVCaptureFlashModeOn;
                 torchMode = AVCaptureTorchModeOn;
                 break;
-            case CarDVRCameraFlashModeAuto:
+            case kCarDVRCameraFlashModeAuto:
                 flashMode = AVCaptureFlashModeAuto;
                 torchMode = AVCaptureTorchModeAuto;
                 break;
-            case CarDVRCameraFlashModeOff:
+            case kCarDVRCameraFlashModeOff:
                 break;
             default:
                 NSAssert1( NO, @"Unsupported camera flash mode: %d", (int)cameraFlashMode );
@@ -122,7 +130,7 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
         {
             @try
             {
-                if ( cameraFlashMode != CarDVRCameraFlashModeOff )
+                if ( cameraFlashMode != kCarDVRCameraFlashModeOff )
                 {
                     if ( !currentCamera.isFlashAvailable || !currentCamera.isTorchAvailable )
                     {
@@ -151,29 +159,28 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
     }
     else
     {
-        _cameraFlashMode = CarDVRCameraFlashModeOff;
+        _cameraFlashMode = kCarDVRCameraFlashModeOff;
     }
 }
 
 - (NSString *const)videoResolutionPreset
 {
-    switch ( self.videoQuality )
+    switch ( _settings.videoQuality.integerValue )
     {
-        case CarDVRVideoQualityHigh:
+        case kCarDVRVideoQualityHigh:
             return AVCaptureSessionPresetHigh;
-        case CarDVRVideoQualityMiddle:
+        case kCarDVRVideoQualityMiddle:
             return AVCaptureSessionPresetMedium;
-        case CarDVRVideoQualityLow:
+        case kCarDVRVideoQualityLow:
             return AVCaptureSessionPresetLow;
         default:
-            NSAssert1( NO, @"Unsupported video quality: %d", (int)self.videoQuality );
+            NSAssert1( NO, @"Unsupported video quality: %@", _settings.videoQuality );
             break;
     }
     return AVCaptureSessionPresetHigh;// return AVCaptureSessionPresetHigh by default.
 }
 
 - (id)initWithCapturer:(id)aCapturer
-                 queue:(dispatch_queue_t)aQueue
             pathHelper:(CarDVRPathHelper *)aPathHelper
               settings:(CarDVRSettings *)aSettings
 {
@@ -181,16 +188,14 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
     if ( self )
     {
         _capturer = aCapturer;
-        _workQueue = aQueue;
         _pathHelper = aPathHelper;
         _settings = aSettings;
-        _cameraFlashMode = CarDVRCameraFlashModeOff;
+        _cameraFlashMode = kCarDVRCameraFlashModeOff;
         _starred = NO;
         _batchConfiguration = NO;
         _recording = NO;
         _willStopRecording = NO;
         
-        [self initConfigurations];
         [self installAVCaptureObjects];
         
         NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
@@ -245,8 +250,8 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
     _nextRecordingClip = 0;
     if ( !self.duoRecordingLoopTimers )
     {
-        self.duoRecordingLoopTimers = [NSMutableArray arrayWithCapacity:kCountOfMovieFileOutputs];
-        for ( NSUInteger i = 0; i < kCountOfMovieFileOutputs; i++ )
+        self.duoRecordingLoopTimers = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
+        for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
         {
             NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
                                                               target:self
@@ -264,7 +269,7 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
     }
     else
     {
-        NSAssert1( self.duoRecordingLoopTimers.count == kCountOfMovieFileOutputs,
+        NSAssert1( self.duoRecordingLoopTimers.count == kCountOfDuoRecordingClips,
                   @"Wrong count of recording loop timers: %u", self.duoRecordingLoopTimers.count );
         NSDate *firstRecordingDate = [NSDate date];
         NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
@@ -282,7 +287,7 @@ static const NSUInteger kCountOfMovieFileOutputs = 2;
     _willStopRecording = YES;
     
     BOOL delaySettingRecordingFlag = NO;
-    for ( NSUInteger i = 0; i < kCountOfMovieFileOutputs; i++ )
+    for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
     {
         [self.duoRecordingLoopTimers[i] invalidate];
         AVCaptureMovieFileOutput *clip = self.duoRecordingClips[i];
@@ -412,98 +417,52 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 #endif// USE_DUO_MOVIE_FILE_OUTPUTS
 }
 
+#pragma mark - from AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate
+- (void)captureOutput:(AVCaptureOutput *)captureOutput
+didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+       fromConnection:(AVCaptureConnection *)connection
+{
+    // TODO: complete
+}
+
 #pragma mark - private methods
-- (AVCaptureDevice *)currentCamera
-{
-    switch ( _cameraPosition )
-    {
-        case CarDVRCameraPositionBack:
-            return _backCamera;
-        case CarDVRCameraPositionFront:
-            return _frontCamera;
-        default:
-            NSAssert1( NO, @"Unsupported camera position: %d", _cameraPosition );
-            // TODO: handle error
-            break;
-    }
-    return nil;
-}
-
-- (void)initConfigurations
-{
-    _videoQuality = CarDVRVideoQualityHigh;
-//    _videoQuality = CarDVRVideoQualityMiddle;
-    _cameraPosition = CarDVRCameraPositionBack;
-}
-
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession
 {
-    // Install video input devices
-    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    for ( AVCaptureDevice *device in devices )
+    //
+    // Create audio connection
+    //
+    AVCaptureDeviceInput *audioInput = [[AVCaptureDeviceInput alloc] initWithDevice:[self audioDevice] error:nil];
+    if ( [aSession canAddInput:audioInput] )
     {
-        if ( device.position == AVCaptureDevicePositionBack )
-        {
-            _backCamera = device;
-            continue;
-        }
-        if ( device.position == AVCaptureDevicePositionFront )
-        {
-            _frontCamera = device;
-            continue;
-        }
-    }
-    
-    AVCaptureDevice *currentCamera = [self currentCamera];
-    NSError *error = nil;
-    AVCaptureDeviceInput *currentCameraInput = [[AVCaptureDeviceInput alloc] initWithDevice:currentCamera error:&error];
-    if ( !currentCameraInput )
-    {
-        // TODO: handle error
+        [aSession addInput:audioInput];
     }
     else
     {
-        if ( [aSession canAddInput:currentCameraInput] )
-        {
-            [aSession addInput:currentCameraInput];
-        }
-        else
-        {
-            // TODO: handle error
-        }
+        // TODO: handle error
     }
-}
+    AVCaptureAudioDataOutput *audioOutput = [[AVCaptureAudioDataOutput alloc] init];
+	dispatch_queue_t audioCaptureQueue = dispatch_queue_create( kAudioCaptureQueueName, DISPATCH_QUEUE_SERIAL );
+	[audioOutput setSampleBufferDelegate:self queue:audioCaptureQueue];
+    _audioConnection = [audioOutput connectionWithMediaType:AVMediaTypeAudio];
 
-- (void)installAVCaptureMovieFileOutputsWithSession:(AVCaptureSession *)aSession
-{
-    if ( _duoRecordingClips )
+    //
+    // Create video connection
+    //
+    AVCaptureDeviceInput *videoInput =
+        [[AVCaptureDeviceInput alloc] initWithDevice:[self videoDeviceWithPosition:_settings.cameraPosition.integerValue]
+                                               error:nil];
+    if ( [aSession canAddInput:videoInput] )
     {
-        for ( AVCaptureMovieFileOutput *output in _duoRecordingClips )
-        {
-            [aSession removeOutput:output];
-        }
+        [aSession addInput:videoInput];
     }
-    _duoRecordingClips = [NSMutableArray arrayWithCapacity:kCountOfMovieFileOutputs];
-    for ( NSUInteger i = 0; i < kCountOfMovieFileOutputs; i++ )
+    else
     {
-        AVCaptureMovieFileOutput *output = [[AVCaptureMovieFileOutput alloc] init];
-        if ( output )
-        {
-            if ( [aSession canAddOutput:output] )
-            {
-                [aSession addOutput:output];
-                [_duoRecordingClips addObject:output];
-            }
-            else
-            {
-                // TODO: handle error
-            }
-        }
-        else
-        {
-            // TODO: handle error
-        }
+        // TODO: handle error
     }
+    AVCaptureVideoDataOutput *videoOutput = [[AVCaptureVideoDataOutput alloc] init];
+    dispatch_queue_t videoCaptureQueue = dispatch_queue_create( kVideoCaptureQueueName, DISPATCH_QUEUE_SERIAL );
+    [videoOutput setSampleBufferDelegate:self queue:videoCaptureQueue];
+    _videoConnection = [videoOutput connectionWithMediaType:AVMediaTypeVideo];
 }
 
 - (void)installAVCaptureObjects
@@ -511,13 +470,28 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     if ( _captureSession )
         return;
     
+    //
+    // Create queue for recording clip to local file
+    //
+    _clipWriterQueue = dispatch_queue_create( kClipWriterQueueName, DISPATCH_QUEUE_SERIAL );
+    
+    //
+    // Create capture session
+    //
     _captureSession = [[AVCaptureSession alloc] init];
+    
+    //
+    // Create previewer
+    //
     _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
     
+    
+    //
+    // Config & start capture session
+    //
     [_captureSession beginConfiguration];
     [_captureSession setSessionPreset:self.videoResolutionPreset];
     [self installAVCaptureDeviceWithSession:_captureSession];
-    [self installAVCaptureMovieFileOutputsWithSession:_captureSession];
     [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     [_captureSession commitConfiguration];
     
@@ -610,8 +584,40 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
     }
     else
     {
-        [clip startRecordingToOutputFileURL:[self newRecordingClipURL] recordingDelegate:self];
+//        [clip startRecordingToOutputFileURL:[self newRecordingClipURL] recordingDelegate:self];
     }
+}
+
+- (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPostion
+{
+    AVCaptureDevicePosition devicePosition = AVCaptureDevicePositionBack;
+    switch ( aPostion )
+    {
+        case kCarDVRCameraPositionFront:
+            devicePosition = AVCaptureDevicePositionFront;
+            break;
+        default:
+            break;
+    }
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for ( AVCaptureDevice *device in devices )
+    {
+        if ( [device position] == devicePosition )
+        {
+            return device;
+        }
+    }
+    return nil;
+}
+
+- (AVCaptureDevice *)audioDevice
+{
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeAudio];
+    if ( [devices count] > 0 )
+    {
+        return [devices objectAtIndex:0];
+    }
+    return nil;
 }
 
 @end

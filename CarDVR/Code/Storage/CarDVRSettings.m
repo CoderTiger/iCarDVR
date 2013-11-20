@@ -8,10 +8,13 @@
 
 #import "CarDVRSettings.h"
 #import "CarDVRPathHelper.h"
+#import "CarDVRVideoCapturerConstants.h"
 
 static NSString *const kKeyMaxRecordingDuration = @"maxRecordingDuration";
 static NSString *const kKeyOverlappedRecordingDuration = @"overlappedRecordingDuration";
 static NSString *const kKeyMaxCountOfRecordingClips = @"maxCountOfRecordingClips";
+static NSString *const kKeyCameraPosition = @"cameraPosition";
+static NSString *const kKeyVideoQuality = @"videoQuality";
 
 static NSNumber *defaultMaxRecordingDuration;// 2 minutes
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
@@ -116,6 +119,34 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
         overlappedRecordingDuration = defaultOverlappedRecordingDuration;
     }
     [_settings setValue:overlappedRecordingDuration forKey:kKeyOverlappedRecordingDuration];
+}
+
+- (NSNumber *)cameraPosition
+{
+    NSNumber *cameraPosition = [_settings valueForKey:kKeyCameraPosition];
+    if ( !cameraPosition )
+    {
+        cameraPosition = [NSNumber numberWithInteger:kCarDVRCameraPositionBack];
+        if ( cameraPosition )
+        {
+            [_settings setValue:cameraPosition forKey:kKeyCameraPosition];
+        }
+    }
+    return cameraPosition;
+}
+
+- (NSNumber *)videoQuality
+{
+    NSNumber *videoQuality = [_settings valueForKey:kKeyVideoQuality];
+    if ( !videoQuality )
+    {
+        videoQuality = [NSNumber numberWithInteger:kCarDVRVideoQualityHigh];
+        if ( videoQuality )
+        {
+            [_settings setValue:videoQuality forKey:kKeyVideoQuality];
+        }
+    }
+    return videoQuality;
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key

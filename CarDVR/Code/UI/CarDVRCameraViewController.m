@@ -155,22 +155,22 @@
 
 - (IBAction)flashOnButtonTouched:(id)sender
 {
-    self.videoCapturer.cameraFlashMode = CarDVRCameraFlashModeOn;
-    self.flashOnButton.hidden = ( self.videoCapturer.cameraFlashMode == CarDVRCameraFlashModeOn );
+    self.videoCapturer.cameraFlashMode = kCarDVRCameraFlashModeOn;
+    self.flashOnButton.hidden = ( self.videoCapturer.cameraFlashMode == kCarDVRCameraFlashModeOn );
     self.flashAutoButton.hidden = !self.flashOnButton.hidden;
 }
 
 - (IBAction)flashAutoButtonTouched:(id)sender
 {
-    self.videoCapturer.cameraFlashMode = CarDVRCameraFlashModeAuto;
-    self.flashAutoButton.hidden = ( self.videoCapturer.cameraFlashMode == CarDVRCameraFlashModeAuto );
+    self.videoCapturer.cameraFlashMode = kCarDVRCameraFlashModeAuto;
+    self.flashAutoButton.hidden = ( self.videoCapturer.cameraFlashMode == kCarDVRCameraFlashModeAuto );
     self.flashOffButton.hidden = !self.flashAutoButton.hidden;
 }
 
 - (IBAction)flashOffButtonTouched:(id)sender
 {
-    self.videoCapturer.cameraFlashMode = CarDVRCameraFlashModeOff;
-    self.flashOffButton.hidden = ( self.videoCapturer.cameraFlashMode == CarDVRCameraFlashModeOff );
+    self.videoCapturer.cameraFlashMode = kCarDVRCameraFlashModeOff;
+    self.flashOffButton.hidden = ( self.videoCapturer.cameraFlashMode == kCarDVRCameraFlashModeOff );
     self.flashOnButton.hidden = !self.flashOffButton.hidden;
 }
 

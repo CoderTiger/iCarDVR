@@ -13,11 +13,8 @@
 NSString *const kCarDVRVideoCapturerDidStartRecordingNotification = @"kCarDVRVideoCapturerDidStartRecordingNotification";
 NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVideoCapturerDidStopRecordingNotification";
 
-static const char kCapturerWorkQueueName[] = "com.iAutoD.capturer.workQueue";
-
 @interface CarDVRVideoCapturer ()
 {
-    dispatch_queue_t _workQueue;
     CarDVRVideoCapturerInterval *_interval;
 }
 @end
@@ -96,9 +93,7 @@ static const char kCapturerWorkQueueName[] = "com.iAutoD.capturer.workQueue";
                                                            userInfo:nil];
             @throw exception;
         }
-        _workQueue = dispatch_queue_create( kCapturerWorkQueueName, NULL );
         _interval = [[CarDVRVideoCapturerInterval alloc] initWithCapturer:self
-                                                                    queue:_workQueue
                                                                pathHelper:aPathHelper
                                                                  settings:aSettings];
     }

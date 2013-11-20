@@ -20,10 +20,6 @@
 @property (assign, nonatomic) CarDVRCameraFlashMode cameraFlashMode;
 @property (assign, nonatomic) BOOL starred;
 
-#pragma mark - config properties
-@property (assign, nonatomic) CarDVRVideoQuality videoQuality;
-@property (assign, nonatomic) CarDVRCameraPosition cameraPosition;
-
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper settings:(CarDVRSettings *)aSettings;
 
 - (void)startRecording;
