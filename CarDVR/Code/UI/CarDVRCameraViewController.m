@@ -205,16 +205,20 @@
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
 {
-    self.startButton.hidden = YES;
-    self.stopButton.hidden = NO;
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    dispatch_async( dispatch_get_main_queue(), ^{
+        self.startButton.hidden = YES;
+        self.stopButton.hidden = NO;
+        [UIApplication sharedApplication].idleTimerDisabled = YES;
+    });
 }
 
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification
 {
-    self.startButton.hidden = NO;
-    self.stopButton.hidden = YES;
-    [UIApplication sharedApplication].idleTimerDisabled = NO;
+    dispatch_async( dispatch_get_main_queue(), ^{
+        self.startButton.hidden = NO;
+        self.stopButton.hidden = YES;
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
+    });
 }
 
 @end
