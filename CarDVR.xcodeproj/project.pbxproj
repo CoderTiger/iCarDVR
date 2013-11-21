@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F6214005183DB2EF004630FE /* CarDVRAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = F6214004183DB2EE004630FE /* CarDVRAssetWriter.m */; };
 		F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */; };
 		F677D935181963AC00C57AE0 /* CarDVRHomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F677D933181963AC00C57AE0 /* CarDVRHomeViewController.xib */; };
 		F6B0F9D61820AAA200A46E3C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0F9D41820AAA100A46E3C /* Localizable.strings */; };
@@ -57,6 +58,8 @@
 
 /* Begin PBXFileReference section */
 		F60D0B9318237848004162C6 /* Coverage.geojson */ = {isa = PBXFileReference; lastKnownFileType = text; path = Coverage.geojson; sourceTree = "<group>"; };
+		F6214003183DB2EE004630FE /* CarDVRAssetWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRAssetWriter.h; sourceTree = "<group>"; };
+		F6214004183DB2EE004630FE /* CarDVRAssetWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRAssetWriter.m; sourceTree = "<group>"; };
 		F677D92E1819636300C57AE0 /* CarDVRHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRHomeViewController.h; sourceTree = "<group>"; };
 		F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRHomeViewController.m; sourceTree = "<group>"; };
 		F677D934181963AC00C57AE0 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = CarDVRHomeViewController.xib; sourceTree = "<group>"; };
@@ -276,6 +279,8 @@
 		F6FEE818180CE6A000034B6A /* Video */ = {
 			isa = PBXGroup;
 			children = (
+				F6214003183DB2EE004630FE /* CarDVRAssetWriter.h */,
+				F6214004183DB2EE004630FE /* CarDVRAssetWriter.m */,
 				F6FEE819180CE75400034B6A /* CarDVRVideoCapturer.h */,
 				F6FEE81A180CE75400034B6A /* CarDVRVideoCapturer.m */,
 				F6D17D921828CF3B003D965C /* CarDVRVideoCapturerConstants.h */,
@@ -424,6 +429,7 @@
 				F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */,
 				F6B0F9FC1820CCC600A46E3C /* CarDVRStarredViewController.m in Sources */,
 				F6FEE820180D9CDE00034B6A /* CarDVRPathHelper.m in Sources */,
+				F6214005183DB2EF004630FE /* CarDVRAssetWriter.m in Sources */,
 				F6D3723F180BEB970076B2EC /* CarDVRAppDelegate.m in Sources */,
 				F6D37252180BEF230076B2EC /* CarDVRCameraViewController.m in Sources */,
 				F6F0FC25181F589F000562DF /* CarDVRSettings.m in Sources */,

@@ -14,9 +14,9 @@
 @interface CarDVRVideoCapturerInterval : NSObject
 
 @property (weak, nonatomic) UIView *previewerView;
-@property (readonly, nonatomic, getter = isRecording) BOOL recording;
-@property (readonly, nonatomic) BOOL hasBackCamera;
-@property (readonly, nonatomic) BOOL hasFrontCamera;
+@property (readonly, getter = isRecording) BOOL recording;
+@property (readonly) BOOL hasBackCamera;
+@property (readonly) BOOL hasFrontCamera;
 @property (assign, nonatomic) CarDVRCameraFlashMode cameraFlashMode;
 @property (assign, nonatomic) BOOL starred;
 

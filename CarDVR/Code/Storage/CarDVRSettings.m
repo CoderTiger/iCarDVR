@@ -21,9 +21,15 @@ static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 @interface CarDVRSettings ()
+{
+    NSNotificationCenter *_notificationCenter;
+}
 
 @property (weak, nonatomic) CarDVRPathHelper *pathHelper;
 @property (strong, nonatomic) NSMutableDictionary *settings;
+
+#pragma mark - Private methods
+- (void)setSettingValue:(id)aValue forKey:(NSString *)aKey;
 
 @end
 
@@ -58,6 +64,7 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
     self = [super init];
     if ( self )
     {
+        _notificationCenter = [[NSNotificationCenter alloc] init];
         _pathHelper = aPathHelper;
         _settings = [NSMutableDictionary dictionary];
     }
@@ -88,7 +95,7 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
     {
         maxRecordingDuration = defaultMaxRecordingDuration;
     }
-    [_settings setValue:maxRecordingDuration forKey:kKeyMaxRecordingDuration];
+    [self setSettingValue:maxRecordingDuration forKey:kKeyMaxRecordingDuration];
 }
 
 - (NSNumber *)overlappedRecordingDuration
@@ -118,7 +125,34 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
     {
         overlappedRecordingDuration = defaultOverlappedRecordingDuration;
     }
-    [_settings setValue:overlappedRecordingDuration forKey:kKeyOverlappedRecordingDuration];
+    [self setSettingValue:overlappedRecordingDuration forKey:kKeyOverlappedRecordingDuration];
+}
+
+- (NSNumber *)maxCountOfRecordingClips
+{
+    NSNumber *maxCountOfRecordingClips = [_settings valueForKey:kKeyMaxCountOfRecordingClips];
+    if ( !maxCountOfRecordingClips )
+    {
+        maxCountOfRecordingClips = defaultMaxCountOfRecordingClips;
+        if ( maxCountOfRecordingClips )
+        {
+            [_settings setValue:maxCountOfRecordingClips forKey:kKeyMaxCountOfRecordingClips];
+        }
+    }
+    return maxCountOfRecordingClips;
+}
+
+- (void)setMaxCountOfRecordingClips:(NSNumber *)maxCountOfRecordingClips
+{
+    if ( !maxCountOfRecordingClips )
+    {
+        return;
+    }
+    if ( [maxCountOfRecordingClips compare:defaultMaxCountOfRecordingClips] == NSOrderedAscending )
+    {
+        maxCountOfRecordingClips = defaultMaxCountOfRecordingClips;
+    }
+    [self setSettingValue:maxCountOfRecordingClips forKey:kKeyMaxCountOfRecordingClips];
 }
 
 - (NSNumber *)cameraPosition
@@ -149,14 +183,45 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
     return videoQuality;
 }
 
+- (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey
+{
+    NSAssert( aKey, @"aKey should NOT be nil" );
+    if ( !aKey )
+        return;
+    [_notificationCenter addObserver:anObserver selector:aSelector name:aKey object:self];
+}
+
+- (void)removeObserver:(id)anObserver forKey:(NSString *)aKey
+{
+    NSAssert( aKey, @"aKey should NOT be nil" );
+    if ( !aKey )
+        return;
+    [_notificationCenter removeObserver:anObserver name:aKey object:self];
+}
+
+- (void)removeObserver:(id)anObserver
+{
+    [_notificationCenter removeObserver:anObserver];
+}
+
 - (void)setValue:(id)value forKey:(NSString *)key
 {
-    [_settings setValue:value forKey:key];
+    [self setSettingValue:value forKey:key];
 }
 
 - (id)valueForKey:(NSString *)key
 {
     return [_settings valueForKey:key];
+}
+
+#pragma mark - Private methods
+- (void)setSettingValue:(id)aValue forKey:(NSString *)aKey
+{
+    NSAssert( aKey, @"aKey should NOT be nil" );
+    if ( !aKey )
+        return;
+    [_settings setValue:aValue forKey:aKey];
+    [_notificationCenter postNotificationName:aKey object:self];
 }
 
 @end

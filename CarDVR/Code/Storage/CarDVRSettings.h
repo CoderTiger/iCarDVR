@@ -19,6 +19,9 @@
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
 
+- (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey;
+- (void)removeObserver:(id)anObserver forKey:(NSString *)aKey;
+- (void)removeObserver:(id)anObserver;
 - (void)setValue:(id)value forKey:(NSString *)key;
 - (id)valueForKey:(NSString *)key;
 

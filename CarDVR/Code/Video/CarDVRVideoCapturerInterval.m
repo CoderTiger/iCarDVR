@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "CarDVRPathHelper.h"
 #import "CarDVRSettings.h"
+#import "CarDVRAssetWriter.h"
 
 static const NSUInteger kCountOfDuoRecordingClips = 2;
 static const char kVideoCaptureQueueName[] = "com.iAutoD.videoCaptureQueue";
@@ -18,15 +19,30 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 @interface CarDVRVideoCapturerInterval ()<AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
 {
-    dispatch_queue_t _workQueue;
     BOOL _willStopRecording;
     
     dispatch_queue_t _clipWriterQueue;
     AVCaptureSession *_captureSession;
     AVCaptureConnection *_audioConnection;
 	AVCaptureConnection *_videoConnection;
+    
+//    AVAssetWriter *assetWriter;
+//    AVAssetWriterInput *assetWriterVideoInput;
+//    AVAssetWriterInput *assetWriterAudioInput;
+    
+    // Only accessed on movie writing queue
+    NSMutableArray *_duoAssetWriter;// CarDVRAssetWriter
+    NSMutableArray *_recentRecordedClipURLs;// NSURL
+    BOOL _readyToRecordAudio;
+    BOOL _readyToRecordVideo;
+	BOOL _recordingWillBeStarted;
+	BOOL _recordingWillBeStopped;
 }
 
+#pragma mark - redeclared public properties as readwrite
+@property (readwrite, getter = isRecording) BOOL recording;
+
+#pragma mark - private properties
 @property (weak, nonatomic) id capturer;
 @property (weak, nonatomic) CarDVRPathHelper *pathHelper;
 @property (weak, nonatomic) CarDVRSettings *settings;
@@ -34,11 +50,7 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 
-@property (strong, nonatomic) NSMutableArray *duoRecordingClips;// AVCaptureMovieFileOutput
-@property (strong, nonatomic) NSMutableArray *duoRecordingWriter;// AVAssetWriter
-@property (strong, nonatomic) NSMutableArray *duoRecordingLoopTimers;// NSTimer
-@property (readonly, nonatomic) NSUInteger nextRecordingClip;
-@property (strong, nonatomic) NSMutableArray *recentRecordedClipURLs;// NSURL
+@property (strong, nonatomic) NSMutableArray *duoRecordingLoopTimer;// NSTimer
 
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
@@ -49,12 +61,19 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
 - (NSURL *)newRecordingClipURL;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
+- (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
 - (void)handleRecordingLoopTimer:(NSTimer *)aTimer;
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPosition;
 - (AVCaptureDevice *)audioDevice;
+- (CGFloat)angleOffsetFromPortraitOrientationToOrientation:(AVCaptureVideoOrientation)orientation;
+- (CGAffineTransform)transformFromCurrentVideoOrientationToOrientation:(AVCaptureVideoOrientation)orientation;
+- (BOOL)setupVideoInputForAssetWriter:(CarDVRAssetWriter *)anAssetWriter
+                    formatDescription:(CMFormatDescriptionRef)currentFormatDescription;
+- (BOOL)setupAudioInputForAssetWriter:(CarDVRAssetWriter *)anAssetWriter
+                    formatDescription:(CMFormatDescriptionRef)currentFormatDescription;
 
 @end
 
@@ -62,7 +81,6 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 @synthesize hasBackCamera = _hasBackCamera;
 @synthesize hasFrontCamera = _hasFrontCamera;
-@synthesize nextRecordingClip = _nextRecordingClip;
 
 - (void)setPreviewerView:(UIView *)previewerView
 {
@@ -87,17 +105,6 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 {
     AVCaptureDevice *frontCamera = [self videoDeviceWithPosition:kCarDVRCameraPositionFront];
     return ( frontCamera != nil );
-}
-
-- (NSUInteger)nextRecordingClip
-{
-    NSUInteger clip = _nextRecordingClip;
-    if ( clip >= kCountOfDuoRecordingClips )
-    {
-        clip = 0;
-    }
-    _nextRecordingClip = ( clip + 1 ) % kCountOfDuoRecordingClips;
-    return clip;
 }
 
 - (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
@@ -202,7 +209,11 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
         [defaultNC addObserver:self
                       selector:@selector(handleAVCaptureSessionRuntimeErrorNotification:)
                           name:AVCaptureSessionRuntimeErrorNotification
-                        object:nil];
+                        object:_captureSession];
+        [defaultNC addObserver:self
+                      selector:@selector(handleAVCaptureSessionDidStopRunningNotification:)
+                          name:AVCaptureSessionDidStopRunningNotification
+                        object:_captureSession];
         [defaultNC addObserver:self
                       selector:@selector(handleUIApplicationDidBecomeActiveNotification)
                           name:UIApplicationDidBecomeActiveNotification
@@ -223,88 +234,104 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 - (void)startRecording
 {
-    if ( _recording || _willStopRecording )
-        return;
-    _recording = YES;
-    _willStopRecording = NO;
-    
-    // Remove the recent recorded clips.
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtPath:self.pathHelper.recentsFolderPath
-                                                                    error:nil];
-    if ( recentRecordedClips )
-    {
-        dispatch_async( _workQueue, ^{
+    dispatch_queue_t currentQueue = dispatch_get_current_queue();
+    dispatch_async( _clipWriterQueue, ^{
+        
+        if ( _recordingWillBeStarted || self.isRecording )
+            return;
+        _recordingWillBeStarted = YES;
+        
+        //
+        // Init asset writer
+        //
+        _duoAssetWriter = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
+        
+        //
+        // Remove the recent recorded clips.
+        //
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtPath:self.pathHelper.recentsFolderPath
+                                                                        error:nil];
+        if ( recentRecordedClips )
+        {
             for ( NSString *clipFileName in recentRecordedClips )
             {
                 [fileManager removeItemAtPath:[self.pathHelper.recentsFolderPath stringByAppendingPathComponent:clipFileName]
                                         error:nil];
             }
-        });
-    }
-    
-    // Prepare recent recoreded clips
-    _recentRecordedClipURLs = [NSMutableArray arrayWithCapacity:self.settings.maxCountOfRecordingClips.unsignedIntegerValue];
-    
-    // Start recording timer
-    _nextRecordingClip = 0;
-    if ( !self.duoRecordingLoopTimers )
-    {
-        self.duoRecordingLoopTimers = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
-        for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
-        {
-            NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
-                                                              target:self
-                                                            selector:@selector(handleRecordingLoopTimer:)
-                                                            userInfo:nil
-                                                             repeats:YES];
-            [self.duoRecordingLoopTimers addObject:timer];
         }
-        NSDate *firstRecordingDate = [NSDate date];
-        NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
-                                                                    - self.settings.overlappedRecordingDuration.doubleValue)
-                                                         sinceDate:firstRecordingDate];
-        [self.duoRecordingLoopTimers[0] setFireDate:firstRecordingDate];
-        [self.duoRecordingLoopTimers[1] setFireDate:secondRecordingDate];
-    }
-    else
-    {
-        NSAssert1( self.duoRecordingLoopTimers.count == kCountOfDuoRecordingClips,
-                  @"Wrong count of recording loop timers: %u", self.duoRecordingLoopTimers.count );
-        NSDate *firstRecordingDate = [NSDate date];
-        NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
-                                                                    - self.settings.overlappedRecordingDuration.doubleValue)
-                                                         sinceDate:firstRecordingDate];
-        [self.duoRecordingLoopTimers[0] setFireDate:firstRecordingDate];
-        [self.duoRecordingLoopTimers[1] setFireDate:secondRecordingDate];
-    }
+        
+        //
+        // Prepare recent recoreded clips
+        //
+        _recentRecordedClipURLs = [NSMutableArray arrayWithCapacity:self.settings.maxCountOfRecordingClips.unsignedIntegerValue];
+        
+        //
+        // Start recording timer
+        //
+        dispatch_async( currentQueue, ^{
+            if ( !self.duoRecordingLoopTimer )
+            {
+                self.duoRecordingLoopTimer = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
+                for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
+                {
+                    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
+                                                                      target:self
+                                                                    selector:@selector(handleRecordingLoopTimer:)
+                                                                    userInfo:nil
+                                                                     repeats:YES];
+                    [self.duoRecordingLoopTimer addObject:timer];
+                }
+                NSDate *firstRecordingDate = [NSDate date];
+                NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
+                                                                            - self.settings.overlappedRecordingDuration.doubleValue)
+                                                                 sinceDate:firstRecordingDate];
+                [self.duoRecordingLoopTimer[0] setFireDate:firstRecordingDate];
+                [self.duoRecordingLoopTimer[1] setFireDate:secondRecordingDate];
+            }
+            else
+            {
+                NSAssert1( self.duoRecordingLoopTimer.count == kCountOfDuoRecordingClips,
+                          @"Wrong count of recording loop timers: %u", self.duoRecordingLoopTimer.count );
+                NSDate *firstRecordingDate = [NSDate date];
+                NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
+                                                                            - self.settings.overlappedRecordingDuration.doubleValue)
+                                                                 sinceDate:firstRecordingDate];
+                [self.duoRecordingLoopTimer[0] setFireDate:firstRecordingDate];
+                [self.duoRecordingLoopTimer[1] setFireDate:secondRecordingDate];
+            }
+        });
+    });
 }
 
 - (void)stopRecording
 {
-    if ( !_recording )
-        return;
-    _willStopRecording = YES;
-    
-    BOOL delaySettingRecordingFlag = NO;
-    for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
-    {
-        [self.duoRecordingLoopTimers[i] invalidate];
-        AVCaptureMovieFileOutput *clip = self.duoRecordingClips[i];
-        if ( clip.isRecording )
-        {
-            [clip stopRecording];
-            delaySettingRecordingFlag = YES;
-        }
-    }
-    if ( !delaySettingRecordingFlag )
-    {
-        _recording = NO;
-        _willStopRecording = NO;
+    dispatch_async( _clipWriterQueue, ^{
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
-                                                            object:self.capturer];
-    }
+        if ( _recordingWillBeStopped || !self.isRecording )
+            return;
+        _recordingWillBeStopped = YES;
+        
+        __block NSUInteger didStopRecordingCount = 0;
+        for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
+        {
+            [assetWriter.writer finishWritingWithCompletionHandler:^{
+                if ( assetWriter.writer.error )
+                {
+                    NSLog( @"[Error] %@", assetWriter.writer.error );
+                }
+                else
+                {
+                    didStopRecordingCount++;
+                    if ( didStopRecordingCount == _duoAssetWriter.count )
+                    {
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                                            object:self.capturer];
+                    }
+                }
+            }];
+        }
+    });
 }
 
 - (void)fitDeviceOrientation
@@ -339,90 +366,110 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
     // TODO: complete
 }
 
-#pragma mark - from AVCaptureFileOutputRecordingDelegate
-- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
-didStartRecordingToOutputFileAtURL:(NSURL *)fileURL
-      fromConnections:(NSArray *)connections
-{
-#ifdef DEBUG
-    NSLog( @"Recording clip: \n%@", captureOutput.outputFileURL );
-#endif// DEBUG
-    [self.recentRecordedClipURLs addObject:captureOutput.outputFileURL];
-    if ( self.recentRecordedClipURLs.count > self.settings.maxCountOfRecordingClips.unsignedIntegerValue )
-    {
-        NSURL *oldestClipURL = self.recentRecordedClipURLs[0];
-        [self.recentRecordedClipURLs removeObjectAtIndex:0];
-        dispatch_async( _workQueue, ^{
-            NSError *error;
-            [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:&error];
-            if ( error )
-            {
-                NSLog( @"[Error] %@", error );
-            }
-        });
-    }
-}
-
-- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
-didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
-      fromConnections:(NSArray *)connections
-                error:(NSError *)error
-{
-    BOOL recordedSuccessfully = YES;
-    if ( [error code] != noErr )
-    {
-        // A problem occurred: Find out if the recording was successful.
-        id value = [[error userInfo] objectForKey:AVErrorRecordingSuccessfullyFinishedKey];
-        if ( value )
-        {
-            recordedSuccessfully = [value boolValue];
-        }
-    }
-    if ( !recordedSuccessfully )
-    {
-        NSLog( @"[Error] failed to record video with error: %@", error );
-    }
-#ifndef USE_DUO_MOVIE_FILE_OUTPUTS
-    if ( !self.isRecording )
-    {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
-                                                            object:self.capturer];
-    }
-#else// USE_DUO_MOVIE_FILE_OUTPUTS
-    if ( self.isRecording )
-    {
-        if ( _willStopRecording )
-        {
-            BOOL isRecording = NO;
-            for ( AVCaptureMovieFileOutput *clip in self.duoRecordingClips )
-            {
-                if ( clip.isRecording )
-                {
-                    isRecording = YES;
-                }
-            }
-            if ( !isRecording )
-            {
-                _recording = NO;
-                _willStopRecording = NO;
-                [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
-                                                                    object:self.capturer];
-            }
-        }
-        else
-        {
-            [captureOutput startRecordingToOutputFileURL:[self newRecordingClipURL] recordingDelegate:self];
-        }
-    }
-#endif// USE_DUO_MOVIE_FILE_OUTPUTS
-}
-
 #pragma mark - from AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate
 - (void)captureOutput:(AVCaptureOutput *)captureOutput
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection
 {
-    // TODO: complete
+    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
+    
+    //
+    // Get video info for preview
+    //
+	if ( connection == _videoConnection )
+    {
+		/*
+		// Get framerate
+		CMTime timestamp = CMSampleBufferGetPresentationTimeStamp( sampleBuffer );
+		[self calculateFramerateAtTimestamp:timestamp];
+        
+		// Get frame dimensions (for onscreen display)
+		if (self.videoDimensions.width == 0 && self.videoDimensions.height == 0)
+			self.videoDimensions = CMVideoFormatDescriptionGetDimensions( formatDescription );
+		
+		// Get buffer type
+		if ( self.videoType == 0 )
+			self.videoType = CMFormatDescriptionGetMediaSubType( formatDescription );
+        
+		CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+		
+		// Synchronously process the pixel buffer to de-green it.
+		[self processPixelBuffer:pixelBuffer];
+		
+		// Enqueue it for preview.  This is a shallow queue, so if image processing is taking too long,
+		// we'll drop this frame for preview (this keeps preview latency low).
+		OSStatus err = CMBufferQueueEnqueue(previewBufferQueue, sampleBuffer);
+		if ( !err ) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				CMSampleBufferRef sbuf = (CMSampleBufferRef)CMBufferQueueDequeueAndRetain(previewBufferQueue);
+				if (sbuf) {
+					CVImageBufferRef pixBuf = CMSampleBufferGetImageBuffer(sbuf);
+					[self.delegate pixelBufferReadyForDisplay:pixBuf];
+					CFRelease(sbuf);
+				}
+			});
+		}
+        */
+	}
+    
+    //
+    // Write sample
+    //
+    CFRetain( sampleBuffer );
+	CFRetain( formatDescription );
+    dispatch_async( _clipWriterQueue, ^{
+        
+        for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
+        {
+            BOOL wasReadyToRecord = ( assetWriter.readyToRecordVideo && assetWriter.readyToRecordVideo );
+            if ( connection == _videoConnection )
+            {
+                if ( !assetWriter.readyToRecordVideo )
+                {
+                    assetWriter.readyToRecordVideo = [self setupVideoInputForAssetWriter:assetWriter
+                                                                       formatDescription:formatDescription];
+                }
+                if ( !_readyToRecordVideo )
+                {
+                    _readyToRecordVideo = assetWriter.readyToRecordVideo;
+                }
+                
+                if ( assetWriter.readyToRecordVideo && assetWriter.readyToRecordAudio )
+                {
+                    [assetWriter writeSampleBuffer:sampleBuffer ofType:AVMediaTypeVideo];
+                }
+            }
+            else if ( connection == _audioConnection )
+            {
+                if ( !assetWriter.readyToRecordAudio )
+                {
+                    assetWriter.readyToRecordAudio = [self setupAudioInputForAssetWriter:assetWriter
+                                                                       formatDescription:formatDescription];
+                }
+                if ( !_readyToRecordAudio )
+                {
+                    _readyToRecordAudio = assetWriter.readyToRecordAudio;
+                }
+                
+                if ( assetWriter.readyToRecordAudio && assetWriter.readyToRecordVideo )
+                {
+                    [assetWriter writeSampleBuffer:sampleBuffer ofType:AVMediaTypeAudio];
+                }
+            }
+            BOOL isReadyToRecord = ( assetWriter.readyToRecordAudio && assetWriter.readyToRecordVideo );
+			if ( !wasReadyToRecord && isReadyToRecord )
+            {
+                assetWriter.recordingWillBeStarted = NO;
+				_recordingWillBeStarted = NO;
+				self.recording = YES;
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
+                                                                    object:self.capturer];
+			}
+        }
+        
+        CFRelease( formatDescription );
+        CFRelease( sampleBuffer );
+    });
 }
 
 #pragma mark - private methods
@@ -502,7 +549,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 - (NSURL *)newRecordingClipURL
 {
     NSDate *currentDate = [NSDate date];
-    NSString *clipName = [NSString stringWithFormat:@"%@.mov", [CarDVRPathHelper stringFromDate:currentDate]];
+    NSString *clipName = [NSString stringWithFormat:@"%@.MOV", [CarDVRPathHelper stringFromDate:currentDate]];
     NSString *clipPath = [self.pathHelper.recentsFolderPath stringByAppendingPathComponent:clipName];
     NSURL *clipURL = [NSURL fileURLWithPath:clipPath];
     return clipURL;
@@ -551,7 +598,19 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification
 {
-    // TODO: complete
+    NSError *error = [aNotification.userInfo valueForKey:AVCaptureSessionErrorKey];
+    NSLog( @"[Error] %@", error );
+    // TODO: handle error
+}
+
+- (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification
+{
+    dispatch_async( _clipWriterQueue, ^{
+        if ( self.isRecording )
+        {
+            [self stopRecording];
+        }
+    });
 }
 
 - (void)handleUIApplicationDidBecomeActiveNotification
@@ -572,20 +631,54 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
 - (void)handleRecordingLoopTimer:(NSTimer *)aTimer
 {
-#pragma unused( aTimer )
 #ifdef DEBUG
     NSLog( @"[Timer] %pt", aTimer );
 #endif// DEBUG
-    NSUInteger nextRecordingClip = self.nextRecordingClip;
-    AVCaptureMovieFileOutput *clip = self.duoRecordingClips[nextRecordingClip];
-    if ( clip.isRecording )
+    NSUInteger nextRecordingClipIndex = [self.duoRecordingLoopTimer indexOfObject:aTimer];
+    if ( nextRecordingClipIndex == NSNotFound )
     {
-        [clip stopRecording];
+        // TODO: handle error
+        return;
     }
-    else
-    {
-//        [clip startRecordingToOutputFileURL:[self newRecordingClipURL] recordingDelegate:self];
-    }
+    dispatch_async( _clipWriterQueue, ^{
+        CarDVRAssetWriter *assetWriter;
+        if ( nextRecordingClipIndex < _duoAssetWriter.count )
+        {
+            assetWriter = [_duoAssetWriter objectAtIndex:nextRecordingClipIndex];
+            [assetWriter.writer finishWritingWithCompletionHandler:^{
+                if ( assetWriter.writer.error )
+                {
+                    NSLog( @"[Error] %@", assetWriter.writer.error );
+                    // TODO: handle error
+                }
+            }];
+        }
+        else
+        {
+            assetWriter = [[CarDVRAssetWriter alloc] initWithURL:[self newRecordingClipURL]
+                                                        settings:_settings
+                                                           error:nil];
+            if ( assetWriter )
+            {
+                assetWriter.recordingWillBeStarted = YES;
+                
+                [_duoAssetWriter addObject:assetWriter];
+                [_recentRecordedClipURLs addObject:assetWriter.writer.outputURL];
+                if ( _recentRecordedClipURLs.count >= _settings.maxCountOfRecordingClips.unsignedIntegerValue )
+                {
+                    NSURL *oldestClipURL = [_recentRecordedClipURLs objectAtIndex:0];
+                    NSError *error;
+                    [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:&error];
+                    if ( error )
+                    {
+                        // Just log the error.
+                        NSLog( @"[Error] %@", error );
+                    }
+                    [_recentRecordedClipURLs removeObjectAtIndex:0];
+                }
+            }
+        }
+    });
 }
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPostion
@@ -618,6 +711,154 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         return [devices objectAtIndex:0];
     }
     return nil;
+}
+
+- (CGFloat)angleOffsetFromPortraitOrientationToOrientation:(AVCaptureVideoOrientation)orientation
+{
+	CGFloat angle = 0.0;
+	
+	switch (orientation)
+    {
+		case AVCaptureVideoOrientationPortrait:
+			angle = 0.0;
+			break;
+		case AVCaptureVideoOrientationPortraitUpsideDown:
+			angle = M_PI;
+			break;
+		case AVCaptureVideoOrientationLandscapeRight:
+			angle = -M_PI_2;
+			break;
+		case AVCaptureVideoOrientationLandscapeLeft:
+			angle = M_PI_2;
+			break;
+		default:
+			break;
+	}
+    
+	return angle;
+}
+
+- (CGAffineTransform)transformFromCurrentVideoOrientationToOrientation:(AVCaptureVideoOrientation)orientation
+{
+	CGAffineTransform transform = CGAffineTransformIdentity;
+    
+	// Calculate offsets from an arbitrary reference orientation (portrait)
+	CGFloat orientationAngleOffset = [self angleOffsetFromPortraitOrientationToOrientation:orientation];
+	CGFloat videoOrientationAngleOffset = [self angleOffsetFromPortraitOrientationToOrientation:_videoConnection.videoOrientation];
+	
+	// Find the difference in angle between the passed in orientation and the current video orientation
+	CGFloat angleOffset = orientationAngleOffset - videoOrientationAngleOffset;
+	transform = CGAffineTransformMakeRotation(angleOffset);
+	
+	return transform;
+}
+
+- (BOOL)setupVideoInputForAssetWriter:(CarDVRAssetWriter *)anAssetWriter
+                    formatDescription:(CMFormatDescriptionRef)currentFormatDescription
+{
+	float bitsPerPixel;
+	CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(currentFormatDescription);
+	int numPixels = dimensions.width * dimensions.height;
+	int bitsPerSecond;
+	
+	// Assume that lower-than-SD resolutions are intended for streaming, and use a lower bitrate
+	if ( numPixels < ( 640 * 480 ) )
+		bitsPerPixel = 4.05;// This bitrate matches the quality produced by AVCaptureSessionPresetMedium or Low.
+	else
+		bitsPerPixel = 11.4;// This bitrate matches the quality produced by AVCaptureSessionPresetHigh.
+	
+	bitsPerSecond = numPixels * bitsPerPixel;
+	
+	NSDictionary *videoCompressionSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+											  AVVideoCodecH264, AVVideoCodecKey,
+											  [NSNumber numberWithInteger:dimensions.width], AVVideoWidthKey,
+											  [NSNumber numberWithInteger:dimensions.height], AVVideoHeightKey,
+											  [NSDictionary dictionaryWithObjectsAndKeys:
+											   [NSNumber numberWithInteger:bitsPerSecond], AVVideoAverageBitRateKey,
+											   [NSNumber numberWithInteger:30], AVVideoMaxKeyFrameIntervalKey,
+											   nil], AVVideoCompressionPropertiesKey,
+											  nil];
+	if ( [anAssetWriter.writer canApplyOutputSettings:videoCompressionSettings forMediaType:AVMediaTypeVideo] )
+    {
+        if ( !anAssetWriter.videoInput )
+        {
+            AVAssetWriterInput *videoInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeVideo
+                                                                            outputSettings:videoCompressionSettings];
+            videoInput.expectsMediaDataInRealTime = YES;
+            UIInterfaceOrientation statusBarOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+            videoInput.transform = [self transformFromCurrentVideoOrientationToOrientation:statusBarOrientation];
+            if ( [anAssetWriter.writer canAddInput:videoInput] )
+            {
+                anAssetWriter.videoInput = videoInput;
+                [anAssetWriter.writer addInput:videoInput];
+            }
+            else
+            {
+                // TODO: handle error
+                NSLog(@"[Error] Couldn't add asset writer video input.");
+                return NO;
+            }
+        }
+	}
+	else {
+        // TODO: handle error
+		NSLog(@"[Error] Couldn't apply video output settings.");
+        return NO;
+	}
+    
+    return YES;
+}
+
+- (BOOL)setupAudioInputForAssetWriter:(CarDVRAssetWriter *)anAssetWriter
+                    formatDescription:(CMFormatDescriptionRef)currentFormatDescription
+{
+    const AudioStreamBasicDescription *currentASBD = CMAudioFormatDescriptionGetStreamBasicDescription(currentFormatDescription);
+    
+	size_t aclSize = 0;
+	const AudioChannelLayout *currentChannelLayout = CMAudioFormatDescriptionGetChannelLayout(currentFormatDescription, &aclSize);
+	NSData *currentChannelLayoutData = nil;
+	
+	// AVChannelLayoutKey must be specified, but if we don't know any better give an empty data and let AVAssetWriter decide.
+	if ( currentChannelLayout && aclSize > 0 )
+		currentChannelLayoutData = [NSData dataWithBytes:currentChannelLayout length:aclSize];
+	else
+		currentChannelLayoutData = [NSData data];
+	
+	NSDictionary *audioCompressionSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+											  [NSNumber numberWithInteger:kAudioFormatMPEG4AAC], AVFormatIDKey,
+											  [NSNumber numberWithFloat:currentASBD->mSampleRate], AVSampleRateKey,
+											  [NSNumber numberWithInt:64000], AVEncoderBitRatePerChannelKey,
+											  [NSNumber numberWithInteger:currentASBD->mChannelsPerFrame], AVNumberOfChannelsKey,
+											  currentChannelLayoutData, AVChannelLayoutKey,
+											  nil];
+	if ( [anAssetWriter.writer canApplyOutputSettings:audioCompressionSettings forMediaType:AVMediaTypeAudio] )
+    {
+        if ( !anAssetWriter.audioInput )
+        {
+            AVAssetWriterInput *audioInput = [[AVAssetWriterInput alloc] initWithMediaType:AVMediaTypeAudio
+                                                                            outputSettings:audioCompressionSettings];
+            audioInput.expectsMediaDataInRealTime = YES;
+            if ( [anAssetWriter.writer canAddInput:audioInput] )
+            {
+                anAssetWriter.audioInput = audioInput;
+                [anAssetWriter.writer addInput:audioInput];
+            }
+            else
+            {
+                // TODO: handle error
+                NSLog(@"Couldn't add asset writer audio input.");
+                return NO;
+            }
+        }
+	}
+	else
+    {
+        // TODO: handle error
+		NSLog(@"Couldn't apply audio output settings.");
+        return NO;
+	}
+    
+    return YES;
 }
 
 @end
