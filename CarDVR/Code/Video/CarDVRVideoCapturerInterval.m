@@ -306,12 +306,26 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 - (void)stopRecording
 {
+    dispatch_queue_t currentQueue = dispatch_get_current_queue();
     dispatch_async( _clipWriterQueue, ^{
         
         if ( _recordingWillBeStopped || !self.isRecording )
             return;
         _recordingWillBeStopped = YES;
         
+        //
+        // Stop recording loop timer
+        //
+        dispatch_async( currentQueue, ^{
+            for ( NSTimer *timer in self.duoRecordingLoopTimer )
+            {
+                [timer invalidate];
+            }
+        });
+        
+        //
+        // Stop asset writer
+        //
         __block NSUInteger didStopRecordingCount = 0;
         for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
         {
@@ -460,10 +474,13 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 			if ( !wasReadyToRecord && isReadyToRecord )
             {
                 assetWriter.recordingWillBeStarted = NO;
-				_recordingWillBeStarted = NO;
-				self.recording = YES;
-                [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
-                                                                    object:self.capturer];
+                if ( !self.isRecording )
+                {
+                    _recordingWillBeStarted = NO;
+                    self.recording = YES;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
+                                                                        object:self.capturer];
+                }
 			}
         }
         
@@ -490,6 +507,14 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     AVCaptureAudioDataOutput *audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 	dispatch_queue_t audioCaptureQueue = dispatch_queue_create( kAudioCaptureQueueName, DISPATCH_QUEUE_SERIAL );
 	[audioOutput setSampleBufferDelegate:self queue:audioCaptureQueue];
+    if ( [aSession canAddOutput:audioOutput] )
+    {
+        [aSession addOutput:audioOutput];
+    }
+    else
+    {
+        // TODO: handle error
+    }
     _audioConnection = [audioOutput connectionWithMediaType:AVMediaTypeAudio];
 
     //
@@ -509,6 +534,14 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     AVCaptureVideoDataOutput *videoOutput = [[AVCaptureVideoDataOutput alloc] init];
     dispatch_queue_t videoCaptureQueue = dispatch_queue_create( kVideoCaptureQueueName, DISPATCH_QUEUE_SERIAL );
     [videoOutput setSampleBufferDelegate:self queue:videoCaptureQueue];
+    if ( [aSession canAddOutput:videoOutput] )
+    {
+        [aSession addOutput:videoOutput];
+    }
+    else
+    {
+        // TODO: handle error
+    }
     _videoConnection = [videoOutput connectionWithMediaType:AVMediaTypeVideo];
 }
 
@@ -531,7 +564,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     // Create previewer
     //
     _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
-    
     
     //
     // Config & start capture session
@@ -645,13 +677,42 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         if ( nextRecordingClipIndex < _duoAssetWriter.count )
         {
             assetWriter = [_duoAssetWriter objectAtIndex:nextRecordingClipIndex];
-            [assetWriter.writer finishWritingWithCompletionHandler:^{
-                if ( assetWriter.writer.error )
+            
+            NSInteger systemMainVersion = [[[UIDevice currentDevice] systemVersion] integerValue];
+            @try
+            {
+                if ( systemMainVersion < 6 )
                 {
-                    NSLog( @"[Error] %@", assetWriter.writer.error );
-                    // TODO: handle error
+                    if ( ![assetWriter.writer finishWriting] )
+                    {
+                        NSLog( @"[Error] failed on AVAssetWriter::finishWriting with status %d, and error: %@",
+                              assetWriter.writer.status,
+                              assetWriter.writer.error );
+                        // TODO: handle error
+                    }
                 }
-            }];
+                else
+                {
+                    [assetWriter.writer finishWritingWithCompletionHandler:^{
+                        if ( assetWriter.writer.error )
+                        {
+                            NSLog( @"[Error] failed on AVAssetWriter::finishWritingWithCompletionHandler with status %d, and error: %@",
+                                  assetWriter.writer.status,
+                                  assetWriter.writer.error );
+                            // TODO: handle error
+                        }
+                    }];
+                }
+            }
+            @catch ( NSException *exception )
+            {
+                NSLog( @"[Error] failed to cause AVAssetWriter to finish writing due to exception: %@", exception );
+                // TODO: handle error
+            }
+            @finally
+            {
+                // do nothing
+            }
         }
         else
         {
