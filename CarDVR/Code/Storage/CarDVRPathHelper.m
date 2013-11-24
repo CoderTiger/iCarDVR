@@ -66,7 +66,8 @@ static NSString *const kStarredFolderName = @"Starred";
                                       error:&error];
         if ( error )
         {
-            NSLog( @"[Error] failed to create %@ folder with error: %@", _recentsFolderPath, error );
+            NSLog( @"[Error] Failed to create %@ folder with error: domain(%@), code(%d), \"%@\"",
+                  _recentsFolderPath, error.domain, error.code, error.description );
         }
     }
 }

@@ -12,26 +12,21 @@
 #import "CarDVRSettings.h"
 #import "CarDVRAssetWriter.h"
 
-static const NSUInteger kCountOfDuoRecordingClips = 1;//2;
+static const NSUInteger kCountOfDuoRecordingClips = 1;
 static const char kVideoCaptureQueueName[] = "com.iAutoD.videoCaptureQueue";
 static const char kAudioCaptureQueueName[] = "com.iAutoD.audioCaptureQueue";
 static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 @interface CarDVRVideoCapturerInterval ()<AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
 {
-    BOOL _willStopRecording;
-    
     dispatch_queue_t _clipWriterQueue;
     AVCaptureSession *_captureSession;
     AVCaptureConnection *_audioConnection;
 	AVCaptureConnection *_videoConnection;
     
-//    AVAssetWriter *assetWriter;
-//    AVAssetWriterInput *assetWriterVideoInput;
-//    AVAssetWriterInput *assetWriterAudioInput;
-    
-    // Only accessed on movie writing queue
+    // Only accessed on movie writing queue (including self.recording)
     NSMutableArray *_duoAssetWriter;// CarDVRAssetWriter
+    NSMutableArray *_duoRecordingLoopTimer;// NSTimer
     NSMutableArray *_recentRecordedClipURLs;// NSURL
     BOOL _readyToRecordAudio;
     BOOL _readyToRecordVideo;
@@ -49,8 +44,6 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 @property (readonly, copy, nonatomic) NSString *const videoResolutionPreset;
 
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
-
-@property (strong, nonatomic) NSMutableArray *duoRecordingLoopTimer;// NSTimer
 
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
@@ -204,7 +197,6 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
         _starred = NO;
         _batchConfiguration = NO;
         _recording = NO;
-        _willStopRecording = NO;
         
         [self installAVCaptureObjects];
         
@@ -237,9 +229,7 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 - (void)startRecording
 {
-    dispatch_queue_t currentQueue = dispatch_get_current_queue();
     dispatch_async( _clipWriterQueue, ^{
-        
         if ( _recordingWillBeStarted || self.isRecording )
             return;
         _recordingWillBeStarted = YES;
@@ -268,70 +258,50 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
         // Prepare recent recoreded clips
         //
         _recentRecordedClipURLs = [NSMutableArray arrayWithCapacity:self.settings.maxCountOfRecordingClips.unsignedIntegerValue];
-        
-        //
-        // Start recording timer
-        //
-        dispatch_async( currentQueue, ^{
-            if ( !self.duoRecordingLoopTimer )
-            {
-                self.duoRecordingLoopTimer = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
-                for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
-                {
-                    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
-                                                                      target:self
-                                                                    selector:@selector(handleRecordingLoopTimer:)
-                                                                    userInfo:nil
-                                                                     repeats:YES];
-                    [self.duoRecordingLoopTimer addObject:timer];
-                }
-                NSDate *firstRecordingDate = [NSDate date];
-                [self.duoRecordingLoopTimer[0] setFireDate:firstRecordingDate];
-                if ( self.duoRecordingLoopTimer.count == 2 )
-                {
-                    NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
-                                                                                - self.settings.overlappedRecordingDuration.doubleValue)
-                                                                     sinceDate:firstRecordingDate];
-                    [self.duoRecordingLoopTimer[1] setFireDate:secondRecordingDate];
-                }
-            }
-            else
-            {
-                NSAssert1( self.duoRecordingLoopTimer.count == kCountOfDuoRecordingClips,
-                          @"Wrong count of recording loop timers: %u", self.duoRecordingLoopTimer.count );
-                NSDate *firstRecordingDate = [NSDate date];
-                [self.duoRecordingLoopTimer[0] setFireDate:firstRecordingDate];
-                if ( self.duoRecordingLoopTimer.count == 2 )
-                {
-                    NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
-                                                                                - self.settings.overlappedRecordingDuration.doubleValue)
-                                                                     sinceDate:firstRecordingDate];
-                    [self.duoRecordingLoopTimer[1] setFireDate:secondRecordingDate];
-                }
-            }
-        });
     });
+    
+    //
+    // Start recording timer
+    //
+    _duoRecordingLoopTimer = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
+    for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
+    {
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDuration.doubleValue
+                                                          target:self
+                                                        selector:@selector(handleRecordingLoopTimer:)
+                                                        userInfo:nil
+                                                         repeats:YES];
+        [_duoRecordingLoopTimer addObject:timer];
+    }
+    NSDate *firstRecordingDate = [NSDate date];
+    [_duoRecordingLoopTimer[0] setFireDate:firstRecordingDate];
+    if ( _duoRecordingLoopTimer.count == 2 )
+    {
+        NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDuration.doubleValue
+                                                                    - self.settings.overlappedRecordingDuration.doubleValue)
+                                                         sinceDate:firstRecordingDate];
+        [_duoRecordingLoopTimer[1] setFireDate:secondRecordingDate];
+    }
 }
 
 - (void)stopRecording
 {
-    dispatch_queue_t currentQueue = dispatch_get_current_queue();
     dispatch_async( _clipWriterQueue, ^{
         
         if ( _recordingWillBeStopped || !self.isRecording )
             return;
         _recordingWillBeStopped = YES;
         
-        //
-        // Stop recording loop timer
-        //
-        dispatch_async( currentQueue, ^{
-            for ( NSTimer *timer in self.duoRecordingLoopTimer )
+        dispatch_async( dispatch_get_main_queue(), ^{
+            //
+            // Stop recording loop timer
+            //
+            for ( NSTimer *timer in _duoRecordingLoopTimer )
             {
                 [timer invalidate];
             }
+            _duoRecordingLoopTimer = nil;
         });
-        
         //
         // Stop asset writer
         //
@@ -342,31 +312,33 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
                 if ( assetWriter.writer.error )
                 {
                     // TODO: handle error
-                    NSLog( @"[Error] Failed to stop recording with status %d, and error %@",
-                          assetWriter.writer.status, assetWriter.writer.error );
+                    NSLog( @"[Error] Failed to stop recording with status %d, and error: domain(%@), code(%d), \"%@\"",
+                          assetWriter.writer.status,
+                          assetWriter.writer.error.domain,
+                          assetWriter.writer.error.code,
+                          assetWriter.writer.error.description );
                 }
                 else
                 {
-                    if ( aException )
-                    {
-                        // TODO: handle error
-                        NSLog( @"[Error] Failed to stop recording due to exception: %@", aException );
-                    }
+                    // ignore aException
+#pragma unused( aException )
 #ifdef DEBUG
                     NSLog( @"[Debug] assetWriter.writer.status = %d", assetWriter.writer.status );
 #endif// DEBUG
-//                    if ( assetWriter.writer.status != AVAssetWriterStatusWriting )
+                    didStopRecordingCount++;
+                    if ( didStopRecordingCount == _duoAssetWriter.count )
                     {
-                        didStopRecordingCount++;
-                        if ( didStopRecordingCount == _duoAssetWriter.count )
-                        {
+                        _readyToRecordAudio = NO;
+                        _readyToRecordVideo = NO;
+                        _recordingWillBeStarted = NO;
+                        _recordingWillBeStopped = NO;
+                        self.recording = NO;
+                        _duoAssetWriter = nil;
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
                                                                                 object:self.capturer];
-                        }
+                        });
                     }
-                    _readyToRecordAudio = NO;
-                    _readyToRecordVideo = NO;
-                    self.recording = NO;
                 }
             }];
         }
@@ -455,9 +427,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     // Write sample
     //
     CFRetain( sampleBuffer );
-	CFRetain( formatDescription );
+    CFRetain( formatDescription );
     dispatch_async( _clipWriterQueue, ^{
-        
         for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
         {
             BOOL wasReadyToRecord = ( assetWriter.readyToRecordVideo && assetWriter.readyToRecordVideo );
@@ -503,12 +474,13 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 {
                     _recordingWillBeStarted = NO;
                     self.recording = YES;
-                    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
-                                                                        object:self.capturer];
+                    dispatch_async( dispatch_get_main_queue(), ^{
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
+                                                                            object:self.capturer];
+                    } );
                 }
 			}
         }
-        
         CFRelease( formatDescription );
         CFRelease( sampleBuffer );
     });
@@ -656,7 +628,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification
 {
     NSError *error = [aNotification.userInfo valueForKey:AVCaptureSessionErrorKey];
-    NSLog( @"[Error] %@", error );
+    NSLog( @"[Error] AVCaptureSession runtime error: domain(%@), code(%d), \"%@\"",
+          error.domain, error.code, error.description );
     // TODO: handle error
 }
 
@@ -691,7 +664,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 #ifdef DEBUG
     NSLog( @"[Timer] %pt", aTimer );
 #endif// DEBUG
-    NSUInteger nextRecordingClipIndex = [self.duoRecordingLoopTimer indexOfObject:aTimer];
+    __block NSUInteger nextRecordingClipIndex = [_duoRecordingLoopTimer indexOfObject:aTimer];
     if ( nextRecordingClipIndex == NSNotFound )
     {
         // TODO: handle error
@@ -706,16 +679,16 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 if ( assetWriter.writer.error )
                 {
                     // TODO: handle error
-                    NSLog( @"[Error] Failed to stop recording clip with status %d, and error %@",
-                          assetWriter.writer.status, assetWriter.writer.error );
+                    NSLog( @"[Error] Failed to stop recording clip with status %d, and error: domain(%@), code(%d), \"%@\"",
+                          assetWriter.writer.status,
+                          assetWriter.writer.error.domain,
+                          assetWriter.writer.error.code,
+                          assetWriter.writer.error.description );
                 }
                 else
                 {
-                    if ( aException )
-                    {
-                        // TODO: handle error
-                        NSLog( @"[Error] Failed to stop recording clip due to exception: %@", aException );
-                    }
+                    // ignore aException
+#pragma unused( aException )
                     [self installNewAssetWriterAtPosition:nextRecordingClipIndex];
                 }
             }];
@@ -910,16 +883,24 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 - (void)stopRecordingOfAssetWriter:(CarDVRAssetWriter *)anAssetWriter
              withCompletionHandler:(void (^)(NSException *aException))aBlock
 {
-    NSInteger systemMainVersion = [[[UIDevice currentDevice] systemVersion] integerValue];
     NSException *outException;
     @try
     {
+#ifdef DEBUG
+        BOOL finished =
+#endif// DEBUG
+        [anAssetWriter.writer finishWriting];
+#ifdef DEBUG
+        NSLog( @"finished = %d", finished );
+#endif// DEBUG
+        /*
+        NSInteger systemMainVersion = [[[UIDevice currentDevice] systemVersion] integerValue];
         if ( systemMainVersion < 6 )
         {
 #ifdef DEBUG
             BOOL finished =
 #endif// DEBUG
-            ![anAssetWriter.writer finishWriting];
+            [anAssetWriter.writer finishWriting];
 #ifdef DEBUG
             NSLog( @"finished = %d", finished );
 #endif// DEBUG
@@ -929,6 +910,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             [anAssetWriter.writer finishWritingWithCompletionHandler:^{
             }];
         }
+         */
     }
     @catch ( NSException *exception )
     {
@@ -968,16 +950,10 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         if ( _recentRecordedClipURLs.count > _settings.maxCountOfRecordingClips.unsignedIntegerValue )
         {
             NSURL *oldestClipURL = [_recentRecordedClipURLs objectAtIndex:0];
-            NSError *error;
 #ifdef DEBUG
             NSLog( @"[Debug] removing clip: %@", oldestClipURL );
 #endif// DEBUG
-            [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:&error];
-            if ( error )
-            {
-                // Just log the error.
-                NSLog( @"[Error] %@", error );
-            }
+            [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:nil];
             [_recentRecordedClipURLs removeObjectAtIndex:0];
         }
     }

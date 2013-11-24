@@ -28,7 +28,8 @@
         _writer = [[AVAssetWriter alloc] initWithURL:anURL fileType:AVFileTypeQuickTimeMovie error:anOutError];
         if ( !_writer )
         {
-            NSLog( @"[Error] %@", *anOutError );
+            NSLog( @"[Error] Failed to create AVAssetWriter object with error: domain(%@), code(%d), \"%@\"",
+                  (*anOutError).domain, (*anOutError).code, (*anOutError).description );
             return nil;
         }
         _settings = aSettings;
