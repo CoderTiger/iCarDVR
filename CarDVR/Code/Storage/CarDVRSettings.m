@@ -16,7 +16,7 @@ static NSString *const kKeyMaxCountOfRecordingClips = @"maxCountOfRecordingClips
 static NSString *const kKeyCameraPosition = @"cameraPosition";
 static NSString *const kKeyVideoQuality = @"videoQuality";
 
-static NSNumber *defaultMaxRecordingDuration;// 2 minutes
+static NSNumber *defaultMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
@@ -37,10 +37,10 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 + (void)initialize
 {
-    defaultMaxRecordingDuration = @5.0f;// 5 seconds, TODO: set appropriate value
+    defaultMaxRecordingDurationPerClip = @30.0f;// 30 seconds
     defaultOverlappedRecordingDuration = @1.0f;// 1 second
     defaultMaxCountOfRecordingClips = @2;// 2 clips
-    if ( !defaultMaxRecordingDuration
+    if ( !defaultMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
         || !defaultMaxCountOfRecordingClips )
     {
@@ -71,31 +71,31 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
     return self;
 }
 
-- (NSNumber *)maxRecordingDuration
+- (NSNumber *)maxRecordingDurationPerClip
 {
-    NSNumber *maxRecordingDuration = [_settings valueForKey:kKeyMaxRecordingDuration];
-    if ( !maxRecordingDuration )
+    NSNumber *maxRecordingDurationPerClip = [_settings valueForKey:kKeyMaxRecordingDuration];
+    if ( !maxRecordingDurationPerClip )
     {
-        maxRecordingDuration = defaultMaxRecordingDuration;
-        if ( maxRecordingDuration )
+        maxRecordingDurationPerClip = defaultMaxRecordingDurationPerClip;
+        if ( maxRecordingDurationPerClip )
         {
-            [_settings setValue:maxRecordingDuration forKey:kKeyMaxRecordingDuration];
+            [_settings setValue:maxRecordingDurationPerClip forKey:kKeyMaxRecordingDuration];
         }
     }
-    return maxRecordingDuration;
+    return maxRecordingDurationPerClip;
 }
 
-- (void)setMaxRecordingDuration:(NSNumber *)maxRecordingDuration
+- (void)setMaxRecordingDurationPerClip:(NSNumber *)maxRecordingDurationPerClip
 {
-    if ( !maxRecordingDuration )
+    if ( !maxRecordingDurationPerClip )
     {
         return;
     }
-    if ( [maxRecordingDuration compare:defaultMaxRecordingDuration] == NSOrderedAscending )
+    if ( [maxRecordingDurationPerClip compare:defaultMaxRecordingDurationPerClip] == NSOrderedAscending )
     {
-        maxRecordingDuration = defaultMaxRecordingDuration;
+        maxRecordingDurationPerClip = defaultMaxRecordingDurationPerClip;
     }
-    [self setSettingValue:maxRecordingDuration forKey:kKeyMaxRecordingDuration];
+    [self setSettingValue:maxRecordingDurationPerClip forKey:kKeyMaxRecordingDuration];
 }
 
 - (NSNumber *)overlappedRecordingDuration
@@ -118,7 +118,7 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
     {
         return;
     }
-    NSComparisonResult result = [overlappedRecordingDuration compare:self.maxRecordingDuration];
+    NSComparisonResult result = [overlappedRecordingDuration compare:self.maxRecordingDurationPerClip];
     if ( ( [overlappedRecordingDuration compare:@0.0f] == NSOrderedAscending )
         || ( result == NSOrderedDescending )
         || ( result == NSOrderedSame ) )

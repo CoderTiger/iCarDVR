@@ -11,7 +11,7 @@
 @class CarDVRPathHelper;
 @interface CarDVRSettings : NSObject
 
-@property (copy, nonatomic) NSNumber *maxRecordingDuration;// second, NSTimeInterval
+@property (copy, nonatomic) NSNumber *maxRecordingDurationPerClip;// second, NSTimeInterval
 @property (copy, nonatomic) NSNumber *overlappedRecordingDuration;// second, NSTimeInterval
 @property (copy, nonatomic) NSNumber *maxCountOfRecordingClips;
 @property (copy, nonatomic) NSNumber *cameraPosition;// CarDVRCameraPosition
