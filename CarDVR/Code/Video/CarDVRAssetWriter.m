@@ -23,7 +23,7 @@
     if ( self )
     {
 #ifdef DEBUG
-        NSLog( @"CarDVRAssetWriter: %@", anURL );
+        NSLog( @"CarDVRAssetWriter %pt: %@", self, anURL );
 #endif// DEBUG
         _writer = [[AVAssetWriter alloc] initWithURL:anURL fileType:AVFileTypeQuickTimeMovie error:anOutError];
         if ( !_writer )
@@ -47,7 +47,7 @@
 		else
         {
             // TODO: handle error
-            NSLog( @"[Error-sample.step1] %@", _writer.error );
+            NSLog( @"[Error-sample.step1] %pt, %@", self, _writer.error );
 		}
 	}
 	
@@ -60,7 +60,7 @@
 				if ( ![_videoInput appendSampleBuffer:aSampleBuffer] )
                 {
 					// TODO: handle error
-                    NSLog( @"[Error-sample.step2] %@", _writer.error );
+                    NSLog( @"[Error-sample.step2] %pt %@", self, _writer.error );
 				}
 			}
 		}
@@ -71,7 +71,7 @@
 				if ( ![_audioInput appendSampleBuffer:aSampleBuffer] )
                 {
                     // TODO: handle error
-                    NSLog( @"[Error-sample.step3] %@", _writer.error );
+                    NSLog( @"[Error-sample.step3] %pt, %@", self, _writer.error );
 				}
 			}
 		}
