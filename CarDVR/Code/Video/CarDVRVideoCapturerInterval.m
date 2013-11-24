@@ -474,9 +474,18 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 {
                     _recordingWillBeStarted = NO;
                     self.recording = YES;
+#ifdef DEBUG
+                    NSLog( @"[Notify] recording = YES ..." );
+#endif// DEBUG
                     dispatch_async( dispatch_get_main_queue(), ^{
+#ifdef DEBUG
+                        NSLog( @"[Notify] recording = YES ... doing" );
+#endif// DEBUG
                         [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
                                                                             object:self.capturer];
+#ifdef DEBUG
+                        NSLog( @"[Notify] recording = YES ... DONE!" );
+#endif// DEBUG
                     } );
                 }
 			}
