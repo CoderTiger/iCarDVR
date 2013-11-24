@@ -355,7 +355,7 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 #ifdef DEBUG
                     NSLog( @"[Debug] assetWriter.writer.status = %d", assetWriter.writer.status );
 #endif// DEBUG
-                    if ( assetWriter.writer.status != AVAssetWriterStatusWriting )
+//                    if ( assetWriter.writer.status != AVAssetWriterStatusWriting )
                     {
                         didStopRecordingCount++;
                         if ( didStopRecordingCount == _duoAssetWriter.count )
@@ -364,6 +364,9 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
                                                                                 object:self.capturer];
                         }
                     }
+                    _readyToRecordAudio = NO;
+                    _readyToRecordVideo = NO;
+                    self.recording = NO;
                 }
             }];
         }
@@ -700,12 +703,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         {
             assetWriter = [_duoAssetWriter objectAtIndex:nextRecordingClipIndex];
             [self stopRecordingOfAssetWriter:assetWriter withCompletionHandler:^(NSException *aException) {
-                if ( aException )
-                {
-                    // TODO: handle error
-                    NSLog( @"[Error] Failed to stop recording clip due to exception: %@", aException );
-                }
-                else if ( assetWriter.writer.error )
+                if ( assetWriter.writer.error )
                 {
                     // TODO: handle error
                     NSLog( @"[Error] Failed to stop recording clip with status %d, and error %@",
@@ -713,6 +711,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 }
                 else
                 {
+                    if ( aException )
+                    {
+                        // TODO: handle error
+                        NSLog( @"[Error] Failed to stop recording clip due to exception: %@", aException );
+                    }
                     [self installNewAssetWriterAtPosition:nextRecordingClipIndex];
                 }
             }];
@@ -958,16 +961,16 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         }
         else
         {
+            NSAssert1( NO, @"[Error] Wrong position (%u) to insert new asset writer.", aPostionAtDuoAssetWriter );
             return nil;
         }
         [_recentRecordedClipURLs addObject:assetWriter.writer.outputURL];
         if ( _recentRecordedClipURLs.count > _settings.maxCountOfRecordingClips.unsignedIntegerValue )
         {
             NSURL *oldestClipURL = [_recentRecordedClipURLs objectAtIndex:0];
-            return assetWriter;
             NSError *error;
 #ifdef DEBUG
-            NSLog( @"removing clip: %@", oldestClipURL );
+            NSLog( @"[Debug] removing clip: %@", oldestClipURL );
 #endif// DEBUG
             [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:&error];
             if ( error )
