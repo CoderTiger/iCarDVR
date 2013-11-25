@@ -35,7 +35,7 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 }
 
 #pragma mark - redeclared public properties as readwrite
-@property (readwrite, getter = isRecording) BOOL recording;
+@property (readwrite, getter = isRecording, nonatomic) BOOL recording;
 
 #pragma mark - private properties
 @property (weak, nonatomic) id capturer;
@@ -77,6 +77,7 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 @synthesize hasBackCamera = _hasBackCamera;
 @synthesize hasFrontCamera = _hasFrontCamera;
+@synthesize recording = _recording;
 
 - (void)setPreviewerView:(UIView *)previewerView
 {
@@ -101,6 +102,27 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 {
     AVCaptureDevice *frontCamera = [self videoDeviceWithPosition:kCarDVRCameraPositionFront];
     return ( frontCamera != nil );
+}
+
+- (void)setRecording:(BOOL)recording
+{
+    @synchronized( self )
+    {
+        if ( _recording == recording )
+            return;
+        _recording = recording;
+        dispatch_async( dispatch_get_main_queue(), ^{
+#ifdef DEBUG
+            NSLog( @"[Notify] recording = %@ ... doing", _recording ? @"YES" : @"NO" );
+#endif// DEBUG
+            [[NSNotificationCenter defaultCenter] postNotificationName:
+             _recording?kCarDVRVideoCapturerDidStartRecordingNotification:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                                object:self.capturer];
+#ifdef DEBUG
+            NSLog( @"[Notify] recording = %@ ... DONE!", _recording ? @"YES" : @"NO" );
+#endif// DEBUG
+        } );
+    }
 }
 
 - (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
@@ -342,12 +364,8 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
             _readyToRecordVideo = NO;
             _recordingWillBeStarted = NO;
             _recordingWillBeStopped = NO;
-            self.recording = NO;
             _duoAssetWriter = nil;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
-                                                                    object:self.capturer];
-            });
+            self.recording = NO;
         }
     });
 }
@@ -485,19 +503,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 {
                     _recordingWillBeStarted = NO;
                     self.recording = YES;
-#ifdef DEBUG
-                    NSLog( @"[Notify] recording = YES ..." );
-#endif// DEBUG
-                    dispatch_async( dispatch_get_main_queue(), ^{
-#ifdef DEBUG
-                        NSLog( @"[Notify] recording = YES ... doing" );
-#endif// DEBUG
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
-                                                                            object:self.capturer];
-#ifdef DEBUG
-                        NSLog( @"[Notify] recording = YES ... DONE!" );
-#endif// DEBUG
-                    } );
                 }
 			}
         }
@@ -923,7 +928,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 #endif// DEBUG
         [anAssetWriter.writer finishWriting];
 #ifdef DEBUG
-        NSLog( @"finished = %d", finished );
+        NSLog( @"[Debug] asset writer = %pt, finished = %d", anAssetWriter, finished );
 #endif// DEBUG
         /*
         NSInteger systemMainVersion = [[[UIDevice currentDevice] systemVersion] integerValue];

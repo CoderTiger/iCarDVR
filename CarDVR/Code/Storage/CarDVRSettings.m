@@ -37,7 +37,11 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 + (void)initialize
 {
+#ifdef DEBUG
+    defaultMaxRecordingDurationPerClip = @5.0f;// 5 seconds
+#else// !DEBUG
     defaultMaxRecordingDurationPerClip = @30.0f;// 30 seconds
+#endif// DEBUG
     defaultOverlappedRecordingDuration = @1.0f;// 1 second
     defaultMaxCountOfRecordingClips = @2;// 2 clips
     if ( !defaultMaxRecordingDurationPerClip
