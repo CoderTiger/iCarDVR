@@ -14,7 +14,8 @@
 
 static const NSInteger kRecentVideosSection = 0;
 static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
-static const CGFloat kRecentVideoCellHeight = 60.0f;
+static const CGFloat kRecentVideoCellHeight = 80.0f;
+static const NSInteger kCarDVRVideoCellViewTag = 1;
 
 @interface CarDVRRecentsViewController ()<UITableViewDataSource, UITableViewDelegate>
 
@@ -121,7 +122,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             if ( !error )
             {
                 [self.recentVideos removeObjectAtIndex:indexPath.row];
-                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             }
         }
     }
