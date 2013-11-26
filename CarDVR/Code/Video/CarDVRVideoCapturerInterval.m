@@ -931,8 +931,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         NSLog( @"[Debug] asset writer = %pt, finished = %d", anAssetWriter, finished );
 #endif// DEBUG
         /*
-        NSInteger systemMainVersion = [[[UIDevice currentDevice] systemVersion] integerValue];
-        if ( systemMainVersion < 6 )
+        if ( floor(NSFoundationVersionNumber) < NSFoundationVersionNumber_iOS_6_0 )
         {
 #ifdef DEBUG
             BOOL finished =
