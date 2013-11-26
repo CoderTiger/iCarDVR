@@ -8,6 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+NSString *const kCarDVRSettingsCommitEditingChangedKeys;
+
+NSString *const kCarDVRSettingsKeyMaxRecordingDuration;
+NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration;
+NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips;
+NSString *const kCarDVRSettingsKeyCameraPosition;
+NSString *const kCarDVRSettingsKeyVideoQuality;
+
 @class CarDVRPathHelper;
 @interface CarDVRSettings : NSObject
 
@@ -24,5 +32,10 @@
 - (void)removeObserver:(id)anObserver;
 - (void)setValue:(id)value forKey:(NSString *)key;
 - (id)valueForKey:(NSString *)key;
+
+- (void)beginEditing;
+- (void)commitEditing;
+- (void)addCommitEditingObserver:(id)anObserver selector:(SEL)aSelector;
+- (void)cancelEditing;
 
 @end
