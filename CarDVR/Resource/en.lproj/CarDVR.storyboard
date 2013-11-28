@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5023" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="8QN-74-2je">
+    <dependencies>
+        <deployment defaultVersion="1280" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="2tM-ZY-Vbf">
+            <objects>
+                <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="8QN-74-2je" sceneMemberID="viewController">
+                    <nil key="simulatedTopBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="OgN-Ud-cbu">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="cUn-8x-vle" kind="relationship" relationship="rootViewController" id="fbC-Nd-Kuy"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DJL-8L-ikm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-490" y="-97"/>
+        </scene>
+        <!--CarDVRCameraViewController-->
+        <scene sceneID="KGY-67-kkQ">
+            <objects>
+                <viewController id="cUn-8x-vle" userLabel="CarDVRCameraViewController" customClass="CarDVRCameraViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="cL6-33-VTC" userLabel="CarDVRCameraView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="vkf-FK-KE8" userLabel="View - Previewer">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ue8-p1-Sch">
+                                <rect key="frame" x="20" y="20" width="62" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="FlashOn">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="flashOnButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Wvf-KN-imH"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="nlz-ru-kJl">
+                                <rect key="frame" x="20" y="20" width="74" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="FlashAuto">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="flashAutoButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="lj0-o8-Dbd"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="v53-MR-Ll8">
+                                <rect key="frame" x="20" y="20" width="62" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="FlashOff">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="flashOffButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="EIU-K0-bgR"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="quc-53-pv6">
+                                <rect key="frame" x="254" y="20" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Home">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="OTC-8v-f6v" kind="push" id="poc-1b-qE1"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="mhG-jR-QdU">
+                                <rect key="frame" x="20" y="518" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <state key="normal" title="Foto">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="fotoButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="S00-BY-KUl"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="laU-cJ-phG">
+                                <rect key="frame" x="137" y="518" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <state key="normal" title="Start">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="startButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="3kg-3l-g3o"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="j5O-o3-C7J">
+                                <rect key="frame" x="137" y="518" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <state key="normal" title="Stop">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="stopButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="ctF-vy-q73"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="itA-kT-pFL">
+                                <rect key="frame" x="254" y="518" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <state key="normal" title="Star">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="starButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="oiY-Hh-VfW"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Tlc-nh-4xy">
+                                <rect key="frame" x="251" y="518" width="52" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <state key="normal" title="Starred">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="starredButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Lsc-kO-RXK"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                        <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Camera" id="5bk-I6-NlY"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <connections>
+                        <outlet property="flashAutoButton" destination="nlz-ru-kJl" id="tfB-H6-34q"/>
+                        <outlet property="flashOffButton" destination="v53-MR-Ll8" id="qK9-4U-XuD"/>
+                        <outlet property="flashOnButton" destination="v53-MR-Ll8" id="6Z9-d6-H1m"/>
+                        <outlet property="previewerView" destination="vkf-FK-KE8" id="unt-d7-yMy"/>
+                        <outlet property="starButton" destination="itA-kT-pFL" id="GYR-nb-AOl"/>
+                        <outlet property="starredButton" destination="Tlc-nh-4xy" id="r7y-zF-7DL"/>
+                        <outlet property="startButton" destination="laU-cJ-phG" id="bYf-Jd-qwx"/>
+                        <outlet property="stopButton" destination="j5O-o3-C7J" id="K4S-NH-x9s"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x7F-Il-j12" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-50" y="-97"/>
+        </scene>
+        <!--CarDVRRecentsViewController-->
+        <scene sceneID="0Ik-P6-Adw">
+            <objects>
+                <viewController id="FNK-G8-EYt" userLabel="CarDVRRecentsViewController" customClass="CarDVRRecentsViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ZkH-vi-nRS" userLabel="CarDVRRecentsView">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="80" sectionHeaderHeight="22" sectionFooterHeight="22" id="duD-lp-B7N" userLabel="Table View - Recent videos">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="kRecentVideoCellId" rowHeight="80" id="Jjt-di-x50" userLabel="Table View Cell - video" customClass="CarDVRVideoTableViewCell">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="80"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Jjt-di-x50" id="U7m-OF-Yje">
+                                            <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="MQp-x6-WKR" userLabel="Image View - Thumbnail">
+                                                    <rect key="frame" x="5" y="5" width="70" height="70"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Gsq-UA-Chi" userLabel="Label - Date">
+                                                    <rect key="frame" x="83" y="5" width="204" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration &amp; Size" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Ojf-wa-BTo">
+                                                    <rect key="frame" x="83" y="29" width="204" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Frame rate &amp; Resolution" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KSg-en-BNr">
+                                                    <rect key="frame" x="83" y="54" width="204" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="dateLabel" destination="Gsq-UA-Chi" id="oKx-K1-BBE"/>
+                                            <outlet property="durationSizeLabel" destination="Ojf-wa-BTo" id="bfC-9a-gZS"/>
+                                            <outlet property="frameRateResolutionLabel" destination="KSg-en-BNr" id="gah-ze-VKt"/>
+                                            <outlet property="thumbnailImageView" destination="MQp-x6-WKR" id="fCG-Vh-kBL"/>
+                                            <segue destination="6xx-5p-VPG" kind="push" identifier="kShowVideoPlayerSegueId" id="whM-Uz-2Lz"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="FNK-G8-EYt" id="JR1-fb-HJc"/>
+                                    <outlet property="delegate" destination="FNK-G8-EYt" id="T4H-D8-3b3"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                        <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Recents" id="Dr7-YI-9KR" userLabel="Tab Bar Item - Recents"/>
+                    <connections>
+                        <outlet property="recentVideoTableView" destination="duD-lp-B7N" id="jwn-R0-tCx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HIx-AG-3P0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="817" y="-322"/>
+        </scene>
+        <!--CarDVRSettingsViewController-->
+        <scene sceneID="MCp-HA-FY4">
+            <objects>
+                <tableViewController id="txJ-95-bui" userLabel="CarDVRSettingsViewController" customClass="CarDVRSettingsViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="rXF-qj-TCR" userLabel="CarDVRSettingsView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection headerTitle="Video" footerTitle="placeholder" id="zbb-w3-SAd" userLabel="Video Section">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="SAZ-OT-cVa">
+                                        <rect key="frame" x="0.0" y="119" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="SAZ-OT-cVa" id="ixI-Hn-y4p">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="avl-dk-Uie">
+                                        <rect key="frame" x="0.0" y="163" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="avl-dk-Uie" id="IFt-8I-c7D">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="W6S-I0-FTa">
+                                        <rect key="frame" x="0.0" y="207" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="W6S-I0-FTa" id="mi2-hA-hfl">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="txJ-95-bui" id="Ill-cC-f1A"/>
+                            <outlet property="delegate" destination="txJ-95-bui" id="laV-Jp-Cg2"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Settings" id="6zs-VG-8rv">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="XJg-VK-97g">
+                            <connections>
+                                <action selector="cancelBarButtonItemTouched:" destination="txJ-95-bui" id="EPp-Au-58R"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="OK" id="Qba-Aq-KSz">
+                            <connections>
+                                <action selector="OKBarButtonItemTouched:" destination="txJ-95-bui" id="5vX-T2-y4R"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <connections>
+                        <outlet property="OKBarButtonItem" destination="Qba-Aq-KSz" id="34N-XW-gAf"/>
+                        <outlet property="cancelBarButtonItem" destination="XJg-VK-97g" id="xnb-A1-kAr"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5If-sG-sn5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="817" y="-915"/>
+        </scene>
+        <!--CarDVRHomeViewController-->
+        <scene sceneID="2eh-e5-utt">
+            <objects>
+                <tabBarController definesPresentationContext="YES" id="OTC-8v-f6v" userLabel="CarDVRHomeViewController" customClass="CarDVRHomeViewController" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" title="Home" id="ONa-WY-5gy">
+                        <barButtonItem key="rightBarButtonItem" title="Setting" id="Ev8-oe-iMX">
+                            <connections>
+                                <segue destination="txJ-95-bui" kind="modal" id="I7C-W7-6zc"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="blZ-Ky-HJ8">
+                        <rect key="frame" x="129" y="330" width="163" height="49"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <outlet property="settingBarButtonItem" destination="Ev8-oe-iMX" id="PoV-DG-0hg"/>
+                        <segue destination="FNK-G8-EYt" kind="relationship" relationship="viewControllers" id="Xma-Kn-FTi"/>
+                        <segue destination="9gA-3N-nYH" kind="relationship" relationship="viewControllers" id="Txx-Kx-v89"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="r3a-aX-CDk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="351" y="-97"/>
+        </scene>
+        <!--View Controller - Starred-->
+        <scene sceneID="hQB-53-o90">
+            <objects>
+                <viewController id="9gA-3N-nYH" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="mjX-2I-jz9">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Starred" id="54c-NM-LA9"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BM9-1D-nT2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="811" y="334"/>
+        </scene>
+        <!--CarDVRPlayerViewController-->
+        <scene sceneID="UjC-Oq-RhW">
+            <objects>
+                <viewController id="6xx-5p-VPG" userLabel="CarDVRPlayerViewController" customClass="CarDVRPlayerViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Bnp-LX-zFO" userLabel="CarDVRPlayerView">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view hidden="YES" contentMode="scaleToFill" id="bDw-fD-tau" userLabel="View - Player Portrait Pane">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                        <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="V5a-nx-4dX"/>
+                    <connections>
+                        <outlet property="playerProtraitPaneView" destination="bDw-fD-tau" id="zVX-mF-Mii"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4wR-oc-bWT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1238" y="-322"/>
+        </scene>
+    </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>

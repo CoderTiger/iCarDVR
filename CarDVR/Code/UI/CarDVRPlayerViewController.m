@@ -12,7 +12,6 @@
 
 @interface CarDVRPlayerViewController ()
 
-@property (weak, nonatomic) CarDVRVideoItem *videoItem;
 @property (strong, nonatomic) MPMoviePlayerController *playerController;
 @property (weak, nonatomic) IBOutlet UIView *playerProtraitPaneView;
 
@@ -26,18 +25,15 @@
 
 @implementation CarDVRPlayerViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil
-               bundle:(NSBundle *)nibBundleOrNil
-            videoItem:(CarDVRVideoItem *)aVideoItem
+- (void)setVideoItem:(CarDVRVideoItem *)videoItem
 {
-    NSAssert( aVideoItem != nil, @"aVideoItem should NOT be nil" );
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
+    _videoItem = videoItem;
+    if ( _videoItem )
     {
-        _videoItem = aVideoItem;
         self.title = [NSString stringWithFormat:NSLocalizedString( @"playerViewTitleFormat", nil ), _videoItem.fileName];
+        NSURL *videoURL = [NSURL fileURLWithPath:_videoItem.filePath];
+        [self installPlayerControllerWithContentURL:videoURL];
     }
-    return self;
 }
 
 - (void)dealloc
@@ -49,9 +45,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.navigationController.navigationBar.translucent = NO;
-    NSURL *videoURL = [NSURL fileURLWithPath:_videoItem.filePath];
-    [self installPlayerControllerWithContentURL:videoURL];
+//    self.navigationController.navigationBar.translucent = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated

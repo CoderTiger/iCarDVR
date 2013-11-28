@@ -23,7 +23,7 @@
 {
     _pathHelper = [[CarDVRPathHelper alloc] init];
     _settings = [[CarDVRSettings alloc] initWithPathHelper:_pathHelper];
-    
+    /*
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
@@ -34,7 +34,7 @@
     self.window.rootViewController = self.navigationController;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    
+    */
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     
     return YES;

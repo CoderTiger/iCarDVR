@@ -10,8 +10,8 @@
 #import "CarDVRPathHelper.h"
 #import <AVFoundation/AVFoundation.h>
 
-static const CGFloat kThumbnailWidth = 60.00f;
-static const CGFloat kThumbnailHeight = 60.00f;
+static const CGFloat kThumbnailWidth = 70.00f;
+static const CGFloat kThumbnailHeight = 70.00f;
 
 @implementation CarDVRVideoItem
 

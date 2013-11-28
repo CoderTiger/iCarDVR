@@ -11,11 +11,11 @@
 #import "CarDVRVideoItem.h"
 #import "CarDVRPlayerViewController.h"
 #import "CarDVRVideoCapturerConstants.h"
+#import "CarDVRVideoTableViewCell.h"
 
 static const NSInteger kRecentVideosSection = 0;
 static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
-static const CGFloat kRecentVideoCellHeight = 80.0f;
-static const NSInteger kCarDVRVideoCellViewTag = 1;
+static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 
 @interface CarDVRRecentsViewController ()<UITableViewDataSource, UITableViewDelegate>
 
@@ -83,20 +83,12 @@ static const NSInteger kCarDVRVideoCellViewTag = 1;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 #pragma unused( tableView )
-    // TODO: use customized cell view
-    UITableViewCell *cell = nil;
+    CarDVRVideoTableViewCell *cell = nil;
     if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
     {
         cell = [tableView dequeueReusableCellWithIdentifier:kRecentVideoCellId];
-        if ( !cell )
-        {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:kRecentVideoCellId];
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        }
         CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
-        cell.textLabel.text = videoItem.fileName;
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"Created: %@", videoItem.createdDate];
-        cell.imageView.image = videoItem.thumbnail;
+        cell.videoItem = videoItem;
     }
     return cell;
 }
@@ -128,25 +120,29 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     }
 }
 
-#pragma mark - from UITableViewDelegate
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-#pragma unused( tableView )
-    if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
-    {
-        CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
-        CarDVRPlayerViewController *playerViewController =
-            [[CarDVRPlayerViewController alloc] initWithNibName:@"CarDVRPlayerViewController"
-                                                         bundle:nil
-                                                      videoItem:videoItem];
-        [self.navigationController pushViewController:playerViewController animated:YES];
-    }
-}
+//#pragma mark - from UITableViewDelegate
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//#pragma unused( tableView )
+//    if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
+//    {
+//        CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
+//        CarDVRPlayerViewController *playerViewController =
+//            [[CarDVRPlayerViewController alloc] initWithNibName:@"CarDVRPlayerViewController"
+//                                                         bundle:nil
+//                                                      videoItem:videoItem];
+//        [self.navigationController pushViewController:playerViewController animated:YES];
+//    }
+//}
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-#pragma unused( tableView, indexPath )
-    return kRecentVideoCellHeight;
+    if ( [segue.identifier isEqualToString:kShowVideoPlayerSegueId] )
+    {
+        CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:[self.recentVideoTableView indexPathForSelectedRow].row];
+        CarDVRPlayerViewController *playerViewController = [segue destinationViewController];
+        playerViewController.videoItem = videoItem;
+    }
 }
 
 #pragma mark - private methods

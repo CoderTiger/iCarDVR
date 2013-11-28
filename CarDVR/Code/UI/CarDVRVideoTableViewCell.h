@@ -1,8 +1,8 @@
 //
-//  CarDVRPlayerViewController.h
+//  CarDVRVideoTableViewCell.h
 //  CarDVR
 //
-//  Created by yxd on 13-11-3.
+//  Created by yxd on 13-11-29.
 //  Copyright (c) 2013年 iautod. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 @class CarDVRVideoItem;
 
-@interface CarDVRPlayerViewController : UIViewController
+@interface CarDVRVideoTableViewCell : UITableViewCell
 
 @property (weak, nonatomic) CarDVRVideoItem *videoItem;
 

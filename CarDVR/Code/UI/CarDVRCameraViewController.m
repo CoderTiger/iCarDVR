@@ -50,26 +50,6 @@
 
 @implementation CarDVRCameraViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
-    {
-        [self setTitle:NSLocalizedString( @"cameraViewTitle", @"Camera" )];
-        [self constructVideoCapturer];
-        NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
-        [defaultNC addObserver:self
-                      selector:@selector(handleCarDVRVideoCapturerDidStartRecordingNotification)
-                          name:kCarDVRVideoCapturerDidStartRecordingNotification
-                        object:nil];
-        [defaultNC addObserver:self
-                      selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
-                          name:kCarDVRVideoCapturerDidStopRecordingNotification
-                        object:nil];
-    }
-    return self;
-}
-
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -79,6 +59,17 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self setTitle:NSLocalizedString( @"cameraViewTitle", @"Camera" )];
+    [self constructVideoCapturer];
+    NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
+    [defaultNC addObserver:self
+                  selector:@selector(handleCarDVRVideoCapturerDidStartRecordingNotification)
+                      name:kCarDVRVideoCapturerDidStartRecordingNotification
+                    object:nil];
+    [defaultNC addObserver:self
+                  selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
+                      name:kCarDVRVideoCapturerDidStopRecordingNotification
+                    object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated

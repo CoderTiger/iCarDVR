@@ -14,37 +14,23 @@
 @interface CarDVRHomeViewController ()
 
 @property (weak, nonatomic) CarDVRPathHelper *pathHelper;
-
-- (void)settingsButtonItemTouched;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *settingBarButtonItem;
 
 @end
 
 @implementation CarDVRHomeViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
-    {
-        self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
-        UIBarButtonItem *settingsButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString( @"settingsViewTitle", @"Settings" )
-                                                                               style:UIBarButtonItemStylePlain
-                                                                              target:self
-                                                                              action:@selector(settingsButtonItemTouched)];
-        self.navigationItem.rightBarButtonItem = settingsButtonItem;
-        CarDVRRecentsViewController *recentsViewController =
-        [[CarDVRRecentsViewController alloc] initWithNibName:@"CarDVRRecentsViewController" bundle:nil];
-        CarDVRStarredViewController *starredViewController =
-        [[CarDVRStarredViewController alloc] initWithNibName:@"CarDVRStarredViewController" bundle:nil];
-        self.viewControllers = @[recentsViewController, starredViewController];
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
+    self.settingBarButtonItem.title = NSLocalizedString( @"settingsViewTitle", @"Settings" );
+//    UIBarButtonItem *settingsButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString( @"settingsViewTitle", @"Settings" )
+//                                                                           style:UIBarButtonItemStylePlain
+//                                                                          target:self
+//                                                                          action:@selector(settingsButtonItemTouched)];
+//    self.navigationItem.rightBarButtonItem = settingsButtonItem;
 }
 
 - (void)didReceiveMemoryWarning
@@ -56,14 +42,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.navigationController.navigationBarHidden = NO;
-}
-
-- (void)settingsButtonItemTouched
-{
-    CarDVRSettingsViewController *settingsViewController =
-        [[CarDVRSettingsViewController alloc] initWithNibName:@"CarDVRSettingsViewController" bundle:nil];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
-    [self.navigationController presentModalViewController:navigationController animated:YES];
 }
 
 @end

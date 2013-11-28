@@ -51,6 +51,8 @@
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>UIMainStoryboardFile</key>
+	<string>CarDVR</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

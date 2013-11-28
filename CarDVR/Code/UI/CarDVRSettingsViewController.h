@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CarDVRSettingsViewController : UIViewController
+@interface CarDVRSettingsViewController : UITableViewController
 
 @end
