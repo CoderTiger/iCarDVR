@@ -11,6 +11,8 @@
 #import "CarDVRStarredViewController.h"
 #import "CarDVRSettingsViewController.h"
 
+static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
+
 @interface CarDVRHomeViewController ()
 
 @property (weak, nonatomic) CarDVRPathHelper *pathHelper;
@@ -42,6 +44,15 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.navigationController.navigationBarHidden = NO;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ( [segue.identifier isEqualToString:kShowPreSettingsSegueId] )
+    {
+        CarDVRSettingsViewController *preSettingsViewController = [[segue.destinationViewController viewControllers] objectAtIndex:0];
+        preSettingsViewController.settings = self.settings;
+    }
 }
 
 @end

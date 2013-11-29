@@ -17,10 +17,13 @@ NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration = @"overlappedReco
 NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips = @"maxCountOfRecordingClips";
 NSString *const kCarDVRSettingsKeyCameraPosition = @"cameraPosition";
 NSString *const kCarDVRSettingsKeyVideoQuality = @"videoQuality";
+NSString *const kCarDVRSettingsKeyVideoFrameRate = @"videoFrameRate";
 
 static NSNumber *defaultMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
+static NSNumber *maxVideoFrameRate ;// 30 fps
+static NSNumber *minVideoFrameRate;// 10 fps
 
 @interface CarDVRSettings ()
 {
@@ -35,6 +38,7 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 #pragma mark - Private methods
 - (void)setSettingValue:(id)aValue forKey:(NSString *)aKey;
+- (id)settingValueForKey:(NSString *)aKey;
 
 @end
 
@@ -49,9 +53,13 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 #endif// DEBUG
     defaultOverlappedRecordingDuration = @1.0f;// 1 second
     defaultMaxCountOfRecordingClips = @2;// 2 clips
+    maxVideoFrameRate = @30;// 30 fps
+    minVideoFrameRate = @10;// 10 fps
     if ( !defaultMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
-        || !defaultMaxCountOfRecordingClips )
+        || !defaultMaxCountOfRecordingClips
+        || !maxVideoFrameRate
+        || !minVideoFrameRate )
     {
         NSException *exception = [NSException exceptionWithName:NSMallocException
                                                          reason:@"Fault on CarDVRSettings::initialize due to out of memory"
@@ -82,8 +90,8 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 - (NSNumber *)maxRecordingDurationPerClip
 {
-    NSNumber *maxRecordingDurationPerClip = [_settings valueForKey:kCarDVRSettingsKeyMaxRecordingDuration];
-    if ( !maxRecordingDurationPerClip )
+    NSNumber *maxRecordingDurationPerClip = [self settingValueForKey:kCarDVRSettingsKeyMaxRecordingDuration];
+    if ( !maxRecordingDurationPerClip && !self.isEditing )
     {
         maxRecordingDurationPerClip = defaultMaxRecordingDurationPerClip;
         if ( maxRecordingDurationPerClip )
@@ -109,8 +117,8 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 - (NSNumber *)overlappedRecordingDuration
 {
-    NSNumber *overlappedRecordingDuration = [_settings valueForKey:kCarDVRSettingsKeyOverlappedRecordingDuration];
-    if ( !overlappedRecordingDuration )
+    NSNumber *overlappedRecordingDuration = [self settingValueForKey:kCarDVRSettingsKeyOverlappedRecordingDuration];
+    if ( !overlappedRecordingDuration && !self.isEditing )
     {
         overlappedRecordingDuration = defaultOverlappedRecordingDuration;
         if ( overlappedRecordingDuration )
@@ -139,8 +147,8 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 - (NSNumber *)maxCountOfRecordingClips
 {
-    NSNumber *maxCountOfRecordingClips = [_settings valueForKey:kCarDVRSettingsKeyMaxCountOfRecordingClips];
-    if ( !maxCountOfRecordingClips )
+    NSNumber *maxCountOfRecordingClips = [self settingValueForKey:kCarDVRSettingsKeyMaxCountOfRecordingClips];
+    if ( !maxCountOfRecordingClips && !self.isEditing )
     {
         maxCountOfRecordingClips = defaultMaxCountOfRecordingClips;
         if ( maxCountOfRecordingClips )
@@ -166,8 +174,8 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 - (NSNumber *)cameraPosition
 {
-    NSNumber *cameraPosition = [_settings valueForKey:kCarDVRSettingsKeyCameraPosition];
-    if ( !cameraPosition )
+    NSNumber *cameraPosition = [self settingValueForKey:kCarDVRSettingsKeyCameraPosition];
+    if ( !cameraPosition && !self.isEditing )
     {
         cameraPosition = [NSNumber numberWithInteger:kCarDVRCameraPositionBack];
         if ( cameraPosition )
@@ -180,8 +188,8 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 - (NSNumber *)videoQuality
 {
-    NSNumber *videoQuality = [_settings valueForKey:kCarDVRSettingsKeyVideoQuality];
-    if ( !videoQuality )
+    NSNumber *videoQuality = [self settingValueForKey:kCarDVRSettingsKeyVideoQuality];
+    if ( !videoQuality && !self.isEditing )
     {
         videoQuality = [NSNumber numberWithInteger:kCarDVRVideoQualityHigh];
         if ( videoQuality )
@@ -190,6 +198,36 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
         }
     }
     return videoQuality;
+}
+
+- (NSNumber *)videoFrameRate
+{
+    NSNumber *videoFrameRate = [self settingValueForKey:kCarDVRSettingsKeyVideoFrameRate];
+    if ( !videoFrameRate && !self.isEditing )
+    {
+        videoFrameRate = maxVideoFrameRate;
+        if ( videoFrameRate )
+        {
+            [_settings setValue:videoFrameRate forKeyPath:kCarDVRSettingsKeyVideoFrameRate];
+        }
+    }
+    return videoFrameRate;
+}
+
+- (void)setVideoFrameRate:(NSNumber *)videoFrameRate
+{
+    if ( [videoFrameRate compare:minVideoFrameRate] == NSOrderedAscending )
+    {
+        [self setSettingValue:minVideoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate];
+    }
+    else if ( [videoFrameRate compare:maxVideoFrameRate] == NSOrderedDescending )
+    {
+        [self setSettingValue:maxVideoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate];
+    }
+    else
+    {
+        [self setSettingValue:videoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate];
+    }
 }
 
 - (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey
@@ -220,7 +258,7 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 
 - (id)valueForKey:(NSString *)key
 {
-    return [_settings valueForKey:key];
+    return [self settingValueForKey:key];
 }
 
 - (void)beginEditing
@@ -283,6 +321,30 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
         [self.settings setValue:aValue forKey:aKey];
         [_notificationCenter postNotificationName:aKey object:self];
     }
+}
+
+- (id)settingValueForKey:(NSString *)aKey
+{
+    NSAssert( aKey, @"aKey should NOT be nil" );
+    if ( !aKey )
+        return nil;
+    id value;
+    if ( self.isEditing )
+    {
+        if ( ![self.removedSettings containsObject:aKey] )
+        {
+            value = [self.editedSettings valueForKey:aKey];
+            if ( !value )
+            {
+                value = [self.settings valueForKey:aKey];
+            }
+        }
+    }
+    else
+    {
+        value = [self.settings valueForKey:aKey];
+    }
+    return value;
 }
 
 @end

@@ -5,3 +5,20 @@
 "starredViewTitle"="Starred";
 "settingsViewTitle"="Settings";
 "playerViewTitleFormat"="%@";
+
+//
+// CarDVRSettingsView
+//
+"settingsSectionVideo"="Video";
+"maxRecordingClipsLabel"="Max recording clips:";
+"maxClipDurationLabel"="Max clip duration:";
+"minuteDuration"="%d minute";
+"minutesDuration"="%d minutes";
+"secondDuration"="%d second";
+"secondsDuration"="%d seconds";
+"maxClipDurationSettingViewTitle"="Max Clip Duration";
+"resolutionLabel"="Resolution:";
+"frameRateLabel"="Frame rate:";
+"videoQualityHigh"="High";
+"videoQualityMiddle"="Middle";
+"videoQualityLow"="Low";

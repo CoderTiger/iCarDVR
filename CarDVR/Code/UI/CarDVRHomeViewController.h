@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "CarDVRPathHelper.h"
 
+@class CarDVRSettings;
+
 @interface CarDVRHomeViewController : UITabBarController
+
+@property (weak, nonatomic) CarDVRSettings *settings;
 
 @end

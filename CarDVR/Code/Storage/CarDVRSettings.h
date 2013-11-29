@@ -21,9 +21,10 @@ NSString *const kCarDVRSettingsKeyVideoQuality;
 
 @property (copy, nonatomic) NSNumber *maxRecordingDurationPerClip;// second, NSTimeInterval
 @property (copy, nonatomic) NSNumber *overlappedRecordingDuration;// second, NSTimeInterval
-@property (copy, nonatomic) NSNumber *maxCountOfRecordingClips;
+@property (copy, nonatomic) NSNumber *maxCountOfRecordingClips;// NSUinteger [2, 10]
 @property (copy, nonatomic) NSNumber *cameraPosition;// CarDVRCameraPosition
 @property (copy, nonatomic) NSNumber *videoQuality;// CarDVRVideoQuality
+@property (copy, nonatomic) NSNumber *videoFrameRate;// NSUinteger [10, 30]
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
 

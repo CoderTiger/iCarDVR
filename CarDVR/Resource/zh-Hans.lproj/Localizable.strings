@@ -5,3 +5,20 @@
 "starredViewTitle"="收藏夹";
 "settingsViewTitle"="设置";
 "playerViewTitleFormat"="%@";
+
+//
+// CarDVRSettingsView
+//
+"settingsSectionVideo"="视频";
+"maxRecordingClipsLabel"="每次最多录制片段数：";
+"maxClipDurationLabel"="最长录制片段时间：";
+"minuteDuration"="%d 分";
+"minutesDuration"="%d 分";
+"secondDuration"="%d 秒";
+"secondsDuration"="%d 秒";
+"maxClipDurationSettingViewTitle"="最长录制片段时间";
+"resolutionLabel"="分辨率：";
+"frameRateLabel"="帧率：";
+"videoQualityHigh"="高";
+"videoQualityMiddle"="中";
+"videoQualityLow"="低";

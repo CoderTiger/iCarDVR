@@ -11,6 +11,8 @@
 #import "CarDVRHomeViewController.h"
 #import "CarDVRAppDelegate.h"
 
+static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
+
 @interface CarDVRCameraViewController ()
 
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
@@ -26,7 +28,6 @@
 
 @property (weak, nonatomic) IBOutlet UIView *previewerView;
 
-- (IBAction)homeButtonTouched:(id)sender;
 - (IBAction)flashOnButtonTouched:(id)sender;
 - (IBAction)flashAutoButtonTouched:(id)sender;
 - (IBAction)flashOffButtonTouched:(id)sender;
@@ -92,6 +93,17 @@
     self.homeViewController = nil;
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+#pragma unused( sender )
+    if ( [segue.identifier isEqualToString:kShowHomeSegueId] )
+    {
+        CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+        CarDVRHomeViewController *homeViewController = segue.destinationViewController;
+        homeViewController.settings = appDelegate.settings;
+    }
+}
+
 #pragma mark - private methods
 - (void)constructVideoCapturer
 {
@@ -131,17 +143,6 @@
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     [self layoutSubviews];
-}
-
-- (IBAction)homeButtonTouched:(id)sender
-{
-    [self stopRecordingVideo];
-    if ( !self.homeViewController )
-    {
-        self.homeViewController = [[CarDVRHomeViewController alloc] initWithNibName:@"CarDVRHomeViewController"
-                                                                         bundle:nil];
-    }
-    [self.navigationController pushViewController:self.homeViewController animated:YES];
 }
 
 - (IBAction)flashOnButtonTouched:(id)sender
