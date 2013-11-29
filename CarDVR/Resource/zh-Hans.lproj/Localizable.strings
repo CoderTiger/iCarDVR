@@ -22,3 +22,4 @@
 "videoQualityHigh"="高";
 "videoQualityMiddle"="中";
 "videoQualityLow"="低";
+"maxClipDurationValueLabel"="%d 分 %d 秒";

@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@class CarDVRMaxClipDurationSettingViewController;
+@protocol CarDVRMaxClipDurationSettingViewControllerDelegate <NSObject>
+
+- (void)maxClipDurationSettingViewControllerDone:(CarDVRMaxClipDurationSettingViewController *)sender;
+
+@end
+
 @interface CarDVRMaxClipDurationSettingViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet UIPickerView *minutesPickerView;
-@property (weak, nonatomic) IBOutlet UIPickerView *secondsPickerView;
+@property (weak, nonatomic) id<CarDVRMaxClipDurationSettingViewControllerDelegate> delegate;
+@property (assign, nonatomic) NSUInteger maxClipDuration;
 
 @end

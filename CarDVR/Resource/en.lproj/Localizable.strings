@@ -22,3 +22,4 @@
 "videoQualityHigh"="High";
 "videoQualityMiddle"="Middle";
 "videoQualityLow"="Low";
+"maxClipDurationValueLabel"="%d min %d sec";

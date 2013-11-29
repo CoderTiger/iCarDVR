@@ -295,7 +295,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="wJE-1W-nxa" kind="push" id="r5c-7M-Zao"/>
+                                            <segue destination="wJE-1W-nxa" kind="push" identifier="kShowMaxClipDurationSettingSegueId" id="r5c-7M-Zao"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="W6S-I0-FTa" userLabel="Table View Cell - Resolution">
@@ -319,7 +319,7 @@
                                                 </label>
                                                 <stepper opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" maximumValue="2" id="jtX-Iq-Cxv" userLabel="Stepper - Resolution">
                                                     <rect key="frame" x="206" y="7" width="94" height="29"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                     <connections>
                                                         <action selector="resolutionValueChanged:" destination="txJ-95-bui" eventType="valueChanged" id="z6B-kM-fcT"/>
                                                     </connections>
@@ -346,9 +346,9 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <stepper opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="5" maximumValue="5" id="Oh6-AV-sYc" userLabel="Stepper - Frame">
+                                                <stepper opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="5" maximumValue="5" id="Oh6-AV-sYc" userLabel="Stepper - Frame rate">
                                                     <rect key="frame" x="206" y="7" width="94" height="29"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                     <connections>
                                                         <action selector="frameRateValueChanged:" destination="txJ-95-bui" eventType="valueChanged" id="EXx-eR-GwR"/>
                                                     </connections>
@@ -381,12 +381,15 @@
                         <outlet property="cancelBarButtonItem" destination="XJg-VK-97g" id="xnb-A1-kAr"/>
                         <outlet property="doneBarButtonItem" destination="Qba-Aq-KSz" id="7De-RP-hq0"/>
                         <outlet property="frameRateLabel" destination="usY-wO-yUo" id="F2i-72-aDR"/>
+                        <outlet property="frameRateStepper" destination="Oh6-AV-sYc" id="fc2-6G-aau"/>
                         <outlet property="frameRateValueLabel" destination="AKx-zh-2k7" id="h4Q-RL-R1A"/>
                         <outlet property="maxClipDurationLabel" destination="ckk-Gm-pLZ" id="m3B-PE-9O0"/>
                         <outlet property="maxClipDurationValueLabel" destination="OQ7-CW-4m0" id="AAH-Ij-trI"/>
                         <outlet property="maxRecordingClipsLabel" destination="9kU-Qw-q4N" id="E0b-ii-5i2"/>
+                        <outlet property="maxRecordingClipsStepper" destination="Huq-8s-UKS" id="Edo-Rt-OmS"/>
                         <outlet property="maxRecordingClipsValueLable" destination="jh2-Mj-yJM" id="kPO-29-GJU"/>
                         <outlet property="resolutionLabel" destination="9IG-XQ-ObM" id="m0K-uX-zqg"/>
+                        <outlet property="resolutionStepper" destination="jtX-Iq-Cxv" id="Uen-fg-E7K"/>
                         <outlet property="resolutionValueLabel" destination="zuQ-eu-mxE" id="lga-nw-fRI"/>
                     </connections>
                 </tableViewController>

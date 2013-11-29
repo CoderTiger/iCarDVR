@@ -11,6 +11,7 @@
 #import "CarDVRVideoCapturerConstants.h"
 
 static NSString *const kCarDVRSettingsCommitEditingNotification = @"kCarDVRSettingsCommitEditingNotification";
+NSString *const kCarDVRSettingsCommitEditingChangedKeys=@"kCarDVRSettingsCommitEditingChangedKeys";
 
 NSString *const kCarDVRSettingsKeyMaxRecordingDuration = @"maxRecordingDuration";
 NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration = @"overlappedRecordingDuration";
@@ -38,6 +39,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
 
 #pragma mark - Private methods
 - (void)setSettingValue:(id)aValue forKey:(NSString *)aKey;
+- (void)setSettingValue:(id)aValue forKey:(NSString *)aKey mutely:(BOOL)aMutely;
 - (id)settingValueForKey:(NSString *)aKey;
 
 @end
@@ -83,6 +85,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
     {
         _notificationCenter = [[NSNotificationCenter alloc] init];
         _pathHelper = aPathHelper;
+        _editing = NO;
         _settings = [NSMutableDictionary dictionary];
     }
     return self;
@@ -91,12 +94,12 @@ static NSNumber *minVideoFrameRate;// 10 fps
 - (NSNumber *)maxRecordingDurationPerClip
 {
     NSNumber *maxRecordingDurationPerClip = [self settingValueForKey:kCarDVRSettingsKeyMaxRecordingDuration];
-    if ( !maxRecordingDurationPerClip && !self.isEditing )
+    if ( !maxRecordingDurationPerClip )
     {
         maxRecordingDurationPerClip = defaultMaxRecordingDurationPerClip;
         if ( maxRecordingDurationPerClip )
         {
-            [_settings setValue:maxRecordingDurationPerClip forKey:kCarDVRSettingsKeyMaxRecordingDuration];
+            [self setSettingValue:maxRecordingDurationPerClip forKey:kCarDVRSettingsKeyMaxRecordingDuration mutely:YES];
         }
     }
     return maxRecordingDurationPerClip;
@@ -118,12 +121,12 @@ static NSNumber *minVideoFrameRate;// 10 fps
 - (NSNumber *)overlappedRecordingDuration
 {
     NSNumber *overlappedRecordingDuration = [self settingValueForKey:kCarDVRSettingsKeyOverlappedRecordingDuration];
-    if ( !overlappedRecordingDuration && !self.isEditing )
+    if ( !overlappedRecordingDuration )
     {
         overlappedRecordingDuration = defaultOverlappedRecordingDuration;
         if ( overlappedRecordingDuration )
         {
-            [_settings setValue:overlappedRecordingDuration forKey:kCarDVRSettingsKeyOverlappedRecordingDuration];
+            [self setSettingValue:overlappedRecordingDuration forKey:kCarDVRSettingsKeyOverlappedRecordingDuration mutely:YES];
         }
     }
     return overlappedRecordingDuration;
@@ -148,12 +151,12 @@ static NSNumber *minVideoFrameRate;// 10 fps
 - (NSNumber *)maxCountOfRecordingClips
 {
     NSNumber *maxCountOfRecordingClips = [self settingValueForKey:kCarDVRSettingsKeyMaxCountOfRecordingClips];
-    if ( !maxCountOfRecordingClips && !self.isEditing )
+    if ( !maxCountOfRecordingClips )
     {
         maxCountOfRecordingClips = defaultMaxCountOfRecordingClips;
         if ( maxCountOfRecordingClips )
         {
-            [_settings setValue:maxCountOfRecordingClips forKey:kCarDVRSettingsKeyMaxCountOfRecordingClips];
+            [self setSettingValue:maxCountOfRecordingClips forKey:kCarDVRSettingsKeyMaxCountOfRecordingClips mutely:YES];
         }
     }
     return maxCountOfRecordingClips;
@@ -175,12 +178,12 @@ static NSNumber *minVideoFrameRate;// 10 fps
 - (NSNumber *)cameraPosition
 {
     NSNumber *cameraPosition = [self settingValueForKey:kCarDVRSettingsKeyCameraPosition];
-    if ( !cameraPosition && !self.isEditing )
+    if ( !cameraPosition )
     {
         cameraPosition = [NSNumber numberWithInteger:kCarDVRCameraPositionBack];
         if ( cameraPosition )
         {
-            [_settings setValue:cameraPosition forKey:kCarDVRSettingsKeyCameraPosition];
+            [self setSettingValue:cameraPosition forKey:kCarDVRSettingsKeyCameraPosition mutely:YES];
         }
     }
     return cameraPosition;
@@ -189,12 +192,12 @@ static NSNumber *minVideoFrameRate;// 10 fps
 - (NSNumber *)videoQuality
 {
     NSNumber *videoQuality = [self settingValueForKey:kCarDVRSettingsKeyVideoQuality];
-    if ( !videoQuality && !self.isEditing )
+    if ( !videoQuality )
     {
         videoQuality = [NSNumber numberWithInteger:kCarDVRVideoQualityHigh];
         if ( videoQuality )
         {
-            [_settings setValue:videoQuality forKey:kCarDVRSettingsKeyVideoQuality];
+            [self setSettingValue:videoQuality forKey:kCarDVRSettingsKeyVideoQuality mutely:YES];
         }
     }
     return videoQuality;
@@ -203,12 +206,12 @@ static NSNumber *minVideoFrameRate;// 10 fps
 - (NSNumber *)videoFrameRate
 {
     NSNumber *videoFrameRate = [self settingValueForKey:kCarDVRSettingsKeyVideoFrameRate];
-    if ( !videoFrameRate && !self.isEditing )
+    if ( !videoFrameRate )
     {
         videoFrameRate = maxVideoFrameRate;
         if ( videoFrameRate )
         {
-            [_settings setValue:videoFrameRate forKeyPath:kCarDVRSettingsKeyVideoFrameRate];
+            [self setSettingValue:videoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate mutely:YES];
         }
     }
     return videoFrameRate;
@@ -302,6 +305,11 @@ static NSNumber *minVideoFrameRate;// 10 fps
 #pragma mark - Private methods
 - (void)setSettingValue:(id)aValue forKey:(NSString *)aKey
 {
+    [self setSettingValue:aValue forKey:aKey mutely:NO];
+}
+
+- (void)setSettingValue:(id)aValue forKey:(NSString *)aKey mutely:(BOOL)aMutely
+{
     NSAssert( aKey, @"aKey should NOT be nil" );
     if ( !aKey )
         return;
@@ -319,7 +327,10 @@ static NSNumber *minVideoFrameRate;// 10 fps
     else
     {
         [self.settings setValue:aValue forKey:aKey];
-        [_notificationCenter postNotificationName:aKey object:self];
+        if ( !aMutely )
+        {
+            [_notificationCenter postNotificationName:aKey object:self];
+        }
     }
 }
 

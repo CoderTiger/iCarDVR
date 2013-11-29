@@ -9,21 +9,26 @@
 #import "CarDVRSettingsViewController.h"
 #import "CarDVRSettings.h"
 #import "CarDVRVideoCapturerConstants.h"
+#import "CarDVRMaxClipDurationSettingViewController.h"
 
 static const NSInteger kCarDVRSettingsSectionVideo = 0;
+static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurationSettingSegueId";
 
-@interface CarDVRSettingsViewController ()
+@interface CarDVRSettingsViewController ()<CarDVRMaxClipDurationSettingViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelBarButtonItem;
 @property (weak, nonatomic) IBOutlet UILabel *maxRecordingClipsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *maxRecordingClipsValueLable;
+@property (weak, nonatomic) IBOutlet UIStepper *maxRecordingClipsStepper;
 @property (weak, nonatomic) IBOutlet UILabel *maxClipDurationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *maxClipDurationValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *resolutionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *resolutionValueLabel;
+@property (weak, nonatomic) IBOutlet UIStepper *resolutionStepper;
 @property (weak, nonatomic) IBOutlet UILabel *frameRateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *frameRateValueLabel;
+@property (weak, nonatomic) IBOutlet UIStepper *frameRateStepper;
 
 - (IBAction)doneBarButtonItemTouched:(id)sender;
 - (IBAction)cancelBarButtonItemTouched:(id)sender;
@@ -33,17 +38,13 @@ static const NSInteger kCarDVRSettingsSectionVideo = 0;
 
 #pragma mark - Private methods
 - (void)loadVideoSettings;
+- (void)setMaxRecordingClipsValue:(NSUInteger)count andUpdateStepper:(BOOL)update;
+- (void)setMaxClipDurationValue:(NSUInteger)seconds;
+- (void)setResolutionValue:(CarDVRVideoQuality)quality andUpdateStepper:(BOOL)update;
 
 @end
 
 @implementation CarDVRSettingsViewController
-
-- (void)setSettings:(CarDVRSettings *)settings
-{
-    _settings = settings;
-    [_settings beginEditing];
-    [self loadVideoSettings];
-}
 
 - (void)viewDidLoad
 {
@@ -55,6 +56,7 @@ static const NSInteger kCarDVRSettingsSectionVideo = 0;
     self.resolutionLabel.text = NSLocalizedString( @"resolutionLabel", nil );
     self.frameRateLabel.text = NSLocalizedString( @"frameRateLabel", nil );
     
+    [_settings beginEditing];
     [self loadVideoSettings];
 }
 
@@ -85,13 +87,33 @@ static const NSInteger kCarDVRSettingsSectionVideo = 0;
 - (IBAction)maxRecordingClipsValueChanged:(id)sender
 {
     UIStepper *stepper = sender;
-    NSInteger maxRecordingClipsCount = (NSInteger)stepper.value;
-    [self.settings setMaxCountOfRecordingClips:[NSNumber numberWithInteger:maxRecordingClipsCount]];
-    self.maxRecordingClipsValueLable.text = [NSString stringWithFormat:@"%d", maxRecordingClipsCount];
+    NSUInteger maxRecordingClipsCount = (NSUInteger)stepper.value;
+    [self.settings setMaxCountOfRecordingClips:[NSNumber numberWithUnsignedInteger:maxRecordingClipsCount]];
+    [self setMaxRecordingClipsValue:maxRecordingClipsCount andUpdateStepper:NO];
 }
 
 - (IBAction)resolutionValueChanged:(id)sender
 {
+    UIStepper *stepper = sender;
+    NSInteger value = stepper.value;
+    CarDVRVideoQuality videoQuality = kCarDVRVideoQualityHigh;
+    switch (value)
+    {
+        case 0:
+            videoQuality = kCarDVRVideoQualityLow;
+            break;
+        case 1:
+            videoQuality = kCarDVRVideoQualityMiddle;
+            break;
+        case 2:
+            videoQuality = kCarDVRVideoQualityHigh;
+            break;
+        default:
+            NSAssert1( NO, @"[Error] Unsupported video quality level: %d", value );
+            break;
+    }
+    [self.settings setVideoQuality:[NSNumber numberWithUnsignedInteger:videoQuality]];
+    [self setResolutionValue:videoQuality andUpdateStepper:NO];
 }
 
 - (IBAction)frameRateValueChanged:(id)sender
@@ -120,29 +142,85 @@ static const NSInteger kCarDVRSettingsSectionVideo = 0;
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ( [segue.identifier isEqualToString:kShowMaxClipDurationSettingSegueId] )
+    {
+        CarDVRMaxClipDurationSettingViewController *maxClipDurationSettingViewController = segue.destinationViewController;
+        maxClipDurationSettingViewController.maxClipDuration = self.settings.maxRecordingDurationPerClip.unsignedIntegerValue;
+        maxClipDurationSettingViewController.delegate = self;
+    }
+}
+
+#pragma mark - from CarDVRMaxClipDurationSettingViewControllerDelegate
+- (void)maxClipDurationSettingViewControllerDone:(CarDVRMaxClipDurationSettingViewController *)sender
+{
+    [self setMaxClipDurationValue:sender.maxClipDuration];
+    [self.settings setMaxRecordingDurationPerClip:[NSNumber numberWithUnsignedInteger:sender.maxClipDuration]];
 }
 
 #pragma mark - Private methods
 - (void)loadVideoSettings
 {
-    self.maxRecordingClipsValueLable.text = [self.settings.maxCountOfRecordingClips stringValue];
-    self.maxClipDurationValueLabel.text = [self.settings.maxRecordingDurationPerClip stringValue];
-    switch ( self.settings.videoQuality.intValue )
+    [self setMaxRecordingClipsValue:self.settings.maxCountOfRecordingClips.unsignedIntegerValue andUpdateStepper:YES];
+    [self setMaxClipDurationValue:self.settings.maxRecordingDurationPerClip.unsignedIntegerValue];
+    [self setResolutionValue:self.settings.videoQuality.intValue andUpdateStepper:YES];
+    self.frameRateValueLabel.text = [self.settings.videoFrameRate stringValue];
+}
+
+- (void)setMaxRecordingClipsValue:(NSUInteger)count andUpdateStepper:(BOOL)update
+{
+    self.maxRecordingClipsValueLable.text = [NSString stringWithFormat:@"%u", count];
+    if ( update )
+    {
+        self.maxRecordingClipsStepper.value = count;
+    }
+}
+
+- (void)setMaxClipDurationValue:(NSUInteger)seconds
+{
+    if ( seconds < 60 )// if < 60 seconds
+    {
+        self.maxClipDurationValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"secondsDuration", nil ), seconds];
+    }
+    else if ( ( seconds % 60 )== 0 )
+    {
+        self.maxClipDurationValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"minutesDuration", nil ), seconds / 60];
+    }
+    else
+    {
+        self.maxClipDurationValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"maxClipDurationValueLabel", nil ),
+                                               seconds / 60, seconds % 60];
+    }
+}
+
+- (void)setResolutionValue:(CarDVRVideoQuality)quality andUpdateStepper:(BOOL)update
+{
+    switch ( quality )
     {
         case kCarDVRVideoQualityHigh:
             self.resolutionValueLabel.text = NSLocalizedString( @"videoQualityHigh", nil );
+            if ( update )
+            {
+                [self.resolutionStepper setValue:2];
+            }
             break;
         case kCarDVRVideoQualityMiddle:
             self.resolutionValueLabel.text = NSLocalizedString( @"videoQualityMiddle", nil );
+            if ( update )
+            {
+                [self.resolutionStepper setValue:1];
+            }
             break;
         case kCarDVRVideoQualityLow:
             self.resolutionValueLabel.text = NSLocalizedString( @"videoQualityLow", nil );
+            if ( update )
+            {
+                [self.resolutionStepper setValue:0];
+            }
             break;
         default:
             NSAssert1( NO, @"[Error] Unsupported video quality: %@", self.settings.videoQuality );
             break;
     }
-    self.frameRateValueLabel.text = [self.settings.videoFrameRate stringValue];
 }
 
 @end

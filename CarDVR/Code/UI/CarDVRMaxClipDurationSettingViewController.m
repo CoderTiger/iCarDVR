@@ -16,9 +16,25 @@ static const NSUInteger kMaxMinutesDuration = 30;
 
 @interface CarDVRMaxClipDurationSettingViewController ()<UIPickerViewDataSource, UIPickerViewDelegate>
 
+@property (weak, nonatomic) IBOutlet UIPickerView *minutesPickerView;
+@property (weak, nonatomic) IBOutlet UIPickerView *secondsPickerView;
+
 @end
 
 @implementation CarDVRMaxClipDurationSettingViewController
+
+- (void)setMaxClipDuration:(NSUInteger)maxClipDuration
+{
+    if ( maxClipDuration < kMinDuration )
+    {
+        maxClipDuration = kMinDuration;
+    }
+    else if ( maxClipDuration > ( kMaxMinutesDuration * 60 + kMaxSecondsDuration ) )
+    {
+        maxClipDuration = kMaxSecondsDuration * 60 + kMaxSecondsDuration;
+    }
+    _maxClipDuration = maxClipDuration;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -34,6 +50,19 @@ static const NSUInteger kMaxMinutesDuration = 30;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = NSLocalizedString( @"maxClipDurationSettingViewTitle", @"Max Clip Duration" );
+    NSUInteger minutes = self.maxClipDuration / 60;
+    NSUInteger seconds = self.maxClipDuration % 60;
+    [self.minutesPickerView selectRow:minutes inComponent:0 animated:NO];
+    [self.secondsPickerView selectRow:seconds inComponent:0 animated:NO];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+#pragma unused( animated )
+    NSUInteger maxClipDuration =
+    [self.minutesPickerView selectedRowInComponent:0] * 60 + [self.secondsPickerView selectedRowInComponent:0];
+    self.maxClipDuration = maxClipDuration;
+    [self.delegate maxClipDurationSettingViewControllerDone:self];
 }
 
 - (void)didReceiveMemoryWarning
@@ -41,17 +70,6 @@ static const NSUInteger kMaxMinutesDuration = 30;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 #pragma mark - from UIPickerViewDataSource
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
