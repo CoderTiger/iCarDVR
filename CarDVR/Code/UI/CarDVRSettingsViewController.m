@@ -10,10 +10,10 @@
 
 @interface CarDVRSettingsViewController ()
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *OKBarButtonItem;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *doneBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelBarButtonItem;
 
-- (IBAction)OKBarButtonItemTouched:(id)sender;
+- (IBAction)doneBarButtonItemTouched:(id)sender;
 - (IBAction)cancelBarButtonItemTouched:(id)sender;
 
 @end
@@ -39,7 +39,7 @@
     self.navigationController.navigationBarHidden = NO;
 }
 
-- (IBAction)OKBarButtonItemTouched:(id)sender
+- (IBAction)doneBarButtonItemTouched:(id)sender
 {
     [self.navigationController dismissModalViewControllerAnimated:YES];
 }

@@ -218,6 +218,21 @@
             </objects>
             <point key="canvasLocation" x="817" y="-322"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Zli-rU-wa8">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="GWm-dg-BoL" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Yc5-hJ-chv">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="txJ-95-bui" kind="relationship" relationship="rootViewController" id="HiQ-Vt-Jsz"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tic-aa-v5Z" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="351" y="-915"/>
+        </scene>
         <!--CarDVRSettingsViewController-->
         <scene sceneID="MCp-HA-FY4">
             <objects>
@@ -262,21 +277,21 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Settings" id="6zs-VG-8rv">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="XJg-VK-97g">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="XJg-VK-97g">
                             <connections>
                                 <action selector="cancelBarButtonItemTouched:" destination="txJ-95-bui" id="EPp-Au-58R"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="OK" id="Qba-Aq-KSz">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="Qba-Aq-KSz">
                             <connections>
-                                <action selector="OKBarButtonItemTouched:" destination="txJ-95-bui" id="5vX-T2-y4R"/>
+                                <action selector="doneBarButtonItemTouched:" destination="txJ-95-bui" id="Wpn-zL-r1P"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
-                        <outlet property="OKBarButtonItem" destination="Qba-Aq-KSz" id="34N-XW-gAf"/>
                         <outlet property="cancelBarButtonItem" destination="XJg-VK-97g" id="xnb-A1-kAr"/>
+                        <outlet property="doneBarButtonItem" destination="Qba-Aq-KSz" id="7De-RP-hq0"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5If-sG-sn5" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -290,7 +305,7 @@
                     <navigationItem key="navigationItem" title="Home" id="ONa-WY-5gy">
                         <barButtonItem key="rightBarButtonItem" title="Setting" id="Ev8-oe-iMX">
                             <connections>
-                                <segue destination="txJ-95-bui" kind="modal" id="I7C-W7-6zc"/>
+                                <segue destination="GWm-dg-BoL" kind="modal" id="qy7-cx-PLf"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
