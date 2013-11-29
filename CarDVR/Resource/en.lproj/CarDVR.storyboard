@@ -133,7 +133,7 @@
                     <connections>
                         <outlet property="flashAutoButton" destination="nlz-ru-kJl" id="tfB-H6-34q"/>
                         <outlet property="flashOffButton" destination="v53-MR-Ll8" id="qK9-4U-XuD"/>
-                        <outlet property="flashOnButton" destination="v53-MR-Ll8" id="6Z9-d6-H1m"/>
+                        <outlet property="flashOnButton" destination="ue8-p1-Sch" id="oxE-eh-aLi"/>
                         <outlet property="previewerView" destination="vkf-FK-KE8" id="unt-d7-yMy"/>
                         <outlet property="starButton" destination="itA-kT-pFL" id="GYR-nb-AOl"/>
                         <outlet property="starredButton" destination="Tlc-nh-4xy" id="r7y-zF-7DL"/>
