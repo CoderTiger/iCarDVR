@@ -23,3 +23,4 @@
 "videoQualityMiddle"="Middle";
 "videoQualityLow"="Low";
 "maxClipDurationValueLabel"="%d min %d sec";
+"storageInfoSectionVideo"="Memory Info";

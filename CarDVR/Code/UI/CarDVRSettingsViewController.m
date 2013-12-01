@@ -12,6 +12,7 @@
 #import "CarDVRMaxClipDurationSettingViewController.h"
 
 static const NSInteger kCarDVRSettingsSectionVideo = 0;
+static const NSInteger kCarDVRSettingsSectionStorageInfo = 1;
 static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurationSettingSegueId";
 
 @interface CarDVRSettingsViewController ()<CarDVRMaxClipDurationSettingViewControllerDelegate>
@@ -128,6 +129,9 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
     {
         case kCarDVRSettingsSectionVideo:
             title = NSLocalizedString( @"settingsSectionVideo", @"Video" );
+            break;
+        case kCarDVRSettingsSectionStorageInfo:
+            title = NSLocalizedString( @"storageInfoSectionVideo", @"Memory Info" );
             break;
         default:
             NSAssert( NO, @"It should NOT be executed here." );
