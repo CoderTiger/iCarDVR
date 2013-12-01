@@ -21,6 +21,7 @@
 @property (assign) BOOL readyToRecordVideo;
 @property (assign) BOOL recordingWillBeStarted;
 @property (assign) BOOL recordingWillBeStopped;
+@property (assign, getter = isRecording, nonatomic) BOOL recording;
 
 - (id)initWithURL:(NSURL *)anURL settings:(CarDVRSettings *)aSettings error:(NSError *__autoreleasing *)anOutError;
 - (void)writeSampleBuffer:(CMSampleBufferRef)aSampleBuffer ofType:(NSString *)aMediaType;

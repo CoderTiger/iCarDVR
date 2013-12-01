@@ -460,7 +460,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             {
                 continue;
             }
-            BOOL wasReadyToRecord = ( assetWriter.readyToRecordVideo && assetWriter.readyToRecordVideo );
             if ( connection == _videoConnection )
             {
                 if ( !assetWriter.readyToRecordVideo )
@@ -496,8 +495,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 }
             }
             BOOL isReadyToRecord = ( assetWriter.readyToRecordAudio && assetWriter.readyToRecordVideo );
-			if ( !wasReadyToRecord && isReadyToRecord )
+			if ( !assetWriter.isRecording && isReadyToRecord )
             {
+                assetWriter.recording = YES;
                 assetWriter.recordingWillBeStarted = NO;
                 if ( !self.isRecording )
                 {

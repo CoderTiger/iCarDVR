@@ -17,6 +17,13 @@
 
 @implementation CarDVRAssetWriter
 
+- (void)setRecording:(BOOL)recording
+{
+    if ( recording == _recording )
+        return;
+    _recording = recording;
+}
+
 - (id)initWithURL:(NSURL *)anURL settings:(CarDVRSettings *)aSettings error:(NSError *__autoreleasing *)anOutError
 {
     self = [super init];
