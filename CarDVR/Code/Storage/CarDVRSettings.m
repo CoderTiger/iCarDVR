@@ -42,6 +42,9 @@ static NSNumber *minVideoFrameRate;// 10 fps
 - (void)setSettingValue:(id)aValue forKey:(NSString *)aKey mutely:(BOOL)aMutely;
 - (id)settingValueForKey:(NSString *)aKey;
 
+- (void)reloadSettings;
+- (void)saveSettings;
+
 @end
 
 @implementation CarDVRSettings
@@ -86,7 +89,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
         _notificationCenter = [[NSNotificationCenter alloc] init];
         _pathHelper = aPathHelper;
         _editing = NO;
-        _settings = [NSMutableDictionary dictionary];
+        [self reloadSettings];
     }
     return self;
 }
@@ -277,6 +280,9 @@ static NSNumber *minVideoFrameRate;// 10 fps
     {
         [_settings addEntriesFromDictionary:self.editedSettings];
         [_settings removeObjectsForKeys:self.removedSettings.allObjects];
+        
+        [self saveSettings];
+        
         NSMutableSet *changedKeys = [NSMutableSet setWithCapacity:( self.removedSettings.count + self.editedSettings.count )];
         [changedKeys addObjectsFromArray:self.editedSettings.allKeys];
         [changedKeys addObjectsFromArray:self.removedSettings.allObjects];
@@ -331,6 +337,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
         {
             [_notificationCenter postNotificationName:aKey object:self];
         }
+        [self saveSettings];
     }
 }
 
@@ -356,6 +363,20 @@ static NSNumber *minVideoFrameRate;// 10 fps
         value = [self.settings valueForKey:aKey];
     }
     return value;
+}
+
+- (void)reloadSettings
+{
+    _settings = [[NSMutableDictionary alloc] initWithContentsOfFile:self.pathHelper.settingsPath];
+    if ( !_settings )
+    {
+        _settings = [NSMutableDictionary dictionary];
+    }
+}
+
+- (void)saveSettings
+{
+    [self.settings writeToFile:self.pathHelper.settingsPath atomically:YES];
 }
 
 @end

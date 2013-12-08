@@ -14,6 +14,9 @@
 @property (readonly, copy, nonatomic) NSString *recentsFolderPath;
 @property (readonly, copy, nonatomic) NSString *starredFolderPath;
 
+@property (readonly, copy, nonatomic) NSString *appSupportFolderPath;
+@property (readonly, copy, nonatomic) NSString *settingsPath;
+
 + (NSString *)stringFromDate:(NSDate *)aDate;
 + (NSDate *)dateFromString:(NSString *)aString;
 

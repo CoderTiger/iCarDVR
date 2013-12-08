@@ -8,7 +8,7 @@
 
 #import "CarDVRMaxClipDurationSettingViewController.h"
 
-static const NSUInteger kMinDuration = 15;// 15 seconds
+static const NSUInteger kMinDuration = 30;// 30 seconds
 static const NSUInteger kMinSecondsDuration = 0;
 static const NSUInteger kMaxSecondsDuration = 59;
 static const NSUInteger kMinMinutesDuration = 0;

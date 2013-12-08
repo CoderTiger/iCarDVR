@@ -13,6 +13,7 @@ static NSDateFormatter *dateFormatter;
 
 static NSString *const kRecentsFolderName = @"Recents";
 static NSString *const kStarredFolderName = @"Starred";
+static NSString *const kSettingsFileName = @"Settings.plist";
 
 @interface CarDVRPathHelper ()
 {
@@ -57,10 +58,10 @@ static NSString *const kStarredFolderName = @"Starred";
 #pragma mark - private methods
 - (void)constructFolderAtPath:(NSString *)aPath withFileManager:(NSFileManager *)aFileManager
 {
-    if ( ![aFileManager fileExistsAtPath:_recentsFolderPath] )
+    if ( ![aFileManager fileExistsAtPath:aPath] )
     {
         NSError *error = nil;
-        [aFileManager createDirectoryAtPath:_recentsFolderPath
+        [aFileManager createDirectoryAtPath:aPath
                 withIntermediateDirectories:NO
                                  attributes:nil
                                       error:&error];
@@ -74,13 +75,21 @@ static NSString *const kStarredFolderName = @"Starred";
 
 - (void)constructFolders
 {
-    NSArray *documentDirectories = NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES );
-    _storageFolderPath = [documentDirectories objectAtIndex:0];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSString *documentDirectory = [NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES ) objectAtIndex:0];
+    _storageFolderPath = documentDirectory;
     _recentsFolderPath = [_storageFolderPath stringByAppendingPathComponent:kRecentsFolderName];
     _starredFolderPath = [_storageFolderPath stringByAppendingPathComponent:kStarredFolderName];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
     [self constructFolderAtPath:_recentsFolderPath withFileManager:fileManager];
     [self constructFolderAtPath:_starredFolderPath withFileManager:fileManager];
+    
+    NSString *applicationSupportDirectory =
+        [NSSearchPathForDirectoriesInDomains( NSApplicationSupportDirectory, NSUserDomainMask, YES ) objectAtIndex:0];
+    [self constructFolderAtPath:applicationSupportDirectory withFileManager:fileManager];
+    _appSupportFolderPath = [applicationSupportDirectory stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
+    [self constructFolderAtPath:_appSupportFolderPath withFileManager:fileManager];
+    _settingsPath = [_appSupportFolderPath stringByAppendingPathComponent:kSettingsFileName];
 }
 
 @end
