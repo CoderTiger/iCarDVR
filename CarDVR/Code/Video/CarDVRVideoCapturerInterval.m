@@ -25,15 +25,8 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 	AVCaptureConnection *_videoConnection;
     
     // Only accessed on movie writing queue (including self.recording)
-#ifdef USE_TIMER
-    NSMutableArray *_duoAssetWriter;// CarDVRAssetWriter
-    NSMutableArray *_duoRecordingLoopTimer;// NSTimer
-#else
     // duo asset writers
-    CarDVRAssetWriter *_assetWriter0;
-    CarDVRAssetWriter *_assetWriter1;
-    // placeholder
-#endif
+    NSMutableArray *_duoAssetWriter;// CarDVRAssetWriter
     NSMutableArray *_recentRecordedClipURLs;// NSURL
     BOOL _readyToRecordAudio;
     BOOL _readyToRecordVideo;
@@ -64,12 +57,11 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 - (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
-#ifdef USE_TIMER
-- (void)handleRecordingLoopTimer:(NSTimer *)aTimer;
-#else
+- (void)startDuoAssetWriterLoop;
+- (void)stopDuoAssetWriterLoop;
 - (void)startNextAssetWriter;
-- (void)stopAssetWriter:(CarDVRAssetWriter *)anAssetWriter;
-#endif//#ifdef USE_TIMER
+- (BOOL)stopAssetWriter:(CarDVRAssetWriter *)anAssetWriter;
+- (void)stopOldestAssetWriter;
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPosition;
 - (AVCaptureDevice *)audioDevice;
@@ -81,9 +73,6 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
                     formatDescription:(CMFormatDescriptionRef)currentFormatDescription;
 - (void)stopRecordingOfAssetWriter:(CarDVRAssetWriter *)anAssetWriter
              withCompletionHandler:(void (^)(NSException *aException)) aBlock;
-#ifdef USE_TIMER
-- (CarDVRAssetWriter *)installNewAssetWriterAtPosition:(NSUInteger)aPostionAtDuoAssetWriter;
-#endif//#ifdef USE_TIMER
 
 @end
 
@@ -263,13 +252,6 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
         if ( _recordingWillBeStarted || self.isRecording )
             return;
         _recordingWillBeStarted = YES;
-        
-#ifdef USE_TIMER
-        //
-        // Init asset writer
-        //
-        _duoAssetWriter = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
-#endif//#ifdef USE_TIMER
         //
         // Remove the recent recorded clips.
         //
@@ -290,102 +272,17 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
         //
         _recentRecordedClipURLs = [NSMutableArray arrayWithCapacity:self.settings.maxCountOfRecordingClips.unsignedIntegerValue];
         
-#ifndef USE_TIMER
-        //
-        // Start first asset writer and schedule the recording task
-        //
-        // TODO: complete
-        CarDVRAssetWriter *assetWriter = [[CarDVRAssetWriter alloc] initWithURL:nil settings:self.settings error:nil];
-#endif//#ifndef USE_TIMER
+        [self startDuoAssetWriterLoop];
     });
-#ifdef USE_TIMER
-    //
-    // Start recording timer
-    //
-    _duoRecordingLoopTimer = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
-    for ( NSUInteger i = 0; i < kCountOfDuoRecordingClips; i++ )
-    {
-        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.settings.maxRecordingDurationPerClip.doubleValue
-                                                          target:self
-                                                        selector:@selector(handleRecordingLoopTimer:)
-                                                        userInfo:nil
-                                                         repeats:YES];
-        [_duoRecordingLoopTimer addObject:timer];
-    }
-    NSDate *firstRecordingDate = [NSDate date];
-    [_duoRecordingLoopTimer[0] setFireDate:firstRecordingDate];
-    if ( _duoRecordingLoopTimer.count == 2 )
-    {
-        NSDate *secondRecordingDate = [NSDate dateWithTimeInterval:(self.settings.maxRecordingDurationPerClip.doubleValue
-                                                                    - self.settings.overlappedRecordingDuration.doubleValue)
-                                                         sinceDate:firstRecordingDate];
-        [_duoRecordingLoopTimer[1] setFireDate:secondRecordingDate];
-    }
-#endif// USE_TIMER
 }
 
 - (void)stopRecording
 {
     dispatch_async( _clipWriterQueue, ^{
-        
         if ( _recordingWillBeStopped || !self.isRecording )
             return;
         _recordingWillBeStopped = YES;
-#ifdef USE_TIMER
-        dispatch_async( dispatch_get_main_queue(), ^{
-            //
-            // Stop recording loop timer
-            //
-            for ( NSTimer *timer in _duoRecordingLoopTimer )
-            {
-                [timer invalidate];
-            }
-            _duoRecordingLoopTimer = nil;
-        });
-        //
-        // Stop asset writer
-        //
-        __block NSUInteger didStopRecordingCount = 0;
-        for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
-        {
-            if ( ![assetWriter isKindOfClass:[CarDVRAssetWriter class]] )
-            {
-                didStopRecordingCount++;
-            }
-            else
-            {
-                [self stopRecordingOfAssetWriter:assetWriter withCompletionHandler:^(NSException *aException) {
-                    if ( assetWriter.writer.error )
-                    {
-                        // TODO: handle error
-                        NSLog( @"[Error] Failed to stop recording with status %d, and error: domain(%@), code(%d), \"%@\"",
-                              assetWriter.writer.status,
-                              assetWriter.writer.error.domain,
-                              assetWriter.writer.error.code,
-                              assetWriter.writer.error.description );
-                    }
-                    else
-                    {
-                        // ignore aException
-#pragma unused( aException )
-#ifdef DEBUG
-                        NSLog( @"[Debug] assetWriter.writer.status = %d", assetWriter.writer.status );
-#endif// DEBUG
-                        didStopRecordingCount++;
-                    }
-                }];
-            }
-        }
-        if ( didStopRecordingCount == _duoAssetWriter.count )
-        {
-            _readyToRecordAudio = NO;
-            _readyToRecordVideo = NO;
-            _recordingWillBeStarted = NO;
-            _recordingWillBeStopped = NO;
-            _duoAssetWriter = nil;
-            self.recording = NO;
-        }
-#endif//#ifdef USE_TIMER
+        [self stopDuoAssetWriterLoop];
     });
 }
 
@@ -473,7 +370,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     CFRetain( sampleBuffer );
     CFRetain( formatDescription );
     dispatch_async( _clipWriterQueue, ^{
-#ifdef USE_TIMER
         for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
         {
             if ( ![assetWriter isKindOfClass:[CarDVRAssetWriter class]] )
@@ -526,9 +422,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 }
 			}
         }
-#else//#ifdef USE_TIMER
-        // TODO: complete
-#endif//#ifdef USE_TIMER
         CFRelease( formatDescription );
         CFRelease( sampleBuffer );
     });
@@ -706,76 +599,84 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         [self stopRecording];
     }
 }
-#ifdef USE_TIMER
-- (void)handleRecordingLoopTimer:(NSTimer *)aTimer
+
+- (void)startDuoAssetWriterLoop
 {
-#ifdef DEBUG
-    NSLog( @"[Timer] %pt", aTimer );
-#endif// DEBUG
-    __block NSUInteger nextRecordingClipIndex = [_duoRecordingLoopTimer indexOfObject:aTimer];
-    if ( nextRecordingClipIndex == NSNotFound )
+    if ( !_duoAssetWriter )
     {
-        // TODO: handle error
-        return;
+        _duoAssetWriter = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
     }
-    dispatch_async( _clipWriterQueue, ^{
-        if ( nextRecordingClipIndex < _duoAssetWriter.count )
-        {
-            id assetWriterObj = [_duoAssetWriter objectAtIndex:nextRecordingClipIndex];
-            if ( [assetWriterObj isKindOfClass:[CarDVRAssetWriter class]] )
-            {
-                CarDVRAssetWriter *assetWriter = assetWriterObj;
-                [self stopRecordingOfAssetWriter:assetWriter withCompletionHandler:^(NSException *aException) {
-                    if ( assetWriter.writer.error )
-                    {
-                        // TODO: handle error
-                        NSLog( @"[Error] Failed to stop recording clip with status %d, and error: domain(%@), code(%d), \"%@\"",
-                              assetWriter.writer.status,
-                              assetWriter.writer.error.domain,
-                              assetWriter.writer.error.code,
-                              assetWriter.writer.error.description );
-                    }
-                    else
-                    {
-                        // ignore aException
-#pragma unused( aException )
-                        [_duoAssetWriter replaceObjectAtIndex:nextRecordingClipIndex withObject:[NSNull null]];
-                    }
-                    
-                }];
-            }
-            else if ( [assetWriterObj isKindOfClass:[NSNull class]] )
-            {
-                [self installNewAssetWriterAtPosition:nextRecordingClipIndex];
-            }
-            else
-            {
-                NSAssert1( NO, @"[Error] unexpected type of asset writer: %@", assetWriterObj );
-            }
-        }
-        else
-        {
-            [self installNewAssetWriterAtPosition:NSNotFound];
-        }
-    });
-}
-#else//#ifdef USE_TIMER
-- (void)startNextAssetWriter
-{
-    CarDVRAssetWriter *nextAssetWriter;
-    if ( !_assetWriter0 )
-    {
-//        nextAssetWriter = &_assetWriter0;
-    }
-    else if ( !_assetWriter1 )
-    {
-//        nextAssetWriter = &_assetWriter1;
-    }
-    // TODO: complete
+    [self startNextAssetWriter];
 }
 
-- (void)stopAssetWriter:(CarDVRAssetWriter *)anAssetWriter
+- (void)stopDuoAssetWriterLoop
 {
+    dispatch_async( dispatch_get_main_queue(), ^{
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    });
+    NSUInteger didStopAssetWriterCount = 0;
+    NSUInteger assetWriterCount = _duoAssetWriter.count;// It should alway be 2.
+    for ( NSUInteger i = 0; ( i < assetWriterCount ) && ( didStopAssetWriterCount < assetWriterCount ) ; didStopAssetWriterCount++ )
+    {
+        if ( [self stopAssetWriter:[_duoAssetWriter objectAtIndex:i]] )
+        {
+            [_duoAssetWriter removeObjectAtIndex:i];
+            continue;
+        }
+        i++;
+    }
+    if ( !_duoAssetWriter.count )
+    {
+        _readyToRecordAudio = NO;
+        _readyToRecordVideo = NO;
+        _recordingWillBeStarted = NO;
+        _recordingWillBeStopped = NO;
+        self.recording = NO;
+    }
+}
+
+- (void)startNextAssetWriter
+{
+#ifdef DEBUG
+    NSLog( @"[Debug][+]%s", __PRETTY_FUNCTION__ );
+#endif// DEBUG
+    dispatch_async( _clipWriterQueue, ^{
+        CarDVRAssetWriter *assetWriter = [[CarDVRAssetWriter alloc] initWithURL:[self newRecordingClipURL]
+                                                                       settings:self.settings
+                                                                          error:nil];
+        [_duoAssetWriter addObject:assetWriter];
+        assetWriter.recordingWillBeStarted = YES;
+        [_recentRecordedClipURLs addObject:assetWriter.writer.outputURL];
+        if ( _recentRecordedClipURLs.count > _settings.maxCountOfRecordingClips.unsignedIntegerValue )
+        {
+            NSURL *oldestClipURL = [_recentRecordedClipURLs objectAtIndex:0];
+#ifdef DEBUG
+            NSLog( @"[Debug] removing clip: %@", oldestClipURL );
+#endif// DEBUG
+            [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:nil];
+            [_recentRecordedClipURLs removeObjectAtIndex:0];
+        }
+        
+        
+        dispatch_async( dispatch_get_main_queue(), ^{
+            NSTimeInterval startNextAssetWriterInterval =
+                self.settings.maxRecordingDurationPerClip.doubleValue - self.settings.overlappedRecordingDuration.doubleValue;
+            NSTimeInterval stopOldestAssetWriterInterval = self.settings.maxRecordingDurationPerClip.doubleValue;
+            [self performSelector:@selector(stopOldestAssetWriter) withObject:nil afterDelay:stopOldestAssetWriterInterval];
+            [self performSelector:@selector(startNextAssetWriter) withObject:nil afterDelay:startNextAssetWriterInterval];
+        });
+    });
+#ifdef DEBUG
+    NSLog( @"[Debug][-]%s", __PRETTY_FUNCTION__ );
+#endif// DEBUG
+}
+
+- (BOOL)stopAssetWriter:(CarDVRAssetWriter *)anAssetWriter
+{
+#ifdef DEBUG
+    NSLog( @"[Debug][+]%s", __PRETTY_FUNCTION__ );
+#endif// DEBUG
+    __block BOOL didStop = NO;
     [self stopRecordingOfAssetWriter:anAssetWriter withCompletionHandler:^(NSException *aException) {
         if ( anAssetWriter.writer.error )
         {
@@ -788,19 +689,30 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         {
             // ignore aException
 #pragma unused( aException )
-            if ( anAssetWriter == _assetWriter0 )
-            {
-                _assetWriter0 = nil;
-            }
-            else if ( anAssetWriter == _assetWriter1 )
-            {
-                _assetWriter1 = nil;
-            }
+            didStop = YES;
         }
-
     }];
+#ifdef DEBUG
+    NSLog( @"[Debug][-]%s => returned %@", __PRETTY_FUNCTION__, didStop ? @"YES" : @"NO" );
+#endif// DEBUG
+    return didStop;
 }
-#endif//#ifdef USE_TIMER
+
+- (void)stopOldestAssetWriter
+{
+    dispatch_async( _clipWriterQueue, ^{
+        if ( !_duoAssetWriter.count )
+        {
+            return;
+        }
+        
+        CarDVRAssetWriter *oldestAssetWriter = [_duoAssetWriter objectAtIndex:0];
+        if ( [self stopAssetWriter:oldestAssetWriter] )
+        {
+            [_duoAssetWriter removeObjectAtIndex:0];
+        }
+    });
+}
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPostion
 {
@@ -1022,45 +934,5 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         aBlock( outException );
     }
 }
-
-#ifdef USE_TIMER
-- (CarDVRAssetWriter *)installNewAssetWriterAtPosition:(NSUInteger)aPostionAtDuoAssetWriter
-{
-    NSAssert1( aPostionAtDuoAssetWriter < _duoAssetWriter.count || aPostionAtDuoAssetWriter == NSNotFound,
-              @"Invalid position %u for new asset writer.", aPostionAtDuoAssetWriter );
-    CarDVRAssetWriter *assetWriter = [[CarDVRAssetWriter alloc] initWithURL:[self newRecordingClipURL]
-                                                                   settings:_settings
-                                                                      error:nil];
-    if ( assetWriter )
-    {
-        assetWriter.recordingWillBeStarted = YES;
-        
-        if ( aPostionAtDuoAssetWriter < _duoAssetWriter.count )
-        {
-            [_duoAssetWriter replaceObjectAtIndex:aPostionAtDuoAssetWriter withObject:assetWriter];
-        }
-        else if ( aPostionAtDuoAssetWriter == NSNotFound )
-        {
-            [_duoAssetWriter addObject:assetWriter];
-        }
-        else
-        {
-            NSAssert1( NO, @"[Error] Wrong position (%u) to insert new asset writer.", aPostionAtDuoAssetWriter );
-            return nil;
-        }
-        [_recentRecordedClipURLs addObject:assetWriter.writer.outputURL];
-        if ( _recentRecordedClipURLs.count > _settings.maxCountOfRecordingClips.unsignedIntegerValue )
-        {
-            NSURL *oldestClipURL = [_recentRecordedClipURLs objectAtIndex:0];
-#ifdef DEBUG
-            NSLog( @"[Debug] removing clip: %@", oldestClipURL );
-#endif// DEBUG
-            [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:nil];
-            [_recentRecordedClipURLs removeObjectAtIndex:0];
-        }
-    }
-    return assetWriter;
-}
-#endif//#ifdef USE_TIMER
 
 @end

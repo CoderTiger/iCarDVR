@@ -96,6 +96,9 @@ static NSNumber *minVideoFrameRate;// 10 fps
 
 - (NSNumber *)maxRecordingDurationPerClip
 {
+#ifdef DEBUG
+    return @5.0f;
+#endif// DEBUG
     NSNumber *maxRecordingDurationPerClip = [self settingValueForKey:kCarDVRSettingsKeyMaxRecordingDuration];
     if ( !maxRecordingDurationPerClip )
     {
