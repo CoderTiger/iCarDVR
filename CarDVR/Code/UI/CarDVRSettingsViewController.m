@@ -13,6 +13,7 @@
 
 static const NSInteger kCarDVRSettingsSectionVideo = 0;
 static const NSInteger kCarDVRSettingsSectionStorageInfo = 1;
+static const NSInteger kCarDVRSettingsSectionAbout = 2;
 static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurationSettingSegueId";
 
 @interface CarDVRSettingsViewController ()<CarDVRMaxClipDurationSettingViewControllerDelegate>
@@ -30,6 +31,7 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
 @property (weak, nonatomic) IBOutlet UILabel *frameRateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *frameRateValueLabel;
 @property (weak, nonatomic) IBOutlet UIStepper *frameRateStepper;
+@property (weak, nonatomic) IBOutlet UILabel *aboutBriefLabel;
 
 - (IBAction)doneBarButtonItemTouched:(id)sender;
 - (IBAction)cancelBarButtonItemTouched:(id)sender;
@@ -56,7 +58,10 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
     self.maxClipDurationLabel.text = NSLocalizedString( @"maxClipDurationLabel", nil );
     self.resolutionLabel.text = NSLocalizedString( @"resolutionLabel", nil );
     self.frameRateLabel.text = NSLocalizedString( @"frameRateLabel", nil );
-    
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSString *appName = [mainBundle objectForInfoDictionaryKey:(__bridge NSString*)kCFBundleNameKey];
+    NSString *appVersion = [mainBundle objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey];
+    self.aboutBriefLabel.text = [NSString stringWithFormat:NSLocalizedString( @"aboutBriefLabel", nil ), appName, appVersion];
     [_settings beginEditing];
     [self loadVideoSettings];
 }
@@ -131,7 +136,10 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
             title = NSLocalizedString( @"settingsSectionVideo", @"Video" );
             break;
         case kCarDVRSettingsSectionStorageInfo:
-            title = NSLocalizedString( @"storageInfoSectionVideo", @"Memory Info" );
+            title = NSLocalizedString( @"settingsSectionStorageInfo", @"Memory Info" );
+            break;
+        case kCarDVRSettingsSectionAbout:
+            title = NSLocalizedString( @"settingsSectionAbout", @"About" );
             break;
         default:
             NSAssert( NO, @"It should NOT be executed here." );

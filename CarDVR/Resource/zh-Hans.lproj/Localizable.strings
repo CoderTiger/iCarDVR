@@ -23,4 +23,6 @@
 "videoQualityMiddle"="中";
 "videoQualityLow"="低";
 "maxClipDurationValueLabel"="%d 分 %d 秒";
-"storageInfoSectionVideo"="内存信息";
+"settingsSectionStorageInfo"="内存信息";
+"settingsSectionAbout"="关于";
+"aboutBriefLabel"="%@ %@";
