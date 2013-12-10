@@ -278,12 +278,18 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 
 - (void)stopRecording
 {
+#ifdef DEBUG
+    NSLog( @"[Debug][+]%s", __PRETTY_FUNCTION__ );
+#endif// DEBUG
     dispatch_async( _clipWriterQueue, ^{
         if ( _recordingWillBeStopped || !self.isRecording )
             return;
         _recordingWillBeStopped = YES;
         [self stopDuoAssetWriterLoop];
     });
+#ifdef DEBUG
+    NSLog( @"[Debug][-]%s", __PRETTY_FUNCTION__ );
+#endif// DEBUG
 }
 
 - (void)fitDeviceOrientation
