@@ -74,6 +74,9 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 - (void)stopRecordingOfAssetWriter:(CarDVRAssetWriter *)anAssetWriter
              withCompletionHandler:(void (^)(NSException *aException)) aBlock;
 
+#pragma mark - methods processing video
+- (void)processVideoSample:(CMSampleBufferRef)aSampleBuffer withFormat:(CMFormatDescriptionRef)aFormatDescription;
+
 @end
 
 @implementation CarDVRVideoCapturerInterval
@@ -302,14 +305,14 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
     {
         if ( _previewLayer.isOrientationSupported )
         {
-            _previewLayer.orientation = statusBarOrientation;
+            _previewLayer.orientation = (AVCaptureVideoOrientation)statusBarOrientation;
         }
     }
     else
     {
         if ( _previewLayer.connection.isVideoOrientationSupported )
         {
-            _previewLayer.connection.videoOrientation = statusBarOrientation;
+            _previewLayer.connection.videoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
         }
     }
     _previewLayer.frame = self.previewerView.bounds;
@@ -336,38 +339,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     //
 	if ( connection == _videoConnection )
     {
-		/*
-		// Get framerate
-		CMTime timestamp = CMSampleBufferGetPresentationTimeStamp( sampleBuffer );
-		[self calculateFramerateAtTimestamp:timestamp];
-        
-		// Get frame dimensions (for onscreen display)
-		if (self.videoDimensions.width == 0 && self.videoDimensions.height == 0)
-			self.videoDimensions = CMVideoFormatDescriptionGetDimensions( formatDescription );
-		
-		// Get buffer type
-		if ( self.videoType == 0 )
-			self.videoType = CMFormatDescriptionGetMediaSubType( formatDescription );
-        
-		CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-		
-		// Synchronously process the pixel buffer to de-green it.
-		[self processPixelBuffer:pixelBuffer];
-		
-		// Enqueue it for preview.  This is a shallow queue, so if image processing is taking too long,
-		// we'll drop this frame for preview (this keeps preview latency low).
-		OSStatus err = CMBufferQueueEnqueue(previewBufferQueue, sampleBuffer);
-		if ( !err ) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				CMSampleBufferRef sbuf = (CMSampleBufferRef)CMBufferQueueDequeueAndRetain(previewBufferQueue);
-				if (sbuf) {
-					CVImageBufferRef pixBuf = CMSampleBufferGetImageBuffer(sbuf);
-					[self.delegate pixelBufferReadyForDisplay:pixBuf];
-					CFRelease(sbuf);
-				}
-			});
-		}
-        */
+        [self processVideoSample:sampleBuffer withFormat:formatDescription];
 	}
     
     //
@@ -825,7 +797,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                                                                             outputSettings:videoCompressionSettings];
             videoInput.expectsMediaDataInRealTime = YES;
             UIInterfaceOrientation statusBarOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-            videoInput.transform = [self transformFromCurrentVideoOrientationToOrientation:statusBarOrientation];
+            videoInput.transform =
+                [self transformFromCurrentVideoOrientationToOrientation:(AVCaptureVideoOrientation)statusBarOrientation];
             if ( [anAssetWriter.writer canAddInput:videoInput] )
             {
                 anAssetWriter.videoInput = videoInput;
@@ -939,6 +912,16 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     {
         aBlock( outException );
     }
+}
+
+#pragma mark - methods processing video
+- (void)processVideoSample:(CMSampleBufferRef)aSampleBuffer withFormat:(CMFormatDescriptionRef)aFormatDescription
+{
+    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer( aSampleBuffer );
+    CVPixelBufferLockBaseAddress( imageBuffer, 0 );
+    // TODO: complete
+    
+    CVPixelBufferUnlockBaseAddress( imageBuffer, 0 );
 }
 
 @end
