@@ -10,12 +10,12 @@
 
 @interface CarDVRPathHelper : NSObject
 
-@property (readonly, copy, nonatomic) NSString *storageFolderPath;
-@property (readonly, copy, nonatomic) NSString *recentsFolderPath;
-@property (readonly, copy, nonatomic) NSString *starredFolderPath;
+@property (readonly, nonatomic) NSURL *storageFolderURL;
+@property (readonly, nonatomic) NSURL *recentsFolderURL;
+@property (readonly, nonatomic) NSURL *starredFolderURL;
 
-@property (readonly, copy, nonatomic) NSString *appSupportFolderPath;
-@property (readonly, copy, nonatomic) NSString *settingsPath;
+@property (readonly, nonatomic) NSURL *appSupportFolderURL;
+@property (readonly, nonatomic) NSURL *settingsURL;
 
 + (NSString *)stringFromDate:(NSDate *)aDate;
 + (NSDate *)dateFromString:(NSString *)aString;

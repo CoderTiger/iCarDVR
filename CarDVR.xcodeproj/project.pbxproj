@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F6066CFC18683F6800D0C051 /* CarDVRStorageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F6066CFB18683F6800D0C051 /* CarDVRStorageInfo.m */; };
 		F6214005183DB2EF004630FE /* CarDVRAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = F6214004183DB2EE004630FE /* CarDVRAssetWriter.m */; };
 		F62987461847A05C00CD25E7 /* CarDVRVideoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F62987451847A05C00CD25E7 /* CarDVRVideoTableViewCell.m */; };
 		F6298749184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */; };
@@ -54,6 +55,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F6066CFA18683F6800D0C051 /* CarDVRStorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRStorageInfo.h; sourceTree = "<group>"; };
+		F6066CFB18683F6800D0C051 /* CarDVRStorageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRStorageInfo.m; sourceTree = "<group>"; };
 		F60D0B9318237848004162C6 /* Coverage.geojson */ = {isa = PBXFileReference; lastKnownFileType = text; path = Coverage.geojson; sourceTree = "<group>"; };
 		F6214003183DB2EE004630FE /* CarDVRAssetWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRAssetWriter.h; sourceTree = "<group>"; };
 		F6214004183DB2EE004630FE /* CarDVRAssetWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRAssetWriter.m; sourceTree = "<group>"; };
@@ -292,6 +295,8 @@
 				F6FEE81F180D9CDE00034B6A /* CarDVRPathHelper.m */,
 				F6F0FC23181F589F000562DF /* CarDVRSettings.h */,
 				F6F0FC24181F589F000562DF /* CarDVRSettings.m */,
+				F6066CFA18683F6800D0C051 /* CarDVRStorageInfo.h */,
+				F6066CFB18683F6800D0C051 /* CarDVRStorageInfo.m */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -426,6 +431,7 @@
 				F6D37252180BEF230076B2EC /* CarDVRCameraViewController.m in Sources */,
 				F6F0FC25181F589F000562DF /* CarDVRSettings.m in Sources */,
 				F6FEE81B180CE75400034B6A /* CarDVRVideoCapturer.m in Sources */,
+				F6066CFC18683F6800D0C051 /* CarDVRStorageInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

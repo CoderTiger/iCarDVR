@@ -21,7 +21,7 @@ static NSString *const kSettingsFileName = @"Settings.plist";
 }
 
 #pragma mark - private methods
-- (void)constructFolderAtPath:(NSString *)aPath withFileManager:(NSFileManager *)aFileManager;
+- (void)constructFolderAtURL:(NSURL *)anURL withFileManager:(NSFileManager *)aFileManager;
 - (void)constructFolders;
 
 @end
@@ -56,19 +56,19 @@ static NSString *const kSettingsFileName = @"Settings.plist";
 }
 
 #pragma mark - private methods
-- (void)constructFolderAtPath:(NSString *)aPath withFileManager:(NSFileManager *)aFileManager
+- (void)constructFolderAtURL:(NSURL *)anURL withFileManager:(NSFileManager *)aFileManager
 {
-    if ( ![aFileManager fileExistsAtPath:aPath] )
+    if ( ![aFileManager fileExistsAtPath:anURL.path] )
     {
-        NSError *error = nil;
-        [aFileManager createDirectoryAtPath:aPath
-                withIntermediateDirectories:NO
-                                 attributes:nil
-                                      error:&error];
+        NSError *error;
+        [aFileManager createDirectoryAtURL:anURL
+               withIntermediateDirectories:NO
+                                attributes:nil
+                                     error:&error];
         if ( error )
         {
-            NSLog( @"[Error] Failed to create %@ folder with error: domain(%@), code(%d), \"%@\"",
-                  _recentsFolderPath, error.domain, error.code, error.description );
+            NSLog( @"[Error] Failed to create folder at \"%@\" with error: %@",
+                  anURL, error.description );
         }
     }
 }
@@ -77,19 +77,21 @@ static NSString *const kSettingsFileName = @"Settings.plist";
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    NSString *documentDirectory = [NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES ) objectAtIndex:0];
-    _storageFolderPath = documentDirectory;
-    _recentsFolderPath = [_storageFolderPath stringByAppendingPathComponent:kRecentsFolderName];
-    _starredFolderPath = [_storageFolderPath stringByAppendingPathComponent:kStarredFolderName];
-    [self constructFolderAtPath:_recentsFolderPath withFileManager:fileManager];
-    [self constructFolderAtPath:_starredFolderPath withFileManager:fileManager];
+    NSString *documentDirectoryPath = [NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES ) objectAtIndex:0];
+    _storageFolderURL = [NSURL fileURLWithPath:documentDirectoryPath];
+    _recentsFolderURL = [NSURL URLWithString:kRecentsFolderName relativeToURL:_storageFolderURL];
+    _starredFolderURL = [NSURL URLWithString:kStarredFolderName relativeToURL:_storageFolderURL];
     
-    NSString *applicationSupportDirectory =
+    [self constructFolderAtURL:_recentsFolderURL withFileManager:fileManager];
+    [self constructFolderAtURL:_starredFolderURL withFileManager:fileManager];
+    
+    NSString *applicationSupportDirectoryPath =
         [NSSearchPathForDirectoriesInDomains( NSApplicationSupportDirectory, NSUserDomainMask, YES ) objectAtIndex:0];
-    [self constructFolderAtPath:applicationSupportDirectory withFileManager:fileManager];
-    _appSupportFolderPath = [applicationSupportDirectory stringByAppendingPathComponent:[[NSBundle mainBundle] bundleIdentifier]];
-    [self constructFolderAtPath:_appSupportFolderPath withFileManager:fileManager];
-    _settingsPath = [_appSupportFolderPath stringByAppendingPathComponent:kSettingsFileName];
+    NSURL *applicationSupportDirectoryURL = [NSURL fileURLWithPath:applicationSupportDirectoryPath];
+    [self constructFolderAtURL:applicationSupportDirectoryURL withFileManager:fileManager];
+    _appSupportFolderURL = [NSURL URLWithString:[[NSBundle mainBundle] bundleIdentifier] relativeToURL:applicationSupportDirectoryURL];
+    [self constructFolderAtURL:_appSupportFolderURL withFileManager:fileManager];
+    _settingsURL = [NSURL URLWithString:kSettingsFileName relativeToURL:_appSupportFolderURL];
 }
 
 @end

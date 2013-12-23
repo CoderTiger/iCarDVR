@@ -117,7 +117,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         {
             CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
             NSError *error = nil;
-            [[NSFileManager defaultManager] removeItemAtPath:videoItem.filePath error:&error];
+            [[NSFileManager defaultManager] removeItemAtURL:videoItem.fileURL error:&error];
             if ( !error )
             {
                 [self.recentVideos removeObjectAtIndex:indexPath.row];
@@ -169,13 +169,18 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     CarDVRPathHelper *pathHelper = appDelegate.pathHelper;
-    NSString *recentsFolderPath = pathHelper.recentsFolderPath;
-    NSDirectoryEnumerator *dirEnum = [fileManager enumeratorAtPath:recentsFolderPath];
-    NSString *fileName = nil;
-    while ( ( fileName = [dirEnum nextObject] ) )
+    NSDirectoryEnumerator *dirEnum =
+        [fileManager enumeratorAtURL:pathHelper.recentsFolderURL
+          includingPropertiesForKeys:nil
+                             options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                        errorHandler:^BOOL(NSURL *url, NSError *error) {
+                            NSLog( @"[Error]Failed to enumerate \"%@\", error:\"%@\"", url, error );
+                            return YES;
+                        }];
+    NSURL *videoURL = nil;
+    while ( ( videoURL = [dirEnum nextObject] ) )
     {
-        CarDVRVideoItem *videoItem =
-            [[CarDVRVideoItem alloc] initWithPath:[recentsFolderPath stringByAppendingPathComponent:fileName]];
+        CarDVRVideoItem *videoItem = [[CarDVRVideoItem alloc] initWithURL:videoURL];
         if ( videoItem )
         {
             [recentVideos addObject:videoItem];

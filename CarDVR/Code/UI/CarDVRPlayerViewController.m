@@ -31,8 +31,7 @@
     if ( _videoItem )
     {
         self.title = [NSString stringWithFormat:NSLocalizedString( @"playerViewTitleFormat", nil ), _videoItem.fileName];
-        NSURL *videoURL = [NSURL fileURLWithPath:_videoItem.filePath];
-        [self installPlayerControllerWithContentURL:videoURL];
+        [self installPlayerControllerWithContentURL:_videoItem.fileURL];
     }
 }
 

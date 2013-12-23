@@ -33,14 +33,14 @@ static const CGFloat kThumbnailHeight = 140.00f;
     }
 }
 
-- (id)initWithPath:(NSString *)aPath
+- (id)initWithURL:(NSURL *)anURL
 {
-    NSAssert( aPath != nil, @"aPath should NOT be nil" );
+    NSAssert( anURL != nil, @"anURL should NOT be nil" );
     self = [super init];
     if ( self )
     {
-        _filePath = aPath;
-        _fileName = [aPath lastPathComponent];
+        _fileURL = anURL;
+        _fileName = [_fileURL lastPathComponent];
         _createdDate = [CarDVRPathHelper dateFromString:[_fileName stringByDeletingPathExtension]];
         if ( !_fileName || !_createdDate )
         {
@@ -48,8 +48,7 @@ static const CGFloat kThumbnailHeight = 140.00f;
                   _fileName, _createdDate );
             return nil;
         }
-        NSURL *videoURL = [NSURL fileURLWithPath:_filePath];
-        AVAsset *asset = [AVAsset assetWithURL:videoURL];
+        AVAsset *asset = [AVAsset assetWithURL:_fileURL];
         if ( !asset )
         {
             NSLog( @"[Error] Failed to create CarDVRVideoItem with nil AVAsset object." );

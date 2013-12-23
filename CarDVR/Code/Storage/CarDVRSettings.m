@@ -7,8 +7,9 @@
 //
 
 #import "CarDVRSettings.h"
-#import "CarDVRPathHelper.h"
 #import "CarDVRVideoCapturerConstants.h"
+#import "CarDVRPathHelper.h"
+#import "CarDVRStorageInfo.h"
 
 static NSString *const kCarDVRSettingsCommitEditingNotification = @"kCarDVRSettingsCommitEditingNotification";
 NSString *const kCarDVRSettingsCommitEditingChangedKeys=@"kCarDVRSettingsCommitEditingChangedKeys";
@@ -36,6 +37,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
 @property (strong, nonatomic) NSMutableDictionary *settings;
 @property (strong, nonatomic) NSMutableDictionary *editedSettings;
 @property (strong, nonatomic) NSMutableSet *removedSettings;
+@property (strong, nonatomic) CarDVRStorageInfo *storageInfo;
 
 #pragma mark - Private methods
 - (void)setSettingValue:(id)aValue forKey:(NSString *)aKey;
@@ -89,6 +91,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
         _notificationCenter = [[NSNotificationCenter alloc] init];
         _pathHelper = aPathHelper;
         _editing = NO;
+        _storageInfo = [[CarDVRStorageInfo alloc] init];
         [self reloadSettings];
     }
     return self;
@@ -370,7 +373,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
 
 - (void)reloadSettings
 {
-    _settings = [[NSMutableDictionary alloc] initWithContentsOfFile:self.pathHelper.settingsPath];
+    _settings = [[NSMutableDictionary alloc] initWithContentsOfURL:self.pathHelper.settingsURL];
     if ( !_settings )
     {
         _settings = [NSMutableDictionary dictionary];
@@ -379,7 +382,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
 
 - (void)saveSettings
 {
-    [self.settings writeToFile:self.pathHelper.settingsPath atomically:YES];
+    [self.settings writeToURL:self.pathHelper.settingsURL atomically:YES];
 }
 
 @end

@@ -259,14 +259,16 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
         // Remove the recent recorded clips.
         //
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtPath:self.pathHelper.recentsFolderPath
-                                                                        error:nil];
+        NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtURL:self.pathHelper.recentsFolderURL
+                                                  includingPropertiesForKeys:nil
+                                                                     options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                                                       error:nil];
         if ( recentRecordedClips )
         {
             for ( NSString *clipFileName in recentRecordedClips )
             {
-                [fileManager removeItemAtPath:[self.pathHelper.recentsFolderPath stringByAppendingPathComponent:clipFileName]
-                                        error:nil];
+                [fileManager removeItemAtURL:[NSURL URLWithString:clipFileName relativeToURL:self.pathHelper.recentsFolderURL]
+                                       error:nil];
             }
         }
         
@@ -498,8 +500,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 {
     NSDate *currentDate = [NSDate date];
     NSString *clipName = [NSString stringWithFormat:@"%@.MOV", [CarDVRPathHelper stringFromDate:currentDate]];
-    NSString *clipPath = [self.pathHelper.recentsFolderPath stringByAppendingPathComponent:clipName];
-    NSURL *clipURL = [NSURL fileURLWithPath:clipPath];
+    NSURL *clipURL = [NSURL URLWithString:clipName relativeToURL:self.pathHelper.recentsFolderURL];
     return clipURL;
 }
 

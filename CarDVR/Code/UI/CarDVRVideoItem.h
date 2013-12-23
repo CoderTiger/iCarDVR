@@ -11,10 +11,10 @@
 @interface CarDVRVideoItem : NSObject
 
 @property (retain, readonly, nonatomic) NSString *fileName;
-@property (retain, readonly, nonatomic) NSString *filePath;
+@property (strong, readonly, nonatomic) NSURL *fileURL;
 @property (strong, readonly, nonatomic) NSDate *createdDate;
 @property (strong, readonly, nonatomic) UIImage *thumbnail;
 
-- (id)initWithPath:(NSString *)aPath;
+- (id)initWithURL:(NSURL *)anURL;
 
 @end
