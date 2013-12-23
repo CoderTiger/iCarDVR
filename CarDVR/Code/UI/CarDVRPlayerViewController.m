@@ -45,7 +45,11 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-//    self.navigationController.navigationBar.translucent = NO;
+    
+    // Prevent sub views from being covered by navigation bar
+    self.navigationController.navigationBar.translucent = NO;
+    if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
+        self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
 }
 
 - (void)viewWillAppear:(BOOL)animated
