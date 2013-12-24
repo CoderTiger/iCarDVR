@@ -10,7 +10,7 @@
 
 @class CarDVRVideoItem;
 
-@interface CarDVRPlayerViewController : UIViewController
+@interface CarDVRVideoDetailViewController : UIViewController
 
 @property (weak, nonatomic) CarDVRVideoItem *videoItem;
 

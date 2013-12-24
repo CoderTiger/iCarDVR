@@ -9,7 +9,7 @@
 #import "CarDVRRecentsViewController.h"
 #import "CarDVRAppDelegate.h"
 #import "CarDVRVideoItem.h"
-#import "CarDVRPlayerViewController.h"
+#import "CarDVRVideoDetailViewController.h"
 #import "CarDVRVideoCapturerConstants.h"
 #import "CarDVRVideoTableViewCell.h"
 
@@ -147,7 +147,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     if ( [segue.identifier isEqualToString:kShowVideoPlayerSegueId] )
     {
         CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:[self.recentVideoTableView indexPathForSelectedRow].row];
-        CarDVRPlayerViewController *playerViewController = [segue destinationViewController];
+        CarDVRVideoDetailViewController *playerViewController = [segue destinationViewController];
         playerViewController.videoItem = videoItem;
     }
 }

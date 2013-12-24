@@ -541,10 +541,10 @@
             </objects>
             <point key="canvasLocation" x="817" y="336"/>
         </scene>
-        <!--CarDVRPlayerViewController-->
+        <!--CarDVRVideoDetailViewController-->
         <scene sceneID="UjC-Oq-RhW">
             <objects>
-                <viewController id="6xx-5p-VPG" userLabel="CarDVRPlayerViewController" customClass="CarDVRPlayerViewController" sceneMemberID="viewController">
+                <viewController id="6xx-5p-VPG" userLabel="CarDVRVideoDetailViewController" customClass="CarDVRVideoDetailViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Bnp-LX-zFO" userLabel="CarDVRPlayerView">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

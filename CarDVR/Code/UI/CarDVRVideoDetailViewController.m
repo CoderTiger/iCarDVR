@@ -6,11 +6,11 @@
 //  Copyright (c) 2013年 iautod. All rights reserved.
 //
 
-#import "CarDVRPlayerViewController.h"
+#import "CarDVRVideoDetailViewController.h"
 #import "CarDVRVideoItem.h"
 #import <MediaPlayer/MediaPlayer.h>
 
-@interface CarDVRPlayerViewController ()
+@interface CarDVRVideoDetailViewController ()
 
 @property (strong, nonatomic) MPMoviePlayerController *playerController;
 @property (weak, nonatomic) IBOutlet UIView *playerProtraitPaneView;
@@ -23,7 +23,7 @@
 
 @end
 
-@implementation CarDVRPlayerViewController
+@implementation CarDVRVideoDetailViewController
 
 - (void)setVideoItem:(CarDVRVideoItem *)videoItem
 {
