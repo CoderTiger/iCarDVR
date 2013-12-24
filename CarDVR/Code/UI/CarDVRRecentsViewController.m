@@ -61,7 +61,7 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
     // Do any additional setup after loading the view from its nib.
     
     // Prevent 'recents' list view from being covered by navigation bar and tab bar.
-    self.navigationController.navigationBar.translucent = NO;
+//    self.navigationController.navigationBar.translucent = NO;
     self.tabBarController.tabBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
