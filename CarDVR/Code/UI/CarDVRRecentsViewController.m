@@ -157,9 +157,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     dispatch_async( dispatch_get_current_queue(), ^{
         self.recentVideos = [self loadRecentsVideo];
-        dispatch_async( dispatch_get_current_queue(), ^{
-            [self.recentVideoTableView reloadData];
-        });
+        [self.recentVideoTableView reloadData];
     });
 }
 

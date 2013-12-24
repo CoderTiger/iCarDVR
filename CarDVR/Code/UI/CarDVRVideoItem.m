@@ -10,9 +10,6 @@
 #import "CarDVRPathHelper.h"
 #import <AVFoundation/AVFoundation.h>
 
-static const CGFloat kThumbnailWidth = 140.00f;
-static const CGFloat kThumbnailHeight = 140.00f;
-
 @implementation CarDVRVideoItem
 
 @synthesize thumbnail = _thumbnail;
@@ -48,17 +45,23 @@ static const CGFloat kThumbnailHeight = 140.00f;
                   _fileName, _createdDate );
             return nil;
         }
-        AVAsset *asset = [AVAsset assetWithURL:_fileURL];
+    }
+    return self;
+}
+
+- (void)generateThumbnailAsynchronouslyWithSize:(CGSize)aSize completionHandler:(void (^)(UIImage *))aCompletionHandler
+{
+    dispatch_async( dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0 ), ^{
+        AVAsset *asset = [AVAsset assetWithURL:self.fileURL];
         if ( !asset )
         {
             NSLog( @"[Error] Failed to create CarDVRVideoItem with nil AVAsset object." );
-            return nil;
+            return;
         }
         AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
         imageGenerator.appliesPreferredTrackTransform = YES;
-        imageGenerator.maximumSize = CGSizeMake( kThumbnailWidth, kThumbnailHeight );
+        imageGenerator.maximumSize = CGSizeMake( aSize.width, aSize.height );
         
-        // TODO: get thumbnail when displaying it in cell view
         CMTime time = CMTimeMake( 1, 60 );
         CMTime actualTime;
         NSError *error = nil;
@@ -70,10 +73,13 @@ static const CGFloat kThumbnailHeight = 140.00f;
         else
         {
             _thumbnail = [[UIImage alloc] initWithCGImage:imageRef];
+            if ( aCompletionHandler )
+            {
+                aCompletionHandler( _thumbnail );
+            }
             CFRelease( imageRef );
         }
-    }
-    return self;
+    });
 }
 
 @end

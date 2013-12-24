@@ -9,6 +9,9 @@
 #import "CarDVRVideoTableViewCell.h"
 #import "CarDVRVideoItem.h"
 
+static const CGFloat kThumbnailWidth = 140.00f;
+static const CGFloat kThumbnailHeight = 140.00f;
+
 @interface CarDVRVideoTableViewCell ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *thumbnailImageView;
@@ -24,7 +27,19 @@
 
 - (void)setVideoItem:(CarDVRVideoItem *)videoItem
 {
-    _thumbnailImageView.image = videoItem.thumbnail;
+    if ( videoItem.thumbnail )
+    {
+        _thumbnailImageView.image = videoItem.thumbnail;
+    }
+    else
+    {
+        [videoItem generateThumbnailAsynchronouslyWithSize:CGSizeMake( kThumbnailWidth, kThumbnailHeight )
+                                         completionHandler:^(UIImage *thumbnail) {
+                                             dispatch_async( dispatch_get_main_queue(), ^{
+                                                 self.thumbnailImageView.image = thumbnail;
+                                             });
+                                         }];
+    }
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier

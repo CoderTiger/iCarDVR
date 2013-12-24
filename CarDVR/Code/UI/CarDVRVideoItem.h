@@ -16,5 +16,6 @@
 @property (strong, readonly, nonatomic) UIImage *thumbnail;
 
 - (id)initWithURL:(NSURL *)anURL;
+- (void)generateThumbnailAsynchronouslyWithSize:(CGSize)aSize completionHandler:(void (^)(UIImage *thumbnail)) aCompletionHandler;
 
 @end
