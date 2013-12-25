@@ -12,24 +12,6 @@
 
 @implementation CarDVRVideoItem
 
-@synthesize thumbnail = _thumbnail;
-
-- (void)setThumbnail:(UIImage *)thumbnail
-{
-    @synchronized( self )
-    {
-        _thumbnail = thumbnail;
-    }
-}
-
-- (UIImage *)thumbnail
-{
-    @synchronized( self )
-    {
-        return _thumbnail;
-    }
-}
-
 - (id)initWithURL:(NSURL *)anURL
 {
     NSAssert( anURL != nil, @"anURL should NOT be nil" );
@@ -37,14 +19,41 @@
     if ( self )
     {
         _fileURL = anURL;
-        _fileName = [_fileURL lastPathComponent];
-        _createdDate = [CarDVRPathHelper dateFromString:[_fileName stringByDeletingPathExtension]];
-        if ( !_fileName || !_createdDate )
+        AVAsset *asset = [AVAsset assetWithURL:_fileURL];
+        if ( !asset )
         {
-            NSLog( @"[Error] Failed to create CarDVRVideoItem with nil file name(%pt) or nil created date(%pt)",
-                  _fileName, _createdDate );
+            NSLog( @"[Error] Cannot create video item with invalid video file" );
             return nil;
         }
+        _fileName = [_fileURL lastPathComponent];
+        if ( !_fileName )
+        {
+            NSLog( @"[Error] Failed to create CarDVRVideoItem with nil file name(%pt)", _fileName );
+            return nil;
+        }
+        NSError *error;
+        NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:_fileURL.path error:&error];
+        if ( !fileAttributes )
+        {
+            NSLog( @"[Error] Failed to get file attributes on creating CarDVRVideoItem due to error: \"%@\"", error.description );
+            return nil;
+        }
+        _fileSize = [fileAttributes fileSize];
+        _creationDate = asset.creationDate.dateValue;
+        if ( !_creationDate )
+        {
+            _creationDate = [fileAttributes fileCreationDate];
+        }
+        _duration = asset.duration.value / asset.duration.timescale;
+        NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+        if ( !videoTracks.count )
+        {
+            NSLog( @"[Error] No video tracks found on creating CarDVRVideoItem." );
+            return nil;
+        }
+        AVAssetTrack *videoTrack = videoTracks[0];
+        _frameRate = videoTrack.nominalFrameRate;
+        _dimension = videoTrack.naturalSize;
     }
     return self;
 }
@@ -72,10 +81,13 @@
         }
         else
         {
-            _thumbnail = [[UIImage alloc] initWithCGImage:imageRef];
-            if ( aCompletionHandler )
+            @synchronized( self )
             {
-                aCompletionHandler( _thumbnail );
+                _thumbnail = [[UIImage alloc] initWithCGImage:imageRef];
+                if ( aCompletionHandler )
+                {
+                    aCompletionHandler( _thumbnail );
+                }
             }
             CFRelease( imageRef );
         }

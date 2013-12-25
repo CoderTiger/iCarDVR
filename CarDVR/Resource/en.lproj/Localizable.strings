@@ -31,3 +31,11 @@
 // CarDVRVideoTableViewCell
 //
 "videoCreationDateFormat"="yyyy-MM-dd HH:mm:ss";
+"videoDurationSizeFormat"="%@, %@";
+"videoSecondsDurationFormat"="%u sec";
+"videoMinutesSecondsDurationFormat"="%u min %u sec";
+"videoSizeByteFormat"="%lluB";
+"videoSizeKByteFormat"="%.2fKB";
+"videoSizeMByteFormat"="%.2fMB";
+"videoSizeGByteFormat"="%.2fGB";
+"videoFrameRateDimensionFormat"="%.2f fps, %.0f x %.0f";

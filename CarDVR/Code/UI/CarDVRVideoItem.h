@@ -12,7 +12,11 @@
 
 @property (retain, readonly, nonatomic) NSString *fileName;
 @property (strong, readonly, nonatomic) NSURL *fileURL;
-@property (strong, readonly, nonatomic) NSDate *createdDate;
+@property (strong, readonly, nonatomic) NSDate *creationDate;
+@property (readonly, nonatomic) NSTimeInterval duration;// seconds
+@property (readonly, nonatomic) float frameRate;// fps
+@property (readonly, nonatomic) CGSize dimension;
+@property (readonly, nonatomic) unsigned long long fileSize;
 @property (strong, readonly, nonatomic) UIImage *thumbnail;
 
 - (id)initWithURL:(NSURL *)anURL;

@@ -35,22 +35,74 @@ static NSDateFormatter *dateFormatter;
 
 - (void)setVideoItem:(CarDVRVideoItem *)videoItem
 {
-    if ( videoItem.thumbnail )
+    if ( _videoItem == videoItem )
+        return;
+    _videoItem = videoItem;
+    //
+    // set self.thumbanailImageView.image
+    //
+    if ( _videoItem.thumbnail )
     {
-        _thumbnailImageView.image = videoItem.thumbnail;
+        _thumbnailImageView.image = _videoItem.thumbnail;
     }
     else
     {
-        [videoItem generateThumbnailAsynchronouslyWithSize:CGSizeMake( kThumbnailWidth, kThumbnailHeight )
-                                         completionHandler:^(UIImage *thumbnail) {
-                                             dispatch_async( dispatch_get_main_queue(), ^{
-                                                 self.thumbnailImageView.image = thumbnail;
-                                             });
-                                         }];
+        [_videoItem generateThumbnailAsynchronouslyWithSize:CGSizeMake( kThumbnailWidth, kThumbnailHeight )
+                                          completionHandler:^(UIImage *thumbnail) {
+                                              dispatch_async( dispatch_get_main_queue(), ^{
+                                                  self.thumbnailImageView.image = thumbnail;
+                                              });
+                                          }];
     }
-    NSError *error;
-    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:videoItem.fileURL.path error:&error];
-    self.dateLabel.text = [dateFormatter stringFromDate:[fileAttributes fileCreationDate]];
+    //
+    // set self.dateLabel.text
+    //
+    self.dateLabel.text = [dateFormatter stringFromDate:videoItem.creationDate];
+    
+    //
+    // set self.durationSizeLabel.text
+    //
+    NSString *durationText;
+    NSUInteger durationSeconds = videoItem.duration;
+    if ( durationSeconds < 60 )// < 1 minute
+    {
+        durationText = [NSString stringWithFormat:NSLocalizedString( @"videoSecondsDurationFormat", nil ),
+                    durationSeconds];
+    }
+    else
+    {
+        durationText = [NSString stringWithFormat:NSLocalizedString( @"videoMinutesSecondsDurationFormat", nil ),
+                    durationSeconds / 60, durationSeconds % 60];
+    }
+    NSString *fileSizeText;
+    if ( videoItem.fileSize < 1024 )// < 1KB
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeByteFormat", nil ),
+                    videoItem.fileSize];
+    }
+    else if ( videoItem.fileSize < 1024 * 1024 )// < 1MB
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeKByteFormat", nil ),
+                    videoItem.fileSize / 1024.0];
+    }
+    else if ( videoItem.fileSize < 1024 * 1024 * 1024 )// < 1GB
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeMByteFormat", nil ),
+                    videoItem.fileSize / ( 1024.0 * 1024.0 )];
+    }
+    else
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeGByteFormat", nil ),
+                    videoItem.fileSize / ( 1024.0 * 1024.0 * 1024.0 )];
+    }
+    self.durationSizeLabel.text = [NSString stringWithFormat:NSLocalizedString( @"videoDurationSizeFormat", nil ),
+                                   durationText, fileSizeText];
+    
+    //
+    // set self.frameRateResolutionLabel.text
+    //
+    self.frameRateResolutionLabel.text = [NSString stringWithFormat:NSLocalizedString( @"videoFrameRateDimensionFormat", nil),
+                                          videoItem.frameRate, videoItem.dimension.width, videoItem.dimension.height];
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
