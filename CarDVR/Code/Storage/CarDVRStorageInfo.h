@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+@class CarDVRPathHelper;
+
 @interface CarDVRStorageInfo : NSObject
+
+- (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
+- (void)getStorageUsageUsingBlock:(void (^)(NSNumber *totalSpace, NSNumber *freeSpace))aBlock;
 
 @end

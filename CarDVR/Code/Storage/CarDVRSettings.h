@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CarDVRStorageInfo.h"
 
 NSString *const kCarDVRSettingsCommitEditingChangedKeys;
 
@@ -19,6 +20,10 @@ NSString *const kCarDVRSettingsKeyVideoQuality;
 @class CarDVRPathHelper;
 @interface CarDVRSettings : NSObject
 
+#pragma mark - static settings
+@property (strong, readonly, nonatomic) CarDVRStorageInfo *storageInfo;
+
+#pragma mark - dynamic settings
 @property (copy, nonatomic) NSNumber *maxRecordingDurationPerClip;// second, NSTimeInterval
 @property (copy, nonatomic) NSNumber *overlappedRecordingDuration;// second, NSTimeInterval
 @property (copy, nonatomic) NSNumber *maxCountOfRecordingClips;// NSUinteger [2, 10]

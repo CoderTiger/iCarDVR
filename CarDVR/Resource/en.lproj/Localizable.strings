@@ -26,3 +26,8 @@
 "settingsSectionStorageInfo"="Memory Info";
 "settingsSectionAbout"="About";
 "aboutBriefLabel"="%@ %@";
+
+//
+// CarDVRVideoTableViewCell
+//
+"videoCreationDateFormat"="yyyy-MM-dd HH:mm:ss";

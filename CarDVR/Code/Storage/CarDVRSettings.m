@@ -91,7 +91,7 @@ static NSNumber *minVideoFrameRate;// 10 fps
         _notificationCenter = [[NSNotificationCenter alloc] init];
         _pathHelper = aPathHelper;
         _editing = NO;
-        _storageInfo = [[CarDVRStorageInfo alloc] init];
+        _storageInfo = [[CarDVRStorageInfo alloc] initWithPathHelper:aPathHelper];
         [self reloadSettings];
     }
     return self;

@@ -11,13 +11,14 @@
 #import "CarDVRVideoCapturerConstants.h"
 #import "CarDVRMaxClipDurationSettingViewController.h"
 
-static const NSInteger kCarDVRSettingsSectionVideo = 0;
-static const NSInteger kCarDVRSettingsSectionStorageInfo = 1;
+static const NSInteger kCarDVRSettingsSectionStorageInfo = 0;
+static const NSInteger kCarDVRSettingsSectionVideo = 1;
 static const NSInteger kCarDVRSettingsSectionAbout = 2;
 static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurationSettingSegueId";
 
 @interface CarDVRSettingsViewController ()<CarDVRMaxClipDurationSettingViewControllerDelegate>
 
+@property (weak, nonatomic) IBOutlet UILabel *storageUsageLabel;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneBarButtonItem;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelBarButtonItem;
 @property (weak, nonatomic) IBOutlet UILabel *maxRecordingClipsLabel;
@@ -76,6 +77,35 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
 {
 #pragma unused( animated )
     self.navigationController.navigationBarHidden = NO;
+    [self.settings.storageInfo getStorageUsageUsingBlock:^(NSNumber *totalSpace, NSNumber *freeSpace) {
+        unsigned long long totalBytes = [totalSpace unsignedLongLongValue];
+        unsigned long long freeBytes = [freeSpace unsignedLongLongValue];
+        double freePercent = (double)freeBytes / (double)totalBytes * 100;
+        NSString *storageUsage;
+        if ( freeBytes < 1024 )
+        {
+            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %lluB",
+                            freePercent, freeBytes];
+        }
+        else if ( freeBytes < 1024 * 1024 )
+        {
+            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %.2fKB",
+                            freePercent, freeBytes/1024.0];
+        }
+        else if ( freeBytes < 1024 * 1024 * 1024 )
+        {
+            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %.2fMB",
+                            freePercent, freeBytes/(1024.0*1024.0)];
+        }
+        else
+        {
+            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %.2fGB",
+                            freePercent, freeBytes/(1024.0*1024.0*1024.0)];
+        }
+        dispatch_async( dispatch_get_main_queue(), ^{
+            self.storageUsageLabel.text = storageUsage;
+        });
+    }];
 }
 
 - (IBAction)doneBarButtonItemTouched:(id)sender

@@ -26,3 +26,8 @@
 "settingsSectionStorageInfo"="内存信息";
 "settingsSectionAbout"="关于";
 "aboutBriefLabel"="%@ %@";
+
+//
+// CarDVRVideoTableViewCell
+//
+"videoCreationDateFormat"="yyyy-MM-dd HH:mm:ss";

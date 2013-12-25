@@ -11,6 +11,7 @@
 
 static const CGFloat kThumbnailWidth = 140.00f;
 static const CGFloat kThumbnailHeight = 140.00f;
+static NSDateFormatter *dateFormatter;
 
 @interface CarDVRVideoTableViewCell ()
 
@@ -24,6 +25,13 @@ static const CGFloat kThumbnailHeight = 140.00f;
 @implementation CarDVRVideoTableViewCell
 
 @synthesize videoItem = _videoItem;
+
++ (void)initialize
+{
+    dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateStyle:NSDateFormatterNoStyle];
+    [dateFormatter setDateFormat:NSLocalizedString( @"videoCreationDateFormat", nil )];
+}
 
 - (void)setVideoItem:(CarDVRVideoItem *)videoItem
 {
@@ -40,6 +48,9 @@ static const CGFloat kThumbnailHeight = 140.00f;
                                              });
                                          }];
     }
+    NSError *error;
+    NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:videoItem.fileURL.path error:&error];
+    self.dateLabel.text = [dateFormatter stringFromDate:[fileAttributes fileCreationDate]];
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
