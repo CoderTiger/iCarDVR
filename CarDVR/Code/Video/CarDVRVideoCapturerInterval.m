@@ -265,10 +265,9 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
                                                                        error:nil];
         if ( recentRecordedClips )
         {
-            for ( NSString *clipFileName in recentRecordedClips )
+            for ( NSURL *clipFileURL in recentRecordedClips )
             {
-                [fileManager removeItemAtURL:[NSURL URLWithString:clipFileName relativeToURL:self.pathHelper.recentsFolderURL]
-                                       error:nil];
+                [fileManager removeItemAtURL:clipFileURL error:nil];
             }
         }
         
@@ -500,7 +499,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 {
     NSDate *currentDate = [NSDate date];
     NSString *clipName = [NSString stringWithFormat:@"%@.MOV", [CarDVRPathHelper stringFromDate:currentDate]];
-    NSURL *clipURL = [NSURL URLWithString:clipName relativeToURL:self.pathHelper.recentsFolderURL];
+    NSURL *clipURL =  [NSURL fileURLWithPath:[self.pathHelper.recentsFolderURL.path stringByAppendingPathComponent:clipName]
+                                 isDirectory:NO];
     return clipURL;
 }
 

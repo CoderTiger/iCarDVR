@@ -86,6 +86,12 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [self layoutSubviews];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+#pragma unused(animated)
+    [self stopRecordingVideo];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

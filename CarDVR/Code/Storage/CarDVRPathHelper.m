@@ -78,20 +78,25 @@ static NSString *const kSettingsFileName = @"Settings.plist";
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     NSString *documentDirectoryPath = [NSSearchPathForDirectoriesInDomains( NSDocumentDirectory, NSUserDomainMask, YES ) objectAtIndex:0];
-    _storageFolderURL = [NSURL fileURLWithPath:documentDirectoryPath];
-    _recentsFolderURL = [NSURL URLWithString:kRecentsFolderName relativeToURL:_storageFolderURL];
-    _starredFolderURL = [NSURL URLWithString:kStarredFolderName relativeToURL:_storageFolderURL];
+    _storageFolderURL = [NSURL fileURLWithPath:documentDirectoryPath isDirectory:YES];
+    _recentsFolderURL = [NSURL fileURLWithPath:[documentDirectoryPath stringByAppendingPathComponent:kRecentsFolderName]
+                                   isDirectory:YES];
+    _starredFolderURL = [NSURL fileURLWithPath:[documentDirectoryPath stringByAppendingPathComponent:kStarredFolderName]
+                                   isDirectory:YES];
     
     [self constructFolderAtURL:_recentsFolderURL withFileManager:fileManager];
     [self constructFolderAtURL:_starredFolderURL withFileManager:fileManager];
     
     NSString *applicationSupportDirectoryPath =
         [NSSearchPathForDirectoriesInDomains( NSApplicationSupportDirectory, NSUserDomainMask, YES ) objectAtIndex:0];
-    NSURL *applicationSupportDirectoryURL = [NSURL fileURLWithPath:applicationSupportDirectoryPath];
+    NSURL *applicationSupportDirectoryURL = [NSURL fileURLWithPath:applicationSupportDirectoryPath isDirectory:YES];
     [self constructFolderAtURL:applicationSupportDirectoryURL withFileManager:fileManager];
-    _appSupportFolderURL = [NSURL URLWithString:[[NSBundle mainBundle] bundleIdentifier] relativeToURL:applicationSupportDirectoryURL];
+    _appSupportFolderURL = [NSURL fileURLWithPath:[applicationSupportDirectoryPath stringByAppendingPathComponent:
+                                                   [[NSBundle mainBundle] bundleIdentifier]]
+                                      isDirectory:YES];
     [self constructFolderAtURL:_appSupportFolderURL withFileManager:fileManager];
-    _settingsURL = [NSURL URLWithString:kSettingsFileName relativeToURL:_appSupportFolderURL];
+    _settingsURL = [NSURL fileURLWithPath:[_appSupportFolderURL.path stringByAppendingPathComponent:kSettingsFileName]
+                              isDirectory:NO];
 }
 
 @end
