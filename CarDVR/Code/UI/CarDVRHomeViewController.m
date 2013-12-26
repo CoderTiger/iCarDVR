@@ -27,12 +27,10 @@ static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
-    self.settingBarButtonItem.title = NSLocalizedString( @"settingsViewTitle", @"Settings" );
-//    UIBarButtonItem *settingsButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString( @"settingsViewTitle", @"Settings" )
-//                                                                           style:UIBarButtonItemStylePlain
-//                                                                          target:self
-//                                                                          action:@selector(settingsButtonItemTouched)];
-//    self.navigationItem.rightBarButtonItem = settingsButtonItem;
+    self.settingBarButtonItem.title = NSLocalizedString( @"settingsViewTitle", @"Settings" );    
+    self.navigationController.navigationBar.translucent = NO;
+    if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
+        self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
 }
 
 - (void)didReceiveMemoryWarning
