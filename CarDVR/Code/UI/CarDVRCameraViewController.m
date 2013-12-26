@@ -10,10 +10,14 @@
 #import "CarDVRVideoCapturer.h"
 #import "CarDVRHomeViewController.h"
 #import "CarDVRAppDelegate.h"
+#import "CarDVRLocationDetector.h"
 
 static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
-@interface CarDVRCameraViewController ()
+@interface CarDVRCameraViewController ()<CarDVRLocationDetectorDelegate>
+{
+    CarDVRLocationDetector *_locationDetector;
+}
 
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
@@ -39,7 +43,8 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 
 #pragma mark - private methods
-- (void)constructVideoCapturer;
+- (void)installVideoCapturer;
+- (void)installLocationDetector;
 - (void)layoutSubviews;
 - (void)startRecordingVideo;
 - (void)stopRecordingVideo;
@@ -61,7 +66,8 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self setTitle:NSLocalizedString( @"cameraViewTitle", @"Camera" )];
-    [self constructVideoCapturer];
+    [self installVideoCapturer];
+    [self installLocationDetector];
     NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
     [defaultNC addObserver:self
                   selector:@selector(handleCarDVRVideoCapturerDidStartRecordingNotification)
@@ -112,13 +118,20 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 }
 
 #pragma mark - private methods
-- (void)constructVideoCapturer
+- (void)installVideoCapturer
 {
     if ( _videoCapturer )
         return;
     CarDVRAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     _videoCapturer = [[CarDVRVideoCapturer alloc] initWithPathHelper:appDelegate.pathHelper
                                                             settings:appDelegate.settings];
+}
+
+- (void)installLocationDetector
+{
+    if ( _locationDetector )
+        return;
+    _locationDetector = [[CarDVRLocationDetector alloc] initWithDelegate:self];
 }
 
 - (void)layoutSubviews
@@ -204,6 +217,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
 {
+    [_locationDetector start];
     self.startButton.hidden = YES;
     self.stopButton.hidden = NO;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
@@ -211,6 +225,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification
 {
+    [_locationDetector stop];
     self.startButton.hidden = NO;
     self.stopButton.hidden = YES;
     [UIApplication sharedApplication].idleTimerDisabled = NO;
