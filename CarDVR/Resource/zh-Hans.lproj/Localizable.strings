@@ -32,7 +32,7 @@
 //
 "videoCreationDateFormat"="yyyy-MM-dd HH:mm:ss";
 "videoDurationSizeFormat"="%@, %@";
-"videoSecondsDurationFormat"="%u sec";
+"videoSecondsDurationFormat"="%u秒";
 "videoMinutesSecondsDurationFormat"="%u分%u秒";
 "videoSizeByteFormat"="%lluB";
 "videoSizeKByteFormat"="%.2fKB";
