@@ -59,6 +59,12 @@
     [self layoutSubviews];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+#pragma unused( animated )
+    [self layoutSubviews];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
