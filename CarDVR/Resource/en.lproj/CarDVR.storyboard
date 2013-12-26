@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="8QN-74-2je">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5037" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="8QN-74-2je">
     <dependencies>
         <deployment defaultVersion="1280" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -195,7 +195,7 @@
                                             <outlet property="durationSizeLabel" destination="Ojf-wa-BTo" id="bfC-9a-gZS"/>
                                             <outlet property="frameRateResolutionLabel" destination="KSg-en-BNr" id="gah-ze-VKt"/>
                                             <outlet property="thumbnailImageView" destination="MQp-x6-WKR" id="fCG-Vh-kBL"/>
-                                            <segue destination="6xx-5p-VPG" kind="push" identifier="kShowVideoPlayerSegueId" id="whM-Uz-2Lz"/>
+                                            <segue destination="cBt-M7-Yka" kind="push" identifier="kShowVideoPlayerSegueId" id="dmg-e5-7ne"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -216,7 +216,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HIx-AG-3P0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="817" y="-322"/>
+            <point key="canvasLocation" x="817" y="-258"/>
         </scene>
         <!--CarDVRPreSettingsViewController-->
         <scene sceneID="Zli-rU-wa8">
@@ -519,34 +519,51 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BM9-1D-nT2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="817" y="336"/>
+            <point key="canvasLocation" x="817" y="398"/>
         </scene>
         <!--CarDVRVideoDetailViewController-->
-        <scene sceneID="UjC-Oq-RhW">
+        <scene sceneID="uLA-lO-s9B">
             <objects>
-                <viewController id="6xx-5p-VPG" userLabel="CarDVRVideoDetailViewController" customClass="CarDVRVideoDetailViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Bnp-LX-zFO" userLabel="CarDVRPlayerView">
+                <tableViewController id="cBt-M7-Yka" userLabel="CarDVRVideoDetailViewController" customClass="CarDVRVideoDetailViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="OQb-W2-X3h" userLabel="CarDVRVideoDetailView">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view hidden="YES" contentMode="scaleToFill" id="bDw-fD-tau" userLabel="View - Player Portrait Pane">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                            </view>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
-                        <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="V5a-nx-4dX"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection id="H9d-MR-fIc" userLabel="Section - Video">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="200" id="qrP-Bk-Pio">
+                                        <rect key="frame" x="0.0" y="35" width="320" height="200"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="qrP-Bk-Pio" id="gpM-Ll-ULw" userLabel="Content View - Player Cell">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" id="hTn-WY-R98" userLabel="View - Player">
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                </view>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="cBt-M7-Yka" id="imi-Xk-79o"/>
+                            <outlet property="delegate" destination="cBt-M7-Yka" id="XTL-4k-Qui"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="h2l-Sb-aFC"/>
                     <connections>
-                        <outlet property="playerProtraitPaneView" destination="bDw-fD-tau" id="zVX-mF-Mii"/>
+                        <outlet property="playerCellView" destination="gpM-Ll-ULw" id="b08-BC-PEp"/>
+                        <outlet property="playerPaneView" destination="hTn-WY-R98" id="8XT-4x-X00"/>
                     </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4wR-oc-bWT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cRk-Px-7t7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1238" y="-322"/>
+            <point key="canvasLocation" x="1238" y="-258"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

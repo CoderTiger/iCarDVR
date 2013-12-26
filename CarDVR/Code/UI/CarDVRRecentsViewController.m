@@ -127,21 +127,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     }
 }
 
-//#pragma mark - from UITableViewDelegate
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//#pragma unused( tableView )
-//    if ( indexPath.section == kRecentVideosSection && indexPath.row < self.recentVideos.count )
-//    {
-//        CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
-//        CarDVRPlayerViewController *playerViewController =
-//            [[CarDVRPlayerViewController alloc] initWithNibName:@"CarDVRPlayerViewController"
-//                                                         bundle:nil
-//                                                      videoItem:videoItem];
-//        [self.navigationController pushViewController:playerViewController animated:YES];
-//    }
-//}
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ( [segue.identifier isEqualToString:kShowVideoPlayerSegueId] )

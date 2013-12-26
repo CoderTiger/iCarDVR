@@ -13,7 +13,8 @@
 @interface CarDVRVideoDetailViewController ()
 
 @property (strong, nonatomic) MPMoviePlayerController *playerController;
-@property (weak, nonatomic) IBOutlet UIView *playerProtraitPaneView;
+@property (weak, nonatomic) IBOutlet UIView *playerPaneView;
+@property (weak, nonatomic) IBOutlet UIView *playerCellView;
 
 #pragma mark - private methods
 - (void)installPlayerControllerWithContentURL:(NSURL *)aURL;
@@ -31,7 +32,6 @@
     if ( _videoItem )
     {
         self.title = [NSString stringWithFormat:NSLocalizedString( @"playerViewTitleFormat", nil ), _videoItem.fileName];
-        [self installPlayerControllerWithContentURL:_videoItem.fileURL];
     }
 }
 
@@ -46,9 +46,11 @@
     // Do any additional setup after loading the view from its nib.
     
     // Prevent sub views from being covered by navigation bar
-//    self.navigationController.navigationBar.translucent = NO;
+    self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
+    
+    [self installPlayerControllerWithContentURL:self.videoItem.fileURL];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -65,29 +67,8 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    [UIView animateWithDuration:duration animations:^{
-        if ( UIInterfaceOrientationIsLandscape( toInterfaceOrientation ) )
-        {
-            CGSize size = [UIScreen mainScreen].bounds.size;
-            size = CGSizeMake( size.height, size.width );
-            UIApplication *application = [UIApplication sharedApplication];
-       
-            if ( application.statusBarHidden == NO )
-            {
-                size.height -= MIN( application.statusBarFrame.size.width, application.statusBarFrame.size.height );
-            }
-            
-            CGRect bounds = self.view.bounds;
-            self.playerController.view.frame = CGRectMake( bounds.origin.x,
-                                                          bounds.origin.y,
-                                                          size.width,
-                                                          size.height );
-        }
-        else
-        {
-            self.playerController.view.frame = self.playerProtraitPaneView.frame;
-        }
-    }];
+#pragma unused(toInterfaceOrientation, duration)
+    self.playerController.view.frame = self.playerPaneView.frame;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -106,9 +87,11 @@
     _playerController = [[MPMoviePlayerController alloc] initWithContentURL:aURL];
     _playerController.controlStyle = MPMovieControlStyleEmbedded;
     _playerController.shouldAutoplay = NO;
+    _playerController.view.hidden = NO;
+    _playerController.scalingMode = MPMovieScalingModeAspectFit;
     [_playerController prepareToPlay];
-    [_playerController.view setFrame:self.playerProtraitPaneView.frame];
-    [self.view addSubview:_playerController.view];
+    [_playerController.view setFrame:self.playerPaneView.frame];
+    [self.playerCellView addSubview:_playerController.view];
     
     NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
     [defaultNC addObserver:self
@@ -119,15 +102,7 @@
 
 - (void)layoutSubviews
 {
-    UIInterfaceOrientation statusBarOrientation = [[UIApplication sharedApplication] statusBarOrientation];
-    if ( UIInterfaceOrientationIsLandscape( statusBarOrientation ) )
-    {
-        self.playerController.view.frame = self.view.bounds;
-    }
-    else
-    {
-        self.playerController.view.frame = self.playerProtraitPaneView.frame;
-    }
+    self.playerController.view.frame = self.playerPaneView.frame;
 }
 
 - (void)handleMPMoviePlayerDidExitFullscreenNotification
