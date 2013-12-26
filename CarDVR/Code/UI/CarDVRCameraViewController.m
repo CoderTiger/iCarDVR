@@ -104,6 +104,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 #pragma unused( sender )
     if ( [segue.identifier isEqualToString:kShowHomeSegueId] )
     {
+        [self stopRecordingVideo];
         CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
         CarDVRHomeViewController *homeViewController = segue.destinationViewController;
         homeViewController.settings = appDelegate.settings;
