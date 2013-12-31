@@ -15,9 +15,6 @@
 static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 @interface CarDVRCameraViewController ()<CarDVRLocationDetectorDelegate>
-{
-    CarDVRLocationDetector *_locationDetector;
-}
 
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
@@ -29,6 +26,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 @property (strong, nonatomic) CarDVRVideoCapturer *videoCapturer;
 @property (strong, nonatomic) CarDVRHomeViewController *homeViewController;
+@property (strong, nonatomic) CarDVRLocationDetector *locationDetector;
 
 @property (weak, nonatomic) IBOutlet UIView *previewerView;
 
@@ -217,7 +215,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
 {
-    [_locationDetector start];
+    [self.locationDetector start];
     self.startButton.hidden = YES;
     self.stopButton.hidden = NO;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
@@ -225,10 +223,22 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification
 {
-    [_locationDetector stop];
+    [self.locationDetector stop];
     self.startButton.hidden = NO;
     self.stopButton.hidden = YES;
     [UIApplication sharedApplication].idleTimerDisabled = NO;
+}
+
+#pragma mark - from CarDVRLocationDetectorDelegate
+- (void)detector:(CarDVRLocationDetector *)aDetector didUpdateToLocation:(CLLocation *)aLocaton
+{
+#ifdef DEBUG
+    NSLog( @"[Debug]%.4f° %@, %.4f° %@",
+          fabs( aLocaton.coordinate.latitude ),
+          aLocaton.coordinate.latitude < 0 ? @"S" : @"N",
+          fabs( aLocaton.coordinate.longitude ),
+          aLocaton.coordinate.longitude < 0 ? @"W" : @"E" );
+#endif// DEBUG
 }
 
 @end

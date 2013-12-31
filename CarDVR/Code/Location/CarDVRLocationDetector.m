@@ -7,7 +7,6 @@
 //
 
 #import "CarDVRLocationDetector.h"
-#import <CoreLocation/CoreLocation.h>
 
 @interface CarDVRLocationDetector ()<CLLocationManagerDelegate>
 {
@@ -16,6 +15,7 @@
 
 #pragma mark - Private methods
 - (void)installLocationManager;
+- (void)didUpdateToLocation:(CLLocation *)aLocation;
 
 @end
 
@@ -32,7 +32,6 @@
     if ( self )
     {
         _delegate = aDelegate;
-        [self installLocationManager];
     }
     return self;
 }
@@ -44,6 +43,8 @@
         NSLog( @"[Error] location services NOT enabled" );
         return;
     }
+    [self installLocationManager];
+    
     [_locationManager startUpdatingLocation];
     // todo: complete
 }
@@ -60,10 +61,23 @@
 }
 
 #pragma mark - from CLLocationManagerDelegate
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+// for iOS 6 and above
+- (void)locationManager:(CLLocationManager *)manager
+     didUpdateLocations:(NSArray *)locations
 {
-    // todo: complete
-    NSLog( @"%s", __PRETTY_FUNCTION__ );
+    if ( locations.count )
+    {
+        [self didUpdateToLocation:[locations lastObject]];
+    }
+}
+
+// for iOS 5 and below
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
+{
+#pragma unused( newLocation )
+    [self didUpdateToLocation:newLocation];
 }
 
 
@@ -74,6 +88,18 @@
         return;
     _locationManager = [[CLLocationManager alloc] init];
     _locationManager.delegate = self;
+    _locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+    _locationManager.distanceFilter = kCLDistanceFilterNone;
+}
+
+- (void)didUpdateToLocation:(CLLocation *)aLocation
+{
+    const NSTimeInterval kMaxLocationAge = 3.0f;// MARK: the threshold value (3.0f) might need to be adjusted by testing.
+    NSTimeInterval locationAge = -[aLocation.timestamp timeIntervalSinceNow];
+    if ( ( locationAge < kMaxLocationAge ) && ( self.delegate ) )
+    {
+        [self.delegate detector:self didUpdateToLocation:aLocation];
+    }
 }
 
 @end

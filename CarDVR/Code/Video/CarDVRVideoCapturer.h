@@ -27,9 +27,4 @@
 - (void)fitDeviceOrientation;
 - (void)focus;
 
-#pragma mark - config methods
-//- (void)beginConfiguration;
-//- (void)commitConfiguration;
-//- (void)cancelConfig;
-
 @end

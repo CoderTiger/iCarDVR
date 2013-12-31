@@ -7,11 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 
+@class CarDVRLocationDetector;
 @protocol CarDVRLocationDetectorDelegate <NSObject>
 
 @optional
-// TODO:
+- (void)detector:(CarDVRLocationDetector *)aDetector didUpdateToLocation:(CLLocation *)aLocaton;
 
 @end
 
