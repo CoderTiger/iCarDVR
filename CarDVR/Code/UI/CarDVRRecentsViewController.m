@@ -12,6 +12,7 @@
 #import "CarDVRVideoDetailViewController.h"
 #import "CarDVRVideoCapturerConstants.h"
 #import "CarDVRVideoTableViewCell.h"
+#import "CarDVRVideoClipURLs.h"
 
 static const NSInteger kRecentVideosSection = 0;
 static NSString *const kRecentVideoCellId = @"kRecentVideoCellId";
@@ -117,12 +118,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         {
             CarDVRVideoItem *videoItem = [self.recentVideos objectAtIndex:indexPath.row];
             NSError *error = nil;
-            [[NSFileManager defaultManager] removeItemAtURL:videoItem.fileURL error:&error];
+            NSFileManager *defaultManager = [NSFileManager defaultManager];
+            [defaultManager removeItemAtURL:videoItem.videoClipURLs.videoFileURL error:&error];
             if ( !error )
             {
                 [self.recentVideos removeObjectAtIndex:indexPath.row];
                 [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
             }
+            [defaultManager removeItemAtURL:videoItem.videoClipURLs.srtFileURL error:&error];
+            [defaultManager removeItemAtURL:videoItem.videoClipURLs.gpxFileURL error:&error];
         }
     }
 }
@@ -152,18 +156,18 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     CarDVRPathHelper *pathHelper = appDelegate.pathHelper;
-    NSDirectoryEnumerator *dirEnum =
-        [fileManager enumeratorAtURL:pathHelper.recentsFolderURL
-          includingPropertiesForKeys:nil
-                             options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                        errorHandler:^BOOL(NSURL *url, NSError *error) {
-                            NSLog( @"[Error]Failed to enumerate \"%@\", error:\"%@\"", url, error );
-                            return YES;
-                        }];
-    NSURL *videoURL = nil;
-    while ( ( videoURL = [dirEnum nextObject] ) )
+    NSDirectoryEnumerator *dirEnum = [fileManager enumeratorAtPath:pathHelper.recentsFolderURL.path];
+    NSString *fileName;
+    while ( ( fileName = [dirEnum nextObject] ) )
     {
-        CarDVRVideoItem *videoItem = [[CarDVRVideoItem alloc] initWithURL:videoURL];
+        if ( ![CarDVRVideoClipURLs isValidVideoPathExtension:fileName.pathExtension] )
+        {
+            continue;
+        }
+        NSString *videoClipName = [fileName.lastPathComponent stringByDeletingPathExtension];
+        CarDVRVideoClipURLs *videoClipURLs = [[CarDVRVideoClipURLs alloc] initWithFolderURL:pathHelper.recentsFolderURL
+                                                                                   clipName:videoClipName];
+        CarDVRVideoItem *videoItem = [[CarDVRVideoItem alloc] initWithVideoClipURLs:videoClipURLs];
         if ( videoItem )
         {
             [recentVideos addObject:videoItem];

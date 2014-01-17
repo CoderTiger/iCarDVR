@@ -32,7 +32,7 @@ static NSString *const kSettingsFileName = @"Settings.plist";
 {
     dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateStyle:NSDateFormatterNoStyle];
-    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd_HH-mm-ss"];
 }
 
 - (id)init
@@ -45,14 +45,13 @@ static NSString *const kSettingsFileName = @"Settings.plist";
     return self;
 }
 
-+ (NSString *)stringFromDate:(NSDate *)aDate
++ (NSString *)fileNameFromDate:(NSDate *)aDate
 {
-    return [dateFormatter stringFromDate:aDate];
-}
-
-+ (NSDate *)dateFromString:(NSString *)aString
-{
-    return [dateFormatter dateFromString:aString];
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSString *appName = [mainBundle.infoDictionary objectForKey:(__bridge NSString *)kCFBundleNameKey];
+    NSMutableString *fileName = [NSMutableString stringWithString:appName];
+    [fileName appendString:[dateFormatter stringFromDate:aDate]];
+    return fileName;
 }
 
 #pragma mark - private methods

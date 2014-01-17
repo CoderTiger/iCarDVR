@@ -75,25 +75,25 @@ static NSDateFormatter *dateFormatter;
                     durationSeconds / 60, durationSeconds % 60];
     }
     NSString *fileSizeText;
-    if ( videoItem.fileSize < 1024 )// < 1KB
+    if ( videoItem.videoFileSize < 1024 )// < 1KB
     {
         fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeByteFormat", nil ),
-                    videoItem.fileSize];
+                    videoItem.videoFileSize];
     }
-    else if ( videoItem.fileSize < 1024 * 1024 )// < 1MB
+    else if ( videoItem.videoFileSize < 1024 * 1024 )// < 1MB
     {
         fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeKByteFormat", nil ),
-                    videoItem.fileSize / 1024.0];
+                    videoItem.videoFileSize / 1024.0];
     }
-    else if ( videoItem.fileSize < 1024 * 1024 * 1024 )// < 1GB
+    else if ( videoItem.videoFileSize < 1024 * 1024 * 1024 )// < 1GB
     {
         fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeMByteFormat", nil ),
-                    videoItem.fileSize / ( 1024.0 * 1024.0 )];
+                    videoItem.videoFileSize / ( 1024.0 * 1024.0 )];
     }
     else
     {
         fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeGByteFormat", nil ),
-                    videoItem.fileSize / ( 1024.0 * 1024.0 * 1024.0 )];
+                    videoItem.videoFileSize / ( 1024.0 * 1024.0 * 1024.0 )];
     }
     self.durationSizeLabel.text = [NSString stringWithFormat:NSLocalizedString( @"videoDurationSizeFormat", nil ),
                                    durationText, fileSizeText];

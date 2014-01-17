@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <CoreLocation/CoreLocation.h>
 
 @class CarDVRSettings;
 
@@ -23,7 +24,12 @@
 @property (assign) BOOL recordingWillBeStopped;
 @property (assign, getter = isRecording, nonatomic) BOOL recording;
 
-- (id)initWithURL:(NSURL *)anURL settings:(CarDVRSettings *)aSettings error:(NSError *__autoreleasing *)anOutError;
+- (id)initWithFolderPath:(NSString *)aFolderPath
+                clipName:(NSString *)aClipName
+                settings:(CarDVRSettings *)aSettings
+                   error:(NSError *__autoreleasing *)anOutError;
+- (BOOL)finishWriting;
 - (void)writeSampleBuffer:(CMSampleBufferRef)aSampleBuffer ofType:(NSString *)aMediaType;
+- (void)addSubtitle:(NSString *)aSubtitle;
 
 @end

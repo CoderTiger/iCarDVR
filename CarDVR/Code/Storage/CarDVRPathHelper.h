@@ -17,7 +17,6 @@
 @property (readonly, nonatomic) NSURL *appSupportFolderURL;
 @property (readonly, nonatomic) NSURL *settingsURL;
 
-+ (NSString *)stringFromDate:(NSDate *)aDate;
-+ (NSDate *)dateFromString:(NSString *)aString;
++ (NSString *)fileNameFromDate:(NSDate *)aDate;
 
 @end

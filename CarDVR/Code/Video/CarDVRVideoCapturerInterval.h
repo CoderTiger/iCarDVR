@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 #import "CarDVRVideoCapturerConstants.h"
 
 @class CarDVRPathHelper;
@@ -27,5 +28,6 @@
 - (void)stopRecording;
 - (void)fitDeviceOrientation;
 - (void)focus;
+- (void)didUpdateToLocation:(CLLocation *)aLocation;
 
 @end

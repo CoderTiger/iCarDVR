@@ -120,4 +120,9 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVide
     [_interval focus];
 }
 
+- (void)didUpdateToLocation:(CLLocation *)aLocation
+{
+    [_interval didUpdateToLocation:aLocation];
+}
+
 @end

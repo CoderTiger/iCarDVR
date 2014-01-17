@@ -11,11 +11,13 @@
 #import "CarDVRPathHelper.h"
 #import "CarDVRSettings.h"
 #import "CarDVRAssetWriter.h"
+#import "CarDVRVideoClipURLs.h"
 
 static const NSUInteger kCountOfDuoRecordingClips = 2;
 static const char kVideoCaptureQueueName[] = "com.iAutoD.videoCaptureQueue";
 static const char kAudioCaptureQueueName[] = "com.iAutoD.audioCaptureQueue";
 static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
+static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
 @interface CarDVRVideoCapturerInterval ()<AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
 {
@@ -32,6 +34,8 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
     BOOL _readyToRecordVideo;
 	BOOL _recordingWillBeStarted;
 	BOOL _recordingWillBeStopped;
+    
+    CLLocation *_location;
 }
 
 #pragma mark - redeclared public properties as readwrite
@@ -53,6 +57,7 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
 - (NSURL *)newRecordingClipURL;
+- (NSString *)newRecordingClipName;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
 - (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
@@ -62,6 +67,7 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 - (void)startNextAssetWriter;
 - (BOOL)stopAssetWriter:(CarDVRAssetWriter *)anAssetWriter;
 - (void)stopOldestAssetWriter;
+- (void)updateSubtitles;
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPosition;
 - (AVCaptureDevice *)audioDevice;
@@ -328,6 +334,20 @@ static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
     // TODO: complete
 }
 
+- (void)didUpdateToLocation:(CLLocation *)aLocation
+{
+    dispatch_async( _clipWriterQueue, ^{
+#ifdef DEBUG
+        NSLog( @"[Debug]%.4f° %@, %.4f° %@",
+              fabs( aLocation.coordinate.latitude ),
+              aLocation.coordinate.latitude < 0 ? @"S" : @"N",
+              fabs( aLocation.coordinate.longitude ),
+              aLocation.coordinate.longitude < 0 ? @"W" : @"E" );
+#endif// DEBUG
+        _location = aLocation;
+    });
+}
+
 #pragma mark - from AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate
 - (void)captureOutput:(AVCaptureOutput *)captureOutput
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
@@ -498,10 +518,17 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 - (NSURL *)newRecordingClipURL
 {
     NSDate *currentDate = [NSDate date];
-    NSString *clipName = [NSString stringWithFormat:@"%@.MOV", [CarDVRPathHelper stringFromDate:currentDate]];
+    NSString *clipName = [NSString stringWithFormat:@"%@.MOV", [CarDVRPathHelper fileNameFromDate:currentDate]];
     NSURL *clipURL =  [NSURL fileURLWithPath:[self.pathHelper.recentsFolderURL.path stringByAppendingPathComponent:clipName]
                                  isDirectory:NO];
     return clipURL;
+}
+
+- (NSString *)newRecordingClipName
+{
+    NSDate *currentDate = [NSDate date];
+    NSString *clipName = [CarDVRPathHelper fileNameFromDate:currentDate];
+    return clipName;
 }
 
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
@@ -586,6 +613,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         _duoAssetWriter = [NSMutableArray arrayWithCapacity:kCountOfDuoRecordingClips];
     }
     [self startNextAssetWriter];
+    [self updateSubtitles];
 }
 
 - (void)stopDuoAssetWriterLoop
@@ -620,9 +648,10 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     NSLog( @"[Debug][+]%s", __PRETTY_FUNCTION__ );
 #endif// DEBUG
     dispatch_async( _clipWriterQueue, ^{
-        CarDVRAssetWriter *assetWriter = [[CarDVRAssetWriter alloc] initWithURL:[self newRecordingClipURL]
-                                                                       settings:self.settings
-                                                                          error:nil];
+        CarDVRAssetWriter *assetWriter = [[CarDVRAssetWriter alloc] initWithFolderPath:self.pathHelper.recentsFolderURL.path
+                                                                              clipName:[self newRecordingClipName]
+                                                                              settings:self.settings
+                                                                                 error:nil];
         [_duoAssetWriter addObject:assetWriter];
         assetWriter.recordingWillBeStarted = YES;
         [_recentRecordedClipURLs addObject:assetWriter.writer.outputURL];
@@ -690,6 +719,26 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         {
             [_duoAssetWriter removeObjectAtIndex:0];
         }
+    });
+}
+
+- (void)updateSubtitles
+{
+    dispatch_async( _clipWriterQueue, ^{
+        NSString *subtitle = [NSString stringWithFormat:@"%.4f° %@, %.4f° %@ | %.2f m",
+              fabs( _location.coordinate.latitude ),
+              _location.coordinate.latitude < 0 ? @"S" : @"N",
+              fabs( _location.coordinate.longitude ),
+              _location.coordinate.longitude < 0 ? @"W" : @"E",
+                              _location.altitude];
+        // todo: complete
+        for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
+        {
+            [assetWriter addSubtitle:subtitle];
+        }
+        dispatch_async( dispatch_get_main_queue(), ^{
+            [self performSelector:@selector(updateSubtitles) withObject:nil afterDelay:kSubtitlesUpdatingInterval];
+        });
     });
 }
 
@@ -883,7 +932,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 #ifdef DEBUG
         BOOL finished =
 #endif// DEBUG
-        [anAssetWriter.writer finishWriting];
+        [anAssetWriter finishWriting];
 #ifdef DEBUG
         NSLog( @"[Debug] asset writer = %pt, finished = %d", anAssetWriter, finished );
 #endif// DEBUG

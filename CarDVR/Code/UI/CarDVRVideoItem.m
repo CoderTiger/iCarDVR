@@ -7,42 +7,43 @@
 //
 
 #import "CarDVRVideoItem.h"
-#import "CarDVRPathHelper.h"
 #import <AVFoundation/AVFoundation.h>
+#import "CarDVRPathHelper.h"
 
 @implementation CarDVRVideoItem
 
-- (id)initWithURL:(NSURL *)anURL
+- (id)initWithVideoClipURLs:(CarDVRVideoClipURLs *)aVideoClipURLs
 {
-    NSAssert( anURL != nil, @"anURL should NOT be nil" );
+    NSAssert( aVideoClipURLs, @"aVideoClipURLs should NOT be nil." );
     self = [super init];
     if ( self )
     {
-        _fileURL = anURL;
-        AVAsset *asset = [AVAsset assetWithURL:_fileURL];
+        _videoClipURLs = aVideoClipURLs;
+        NSURL *videoFileURL = _videoClipURLs.videoFileURL;
+        AVAsset *asset = [AVAsset assetWithURL:videoFileURL];
         if ( !asset )
         {
             NSLog( @"[Error] Cannot create video item with invalid video file" );
             return nil;
         }
-        _fileName = [_fileURL lastPathComponent];
-        if ( !_fileName )
+        _videoFileName = [videoFileURL lastPathComponent];
+        if ( !_videoFileName )
         {
-            NSLog( @"[Error] Failed to create CarDVRVideoItem with nil file name(%pt)", _fileName );
+            NSLog( @"[Error] Failed to create CarDVRVideoItem with nil file name(%pt)", _videoFileName );
             return nil;
         }
         NSError *error;
-        NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:_fileURL.path error:&error];
-        if ( !fileAttributes )
+        NSDictionary *videoFileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:videoFileURL.path error:&error];
+        if ( !videoFileAttributes )
         {
             NSLog( @"[Error] Failed to get file attributes on creating CarDVRVideoItem due to error: \"%@\"", error.description );
             return nil;
         }
-        _fileSize = [fileAttributes fileSize];
+        _videoFileSize = [videoFileAttributes fileSize];
         _creationDate = asset.creationDate.dateValue;
         if ( !_creationDate )
         {
-            _creationDate = [fileAttributes fileCreationDate];
+            _creationDate = [videoFileAttributes fileCreationDate];
         }
         _duration = asset.duration.value / asset.duration.timescale;
         NSArray *videoTracks = [asset tracksWithMediaType:AVMediaTypeVideo];
@@ -61,7 +62,7 @@
 - (void)generateThumbnailAsynchronouslyWithSize:(CGSize)aSize completionHandler:(void (^)(UIImage *))aCompletionHandler
 {
     dispatch_async( dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0 ), ^{
-        AVAsset *asset = [AVAsset assetWithURL:self.fileURL];
+        AVAsset *asset = [AVAsset assetWithURL:self.videoClipURLs.videoFileURL];
         if ( !asset )
         {
             NSLog( @"[Error] Failed to create CarDVRVideoItem with nil AVAsset object." );

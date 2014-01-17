@@ -230,15 +230,10 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 }
 
 #pragma mark - from CarDVRLocationDetectorDelegate
-- (void)detector:(CarDVRLocationDetector *)aDetector didUpdateToLocation:(CLLocation *)aLocaton
+- (void)detector:(CarDVRLocationDetector *)aDetector didUpdateToLocation:(CLLocation *)aLocation
 {
-#ifdef DEBUG
-    NSLog( @"[Debug]%.4f° %@, %.4f° %@",
-          fabs( aLocaton.coordinate.latitude ),
-          aLocaton.coordinate.latitude < 0 ? @"S" : @"N",
-          fabs( aLocaton.coordinate.longitude ),
-          aLocaton.coordinate.longitude < 0 ? @"W" : @"E" );
-#endif// DEBUG
+#pragma unused( aDetector )
+    [self.videoCapturer didUpdateToLocation:aLocation];
 }
 
 @end

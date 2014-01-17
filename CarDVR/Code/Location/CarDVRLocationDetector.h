@@ -13,7 +13,7 @@
 @protocol CarDVRLocationDetectorDelegate <NSObject>
 
 @optional
-- (void)detector:(CarDVRLocationDetector *)aDetector didUpdateToLocation:(CLLocation *)aLocaton;
+- (void)detector:(CarDVRLocationDetector *)aDetector didUpdateToLocation:(CLLocation *)aLocation;
 
 @end
 

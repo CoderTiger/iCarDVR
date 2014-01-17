@@ -31,7 +31,7 @@
     _videoItem = videoItem;
     if ( _videoItem )
     {
-        self.title = [NSString stringWithFormat:NSLocalizedString( @"playerViewTitleFormat", nil ), _videoItem.fileName];
+        self.title = [NSString stringWithFormat:NSLocalizedString( @"playerViewTitleFormat", nil ), _videoItem.videoFileName];
     }
 }
 
@@ -50,7 +50,7 @@
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
     
-    [self installPlayerControllerWithContentURL:self.videoItem.fileURL];
+    [self installPlayerControllerWithContentURL:self.videoItem.videoClipURLs.videoFileURL];
 }
 
 - (void)viewWillAppear:(BOOL)animated
