@@ -9,7 +9,7 @@
 #import "CarDVRAssetWriter.h"
 #import "CarDVRSettings.h"
 
-static NSString *const kSrtRecordFormat = @"%u\r\n%2d:%2d:%2d,%3d --> %2d:%2d:%2d,%3d\r\n%@\r\n\r\n";
+static NSString *const kSrtRecordFormat = @"%u\r\n%02d:%02d:%02d,%03lld --> %02d:%02d:%02d,%03lld\r\n%@\r\n\r\n";
 
 static NSDateFormatter *subtitleDateFormatter;
 
@@ -154,19 +154,18 @@ static NSDateFormatter *subtitleDateFormatter;
         
         div_t beginHour = div( previousSubtitleBeginTimeInterval, 3600 );
         div_t beginMinitue = div( beginHour.rem, 60 );
-        div_t beginSecond = div( beginMinitue.rem, 60 );
-        div_t beginMillisecond = div( beginSecond.rem, 1000 );
+        lldiv_t beginMillisecond = lldiv( previousSubtitleBeginTimeInterval * 1000, 1000 );
         
         div_t endHour = div( previousSubtitleEndTimeInterval, 3600 );
         div_t endMinitue = div( endHour.rem, 60 );
-        div_t endSecond = div( endMinitue.rem, 60 );
-        div_t endMillisecond = div( endSecond.rem, 60 );
+        lldiv_t endMillisecond = lldiv( previousSubtitleEndTimeInterval * 1000, 1000 );
         
         NSString *srtRecord = [NSString stringWithFormat:kSrtRecordFormat,
                                _subtitlesSequenceId,
-                               beginHour.quot, beginMinitue.quot, beginSecond.quot, beginMillisecond.quot,
-                               endHour.quot, endMinitue.quot, endSecond.quot, endMillisecond.quot,
-                               _previousSubtitle ];
+                               beginHour.quot, beginMinitue.quot, beginMinitue.rem, beginMillisecond.rem,
+                               endHour.quot, endMinitue.quot, endMinitue.rem, endMillisecond.rem,
+                               _previousSubtitle];
+        _subtitlesSequenceId++;
         [self.srtFileHandle writeData:[srtRecord dataUsingEncoding:NSUTF8StringEncoding]];
         _previousSubtitle = nil;
         _previousSubtitleTime = previousSubtitleEndTime;

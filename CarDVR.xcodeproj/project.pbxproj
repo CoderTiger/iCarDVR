@@ -15,6 +15,7 @@
 		F62987461847A05C00CD25E7 /* CarDVRVideoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F62987451847A05C00CD25E7 /* CarDVRVideoTableViewCell.m */; };
 		F6298749184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */; };
 		F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */; };
+		F6AD6E8118951B6F0006DA59 /* CarDVRMeasurementConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F6AD6E8018951B6F0006DA59 /* CarDVRMeasurementConverter.m */; };
 		F6B0F9D61820AAA200A46E3C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0F9D41820AAA100A46E3C /* Localizable.strings */; };
 		F6B0F9F41820CB1800A46E3C /* CarDVRRecentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0F9F21820CB1800A46E3C /* CarDVRRecentsViewController.m */; };
 		F6B0F9FC1820CCC600A46E3C /* CarDVRStarredViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0F9FA1820CCC600A46E3C /* CarDVRStarredViewController.m */; };
@@ -74,6 +75,8 @@
 		F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRMaxClipDurationSettingViewController.m; sourceTree = "<group>"; };
 		F677D92E1819636300C57AE0 /* CarDVRHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRHomeViewController.h; sourceTree = "<group>"; };
 		F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRHomeViewController.m; sourceTree = "<group>"; };
+		F6AD6E7F18951B6F0006DA59 /* CarDVRMeasurementConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRMeasurementConverter.h; sourceTree = "<group>"; };
+		F6AD6E8018951B6F0006DA59 /* CarDVRMeasurementConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRMeasurementConverter.m; sourceTree = "<group>"; };
 		F6B0F9D51820AAA200A46E3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		F6B0F9F11820CB1800A46E3C /* CarDVRRecentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRRecentsViewController.h; sourceTree = "<group>"; };
 		F6B0F9F21820CB1800A46E3C /* CarDVRRecentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRRecentsViewController.m; sourceTree = "<group>"; };
@@ -160,6 +163,15 @@
 			path = Location;
 			sourceTree = "<group>";
 		};
+		F6AD6E7E1895116F0006DA59 /* Measurement */ = {
+			isa = PBXGroup;
+			children = (
+				F6AD6E7F18951B6F0006DA59 /* CarDVRMeasurementConverter.h */,
+				F6AD6E8018951B6F0006DA59 /* CarDVRMeasurementConverter.m */,
+			);
+			path = Measurement;
+			sourceTree = "<group>";
+		};
 		F6B0FA4F182224CD00A46E3C /* zh-Hans.lproj */ = {
 			isa = PBXGroup;
 			children = (
@@ -236,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				F62323E9186C41C600123109 /* Location */,
+				F6AD6E7E1895116F0006DA59 /* Measurement */,
 				F6FEE81D180D9C9D00034B6A /* Storage */,
 				F6D3724E180BEE8A0076B2EC /* UI */,
 				F6FEE818180CE6A000034B6A /* Video */,
@@ -367,7 +380,7 @@
 		F6D37200180BE9C00076B2EC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = iautod;
 				TargetAttributes = {
 					F6D37207180BE9C00076B2EC = {
@@ -448,6 +461,7 @@
 				F6B0F9FC1820CCC600A46E3C /* CarDVRStarredViewController.m in Sources */,
 				F6FEE820180D9CDE00034B6A /* CarDVRPathHelper.m in Sources */,
 				F62323EC186C421600123109 /* CarDVRLocationDetector.m in Sources */,
+				F6AD6E8118951B6F0006DA59 /* CarDVRMeasurementConverter.m in Sources */,
 				F6298749184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m in Sources */,
 				F6214005183DB2EF004630FE /* CarDVRAssetWriter.m in Sources */,
 				F6D3723F180BEB970076B2EC /* CarDVRAppDelegate.m in Sources */,
@@ -533,7 +547,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -575,7 +588,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -610,7 +622,6 @@
 		F6D37235180BE9C00076B2EC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = CarDVR/CarDVR.entitlements;
@@ -619,6 +630,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVR/Resource/CarDVR-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "i$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "69FC4238-BB31-4C5F-A7EE-4E865C8D1431";
 				VALID_ARCHS = "armv7 armv7s";
@@ -629,7 +641,6 @@
 		F6D37236180BE9C00076B2EC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = CarDVR/CarDVR.entitlements;
@@ -648,7 +659,6 @@
 		F6D37238180BE9C00076B2EC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CarDVR.app/CarDVR";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -671,7 +681,6 @@
 		F6D37239180BE9C00076B2EC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CarDVR.app/CarDVR";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

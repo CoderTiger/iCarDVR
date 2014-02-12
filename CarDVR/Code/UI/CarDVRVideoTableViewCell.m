@@ -59,7 +59,7 @@ static NSDateFormatter *dateFormatter;
     //
     self.dateLabel.text = [dateFormatter stringFromDate:videoItem.creationDate];
     
-    //
+    // 
     // set self.durationSizeLabel.text
     //
     NSString *durationText;

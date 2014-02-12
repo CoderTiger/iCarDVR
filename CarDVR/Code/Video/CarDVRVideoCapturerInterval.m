@@ -731,6 +731,12 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
               fabs( _location.coordinate.longitude ),
               _location.coordinate.longitude < 0 ? @"W" : @"E",
                               _location.altitude];
+        NSLocale *currentLocale = [NSLocale currentLocale];
+        NSString *currentMeasurementSystem = [currentLocale objectForKey:NSLocaleMeasurementSystem];
+#ifdef DEBUG
+        NSLog( @"[Debug]current measurement system: %@", currentMeasurementSystem );
+#endif//DEBUG
+        
         // todo: complete
         for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
         {
