@@ -39,3 +39,9 @@
 "videoSizeMByteFormat"="%.2fMB";
 "videoSizeGByteFormat"="%.2fGB";
 "videoFrameRateDimensionFormat"="%.2f fps, %.0f x %.0f";
+
+//
+// CarDVRMeasurementConverter
+//
+"metricLocationStringFormat"="%.4f° %@, %.4f° %@ | %.2f m";
+"AmericanUnitsLocationStringFormat"="%.4f° %@, %.4f° %@ | %.2f ft";

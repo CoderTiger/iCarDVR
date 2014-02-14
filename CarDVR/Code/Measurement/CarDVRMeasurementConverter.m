@@ -10,15 +10,36 @@
 
 @implementation CarDVRMeasurementConverter
 
+- (id)init
+{
+    return [self initWithLocale:[NSLocale currentLocale]];
+}
+
 - (id)initWithLocale:(NSLocale *)aLocale
 {
     self = [super init];
     if ( self )
     {
-        BOOL usesMetricSystem = [[aLocale objectForKey:NSLocaleUsesMetricSystem] boolValue];
-        // todo: complete
+        _locale = aLocale;
     }
     return self;
+}
+
+- (NSString *)localStringFromMetricLocation:(CLLocation *)aLocation
+{
+    NSAssert( aLocation, @"aLocation should NOT be nil." );
+    NSString *localString;
+    BOOL usesMetricSystem = [[self.locale objectForKey:NSLocaleUsesMetricSystem] boolValue];
+    if ( usesMetricSystem )
+    {
+        // todo: complete
+    }
+    else// assume American measurement units
+    {
+//        aLocation.altitude;
+        // todo: complete
+    }
+    return localString;
 }
 
 @end

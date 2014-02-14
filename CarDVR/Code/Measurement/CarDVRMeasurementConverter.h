@@ -7,9 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface CarDVRMeasurementConverter : NSObject
 
+@property (strong, nonatomic) NSLocale *locale;
+
+- (id)init;
 - (id)initWithLocale:(NSLocale *)aLocale;
+
+- (NSString *)localStringFromMetricLocation:(CLLocation *)aLocation;
 
 @end
