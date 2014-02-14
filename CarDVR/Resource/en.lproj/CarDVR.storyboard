@@ -33,7 +33,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ue8-p1-Sch" userLabel="Button - FlashOff&amp;toOn">
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ue8-p1-Sch" userLabel="Button - FlashOff&amp;toOn">
                                 <rect key="frame" x="20" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="ButtonFlashOff50x50">
@@ -43,7 +43,7 @@
                                     <action selector="flashOnButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Wvf-KN-imH"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nlz-ru-kJl" userLabel="Button - FlashOn&amp;toAuto">
+                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nlz-ru-kJl" userLabel="Button - FlashOn&amp;toAuto">
                                 <rect key="frame" x="20" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="ButtonFlashOn50x50">
@@ -53,7 +53,7 @@
                                     <action selector="flashAutoButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="lj0-o8-Dbd"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="v53-MR-Ll8" userLabel="Button - FlashAuto&amp;toOff">
+                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="v53-MR-Ll8" userLabel="Button - FlashAuto&amp;toOff">
                                 <rect key="frame" x="20" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="ButtonFlashAuto50x50">
@@ -63,7 +63,7 @@
                                     <action selector="flashOffButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="EIU-K0-bgR"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="quc-53-pv6">
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="quc-53-pv6">
                                 <rect key="frame" x="252" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Home" image="ButtonHome50x50">
@@ -73,7 +73,7 @@
                                     <segue destination="OTC-8v-f6v" kind="push" identifier="kShowHomeSegueId" id="poc-1b-qE1"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mhG-jR-QdU">
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mhG-jR-QdU">
                                 <rect key="frame" x="20" y="508" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <state key="normal" title="Foto" image="ButtonFoto50x50">
@@ -83,7 +83,7 @@
                                     <action selector="fotoButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="S00-BY-KUl"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="laU-cJ-phG" userLabel="Button - Start">
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="laU-cJ-phG" userLabel="Button - Start">
                                 <rect key="frame" x="135" y="508" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <state key="normal" title="Start" image="ButtonStart50x50">
@@ -93,7 +93,7 @@
                                     <action selector="startButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="3kg-3l-g3o"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="j5O-o3-C7J">
+                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="j5O-o3-C7J">
                                 <rect key="frame" x="135" y="508" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <state key="normal" title="Stop" image="ButtonStop50x50">
@@ -103,7 +103,7 @@
                                     <action selector="stopButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="ctF-vy-q73"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="itA-kT-pFL">
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="itA-kT-pFL">
                                 <rect key="frame" x="252" y="508" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <state key="normal" title="Star" image="ButtonStar50x50">
@@ -113,7 +113,7 @@
                                     <action selector="starButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="oiY-Hh-VfW"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tlc-nh-4xy">
+                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tlc-nh-4xy">
                                 <rect key="frame" x="252" y="508" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                 <state key="normal" title="Starred" image="ButtonStarred50x50">
