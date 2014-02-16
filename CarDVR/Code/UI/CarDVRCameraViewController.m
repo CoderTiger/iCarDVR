@@ -41,6 +41,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 
 #pragma mark - private methods
+- (void)setFlashMode:(CarDVRCameraFlashMode)aFlashMode;
 - (void)installVideoCapturer;
 - (void)installLocationDetector;
 - (void)layoutSubviews;
@@ -116,6 +117,32 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 }
 
 #pragma mark - private methods
+- (void)setFlashMode:(CarDVRCameraFlashMode)aFlashMode
+{
+    switch ( aFlashMode )
+    {
+        case kCarDVRCameraFlashModeOn:
+            self.flashOnButton.hidden = NO;
+            self.flashOffButton.hidden = YES;
+            self.flashAutoButton.hidden = YES;
+            break;
+        case kCarDVRCameraFlashModeAuto:
+            self.flashOnButton.hidden = YES;
+            self.flashOffButton.hidden = YES;
+            self.flashAutoButton.hidden = NO;
+            break;
+        case kCarDVRCameraFlashModeOff:
+            self.flashOnButton.hidden = YES;
+            self.flashOffButton.hidden = NO;
+            self.flashAutoButton.hidden = YES;
+            break;
+        default:
+            NSAssert1( NO, @"Unknown flash mode: %d", aFlashMode );
+            break;
+    }
+    self.videoCapturer.cameraFlashMode = aFlashMode;
+}
+
 - (void)installVideoCapturer
 {
     if ( _videoCapturer )
@@ -165,23 +192,17 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 - (IBAction)flashOnButtonTouched:(id)sender
 {
-    self.videoCapturer.cameraFlashMode = kCarDVRCameraFlashModeOn;
-    self.flashOnButton.hidden = ( self.videoCapturer.cameraFlashMode == kCarDVRCameraFlashModeOn );
-    self.flashAutoButton.hidden = !self.flashOnButton.hidden;
+    [self setFlashMode:kCarDVRCameraFlashModeAuto];
 }
 
 - (IBAction)flashAutoButtonTouched:(id)sender
 {
-    self.videoCapturer.cameraFlashMode = kCarDVRCameraFlashModeAuto;
-    self.flashAutoButton.hidden = ( self.videoCapturer.cameraFlashMode == kCarDVRCameraFlashModeAuto );
-    self.flashOffButton.hidden = !self.flashAutoButton.hidden;
+    [self setFlashMode:kCarDVRCameraFlashModeOff];
 }
 
 - (IBAction)flashOffButtonTouched:(id)sender
 {
-    self.videoCapturer.cameraFlashMode = kCarDVRCameraFlashModeOff;
-    self.flashOffButton.hidden = ( self.videoCapturer.cameraFlashMode == kCarDVRCameraFlashModeOff );
-    self.flashOnButton.hidden = !self.flashOffButton.hidden;
+    [self setFlashMode:kCarDVRCameraFlashModeOn];
 }
 
 - (IBAction)fotoButtonTouched:(id)sender

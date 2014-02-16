@@ -41,6 +41,6 @@
 "videoFrameRateDimensionFormat"="%.2f fps, %.0f x %.0f";
 
 //
-// CarDVRMeasurementConverter
+// video subtitles
 //
-"metricLocationStringFormat"="%.4f° %@, %.4f° %@ | %.2f m";
+locationStringFormat="%.4f° %@, %.4f° %@";

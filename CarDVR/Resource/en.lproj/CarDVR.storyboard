@@ -33,34 +33,34 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </view>
-                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ue8-p1-Sch" userLabel="Button - FlashOff&amp;toOn">
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ue8-p1-Sch" userLabel="Button - FlashOff">
                                 <rect key="frame" x="20" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="ButtonFlashOff50x50">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="flashOnButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Wvf-KN-imH"/>
+                                    <action selector="flashOffButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="zIT-zY-UOo"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nlz-ru-kJl" userLabel="Button - FlashOn&amp;toAuto">
+                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="nlz-ru-kJl" userLabel="Button - FlashOn">
                                 <rect key="frame" x="20" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="ButtonFlashOn50x50">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="flashAutoButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="lj0-o8-Dbd"/>
+                                    <action selector="flashOnButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="lOd-W4-Whd"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="v53-MR-Ll8" userLabel="Button - FlashAuto&amp;toOff">
+                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="v53-MR-Ll8" userLabel="Button - FlashAuto">
                                 <rect key="frame" x="20" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="ButtonFlashAuto50x50">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="flashOffButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="EIU-K0-bgR"/>
+                                    <action selector="flashAutoButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Sfq-7V-Grv"/>
                                 </connections>
                             </button>
                             <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="quc-53-pv6">
@@ -123,6 +123,20 @@
                                     <action selector="starredButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Lsc-kO-RXK"/>
                                 </connections>
                             </button>
+                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2hP-oV-kOw">
+                                <rect key="frame" x="193" y="512" width="40" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <state key="normal" title="MicOff" image="ButtonMicOff40x40">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="lnX-KW-mL8">
+                                <rect key="frame" x="193" y="512" width="40" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <state key="normal" title="MicOn" image="ButtonMicOn40x40">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
@@ -131,9 +145,9 @@
                     <navigationItem key="navigationItem" title="Camera" id="5bk-I6-NlY"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
-                        <outlet property="flashAutoButton" destination="nlz-ru-kJl" id="tfB-H6-34q"/>
-                        <outlet property="flashOffButton" destination="v53-MR-Ll8" id="qK9-4U-XuD"/>
-                        <outlet property="flashOnButton" destination="ue8-p1-Sch" id="oxE-eh-aLi"/>
+                        <outlet property="flashAutoButton" destination="v53-MR-Ll8" id="oBa-pr-HBq"/>
+                        <outlet property="flashOffButton" destination="ue8-p1-Sch" id="AwN-kV-uie"/>
+                        <outlet property="flashOnButton" destination="nlz-ru-kJl" id="yCc-2h-cYS"/>
                         <outlet property="previewerView" destination="vkf-FK-KE8" id="unt-d7-yMy"/>
                         <outlet property="starButton" destination="itA-kT-pFL" id="GYR-nb-AOl"/>
                         <outlet property="starredButton" destination="Tlc-nh-4xy" id="r7y-zF-7DL"/>
@@ -590,6 +604,8 @@
         <image name="ButtonFlashOn50x50" width="50" height="50"/>
         <image name="ButtonFoto50x50" width="50" height="50"/>
         <image name="ButtonHome50x50" width="50" height="50"/>
+        <image name="ButtonMicOff40x40" width="40" height="40"/>
+        <image name="ButtonMicOn40x40" width="40" height="40"/>
         <image name="ButtonStar50x50" width="50" height="50"/>
         <image name="ButtonStarred50x50" width="50" height="50"/>
         <image name="ButtonStart50x50" width="50" height="50"/>
