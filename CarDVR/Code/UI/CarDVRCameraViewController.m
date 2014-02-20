@@ -11,10 +11,15 @@
 #import "CarDVRHomeViewController.h"
 #import "CarDVRAppDelegate.h"
 #import "CarDVRLocationDetector.h"
+#import "CarDVRSettings.h"
 
 static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 @interface CarDVRCameraViewController ()<CarDVRLocationDetectorDelegate>
+
+@property (strong, nonatomic) CarDVRVideoCapturer *videoCapturer;
+@property (strong, nonatomic) CarDVRLocationDetector *locationDetector;
+@property (weak, readonly) CarDVRSettings *settings;
 
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
@@ -23,11 +28,8 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 @property (weak, nonatomic) IBOutlet UIButton *stopButton;
 @property (weak, nonatomic) IBOutlet UIButton *starButton;
 @property (weak, nonatomic) IBOutlet UIButton *starredButton;
-
-@property (strong, nonatomic) CarDVRVideoCapturer *videoCapturer;
-@property (strong, nonatomic) CarDVRHomeViewController *homeViewController;
-@property (strong, nonatomic) CarDVRLocationDetector *locationDetector;
-
+@property (weak, nonatomic) IBOutlet UIButton *microphoneOffButton;
+@property (weak, nonatomic) IBOutlet UIButton *microphoneOnButton;
 @property (weak, nonatomic) IBOutlet UIView *previewerView;
 
 - (IBAction)flashOnButtonTouched:(id)sender;
@@ -38,15 +40,18 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 - (IBAction)stopButtonTouched:(id)sender;
 - (IBAction)starButtonTouched:(id)sender;
 - (IBAction)starredButtonTouched:(id)sender;
-
+- (IBAction)microphoneOffButtonTouched:(id)sender;
+- (IBAction)microphoneOnButtonTouched:(id)sender;
 
 #pragma mark - private methods
 - (void)setFlashMode:(CarDVRCameraFlashMode)aFlashMode;
 - (void)installVideoCapturer;
 - (void)installLocationDetector;
+- (void)loadSettings;
 - (void)layoutSubviews;
 - (void)startRecordingVideo;
 - (void)stopRecordingVideo;
+- (void)setMicrophoneOnValue:(BOOL)anValue;
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
@@ -54,6 +59,12 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 @end
 
 @implementation CarDVRCameraViewController
+
+- (CarDVRSettings *)settings
+{
+    CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    return appDelegate.settings;
+}
 
 - (void)dealloc
 {
@@ -67,6 +78,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [self setTitle:NSLocalizedString( @"cameraViewTitle", @"Camera" )];
     [self installVideoCapturer];
     [self installLocationDetector];
+    [self loadSettings];
     NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
     [defaultNC addObserver:self
                   selector:@selector(handleCarDVRVideoCapturerDidStartRecordingNotification)
@@ -101,7 +113,6 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-    self.homeViewController = nil;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -110,9 +121,8 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     if ( [segue.identifier isEqualToString:kShowHomeSegueId] )
     {
         [self stopRecordingVideo];
-        CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
         CarDVRHomeViewController *homeViewController = segue.destinationViewController;
-        homeViewController.settings = appDelegate.settings;
+        homeViewController.settings = self.settings;
     }
 }
 
@@ -138,7 +148,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
             break;
         default:
             NSAssert1( NO, @"Unknown flash mode: %d", aFlashMode );
-            break;
+            return;
     }
     self.videoCapturer.cameraFlashMode = aFlashMode;
 }
@@ -157,6 +167,16 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     if ( _locationDetector )
         return;
     _locationDetector = [[CarDVRLocationDetector alloc] initWithDelegate:self];
+}
+
+- (void)loadSettings
+{
+    //
+    // load microphone on flag
+    //
+    BOOL isMicrophoneOn = self.settings.microphoneOn.boolValue;
+    self.microphoneOffButton.hidden = isMicrophoneOn;
+    self.microphoneOnButton.hidden = !isMicrophoneOn;
 }
 
 - (void)layoutSubviews
@@ -183,6 +203,14 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     {
         [self.videoCapturer stopRecording];
     }
+}
+
+- (void)setMicrophoneOnValue:(BOOL)anValue
+{
+    self.settings.microphoneOn = [NSNumber numberWithBool:anValue];
+    BOOL isMicrophoneOn = self.settings.microphoneOn.boolValue;
+    self.microphoneOffButton.hidden = isMicrophoneOn;
+    self.microphoneOnButton.hidden = !isMicrophoneOn;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -232,6 +260,18 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [self.videoCapturer setStarred:NO];
     self.starButton.hidden = self.videoCapturer.starred;
     self.starredButton.hidden = !self.starredButton.hidden;
+}
+
+- (IBAction)microphoneOffButtonTouched:(id)sender
+{
+#pragma unused(sender)
+    [self setMicrophoneOnValue:YES];
+}
+
+- (IBAction)microphoneOnButtonTouched:(id)sender
+{
+#pragma unused(sender)
+    [self setMicrophoneOnValue:NO];
 }
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification

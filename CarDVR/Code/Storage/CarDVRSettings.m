@@ -20,12 +20,14 @@ NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips = @"maxCountOfRecordi
 NSString *const kCarDVRSettingsKeyCameraPosition = @"cameraPosition";
 NSString *const kCarDVRSettingsKeyVideoQuality = @"videoQuality";
 NSString *const kCarDVRSettingsKeyVideoFrameRate = @"videoFrameRate";
+NSString *const kCarDVRSettingsKeyMicrophoneOn = @"isMicrophoneOn";
 
 static NSNumber *defaultMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 static NSNumber *maxVideoFrameRate ;// 30 fps
 static NSNumber *minVideoFrameRate;// 10 fps
+static NSNumber *defaultMicrophoneOnValue;// YES
 
 @interface CarDVRSettings ()
 {
@@ -62,11 +64,13 @@ static NSNumber *minVideoFrameRate;// 10 fps
     defaultMaxCountOfRecordingClips = @2;// 2 clips
     maxVideoFrameRate = @30;// 30 fps
     minVideoFrameRate = @10;// 10 fps
+    defaultMicrophoneOnValue = @YES;
     if ( !defaultMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
         || !defaultMaxCountOfRecordingClips
         || !maxVideoFrameRate
-        || !minVideoFrameRate )
+        || !minVideoFrameRate
+        || !defaultMicrophoneOnValue )
     {
         NSException *exception = [NSException exceptionWithName:NSMallocException
                                                          reason:@"Fault on CarDVRSettings::initialize due to out of memory"
@@ -198,6 +202,24 @@ static NSNumber *minVideoFrameRate;// 10 fps
     return cameraPosition;
 }
 
+- (void)setCameraPosition:(NSNumber *)cameraPosition
+{
+    if ( !cameraPosition )
+    {
+        return;
+    }
+    NSInteger position = cameraPosition.integerValue;
+    switch ( position )
+    {
+        case kCarDVRCameraPositionBack:
+        case kCarDVRCameraPositionFront:
+            [self setSettingValue:cameraPosition forKey:kCarDVRSettingsKeyCameraPosition];
+            break;
+        default:
+            break;
+    }
+}
+
 - (NSNumber *)videoQuality
 {
     NSNumber *videoQuality = [self settingValueForKey:kCarDVRSettingsKeyVideoQuality];
@@ -228,6 +250,10 @@ static NSNumber *minVideoFrameRate;// 10 fps
 
 - (void)setVideoFrameRate:(NSNumber *)videoFrameRate
 {
+    if ( !videoFrameRate )
+    {
+        return;
+    }
     if ( [videoFrameRate compare:minVideoFrameRate] == NSOrderedAscending )
     {
         [self setSettingValue:minVideoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate];
@@ -240,6 +266,29 @@ static NSNumber *minVideoFrameRate;// 10 fps
     {
         [self setSettingValue:videoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate];
     }
+}
+
+- (NSNumber *)isMicrophoneOn
+{
+    NSNumber *microphoneOn = [self settingValueForKey:kCarDVRSettingsKeyMicrophoneOn];
+    if ( !microphoneOn )
+    {
+        microphoneOn = defaultMicrophoneOnValue;
+        if ( microphoneOn )
+        {
+            [self setSettingValue:microphoneOn forKey:kCarDVRSettingsKeyMicrophoneOn mutely:YES];
+        }
+    }
+    return microphoneOn;
+}
+
+- (void)setMicrophoneOn:(NSNumber *)microphoneOn
+{
+    if ( !microphoneOn )
+    {
+        return;
+    }
+    [self setSettingValue:microphoneOn forKey:kCarDVRSettingsKeyMicrophoneOn];
 }
 
 - (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey

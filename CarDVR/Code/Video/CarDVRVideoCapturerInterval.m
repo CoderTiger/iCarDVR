@@ -34,6 +34,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
     BOOL _readyToRecordVideo;
 	BOOL _recordingWillBeStarted;
 	BOOL _recordingWillBeStopped;
+    BOOL _isMicrophoneOn;
     
     CLLocation *_location;
 }
@@ -62,6 +63,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 - (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
+- (void)handleMicrophoneOnChangedNotification;
 - (void)startDuoAssetWriterLoop;
 - (void)stopDuoAssetWriterLoop;
 - (void)startNextAssetWriter;
@@ -225,6 +227,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
         _starred = NO;
         _batchConfiguration = NO;
         _recording = NO;
+        _isMicrophoneOn = _settings.isMicrophoneOn.boolValue;
         
         [self installAVCaptureObjects];
         
@@ -245,12 +248,16 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
                       selector:@selector(handleUIApplicationDidEnterBackgroundNotification)
                           name:UIApplicationDidEnterBackgroundNotification
                         object:nil];
+        
+        [_settings addObserver:self selector:@selector(handleMicrophoneOnChangedNotification)
+                        forKey:kCarDVRSettingsKeyMicrophoneOn];
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [self.settings removeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_captureSession stopRunning];
 }
@@ -604,6 +611,14 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     {
         [self stopRecording];
     }
+}
+
+- (void)handleMicrophoneOnChangedNotification
+{
+    BOOL isMicrophoneOn = self.settings.isMicrophoneOn.boolValue;
+    dispatch_async( _clipWriterQueue, ^{
+        _isMicrophoneOn = isMicrophoneOn;
+    });
 }
 
 - (void)startDuoAssetWriterLoop

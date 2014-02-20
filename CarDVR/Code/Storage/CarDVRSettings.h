@@ -16,6 +16,8 @@ NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration;
 NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips;
 NSString *const kCarDVRSettingsKeyCameraPosition;
 NSString *const kCarDVRSettingsKeyVideoQuality;
+NSString *const kCarDVRSettingsKeyVideoFrameRate;
+NSString *const kCarDVRSettingsKeyMicrophoneOn;
 
 @class CarDVRPathHelper;
 @interface CarDVRSettings : NSObject
@@ -30,6 +32,7 @@ NSString *const kCarDVRSettingsKeyVideoQuality;
 @property (copy, nonatomic) NSNumber *cameraPosition;// CarDVRCameraPosition
 @property (copy, nonatomic) NSNumber *videoQuality;// CarDVRVideoQuality
 @property (copy, nonatomic) NSNumber *videoFrameRate;// NSUinteger [10, 30]
+@property (copy, nonatomic, getter = isMicrophoneOn) NSNumber *microphoneOn;// BOOL
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
 
