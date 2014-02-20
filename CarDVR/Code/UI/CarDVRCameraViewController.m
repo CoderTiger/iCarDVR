@@ -53,6 +53,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 - (void)stopRecordingVideo;
 - (void)setMicrophoneOnValue:(BOOL)anValue;
 
+- (void)handleUIApplicationDidEnterBackgroundNotification;
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
 
@@ -81,6 +82,10 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [self loadSettings];
     NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
     [defaultNC addObserver:self
+                  selector:@selector(handleUIApplicationDidEnterBackgroundNotification)
+                      name:UIApplicationDidEnterBackgroundNotification
+                    object:nil];
+    [defaultNC addObserver:self
                   selector:@selector(handleCarDVRVideoCapturerDidStartRecordingNotification)
                       name:kCarDVRVideoCapturerDidStartRecordingNotification
                     object:nil];
@@ -107,6 +112,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 {
 #pragma unused(animated)
     [self stopRecordingVideo];
+    [self setFlashMode:kCarDVRCameraFlashModeOff];
 }
 
 - (void)didReceiveMemoryWarning
@@ -272,6 +278,11 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 {
 #pragma unused(sender)
     [self setMicrophoneOnValue:NO];
+}
+
+- (void)handleUIApplicationDidEnterBackgroundNotification
+{
+    [self setFlashMode:kCarDVRCameraFlashModeOff];
 }
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
