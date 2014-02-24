@@ -56,16 +56,6 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVide
     return _interval.cameraFlashMode;
 }
 
-- (void)setStarred:(BOOL)starred
-{
-    [_interval setStarred:starred];
-}
-
-- (BOOL)starred
-{
-    return _interval.starred;
-}
-
 - (id)init
 {
     NSException *exception = [NSException exceptionWithName:NSGenericException

@@ -123,26 +123,6 @@
                                     <action selector="starredButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Lsc-kO-RXK"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2hP-oV-kOw">
-                                <rect key="frame" x="193" y="512" width="40" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <state key="normal" title="MicOff" image="ButtonMicOff40x40">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="microphoneOffButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="HJd-CL-l3e"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="lnX-KW-mL8">
-                                <rect key="frame" x="193" y="512" width="40" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <state key="normal" title="MicOn" image="ButtonMicOn40x40">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="microphoneOnButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="6Ub-z2-FPX"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
@@ -154,8 +134,6 @@
                         <outlet property="flashAutoButton" destination="v53-MR-Ll8" id="oBa-pr-HBq"/>
                         <outlet property="flashOffButton" destination="ue8-p1-Sch" id="AwN-kV-uie"/>
                         <outlet property="flashOnButton" destination="nlz-ru-kJl" id="yCc-2h-cYS"/>
-                        <outlet property="microphoneOffButton" destination="2hP-oV-kOw" id="yG8-Ad-ZbJ"/>
-                        <outlet property="microphoneOnButton" destination="lnX-KW-mL8" id="0M3-mE-HsU"/>
                         <outlet property="previewerView" destination="vkf-FK-KE8" id="unt-d7-yMy"/>
                         <outlet property="starButton" destination="itA-kT-pFL" id="GYR-nb-AOl"/>
                         <outlet property="starredButton" destination="Tlc-nh-4xy" id="r7y-zF-7DL"/>
@@ -612,8 +590,6 @@
         <image name="ButtonFlashOn50x50" width="50" height="50"/>
         <image name="ButtonFoto50x50" width="50" height="50"/>
         <image name="ButtonHome50x50" width="50" height="50"/>
-        <image name="ButtonMicOff40x40" width="40" height="40"/>
-        <image name="ButtonMicOn40x40" width="40" height="40"/>
         <image name="ButtonStar50x50" width="50" height="50"/>
         <image name="ButtonStarred50x50" width="50" height="50"/>
         <image name="ButtonStart50x50" width="50" height="50"/>

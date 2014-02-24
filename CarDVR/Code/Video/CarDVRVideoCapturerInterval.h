@@ -19,7 +19,6 @@
 @property (readonly) BOOL hasBackCamera;
 @property (readonly) BOOL hasFrontCamera;
 @property (assign, nonatomic) CarDVRCameraFlashMode cameraFlashMode;
-@property (assign, nonatomic) BOOL starred;
 
 - (id)initWithCapturer:(id)aCapturer
             pathHelper:(CarDVRPathHelper *)aPathHelper

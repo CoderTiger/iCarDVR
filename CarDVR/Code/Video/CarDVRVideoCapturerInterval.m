@@ -34,7 +34,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
     BOOL _readyToRecordVideo;
 	BOOL _recordingWillBeStarted;
 	BOOL _recordingWillBeStopped;
-    BOOL _isMicrophoneOn;
+    BOOL _isStarred;
     
     CLLocation *_location;
 }
@@ -63,7 +63,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 - (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
-- (void)handleMicrophoneOnChangedNotification;
+- (void)handleStarredChangedNotification;
 - (void)startDuoAssetWriterLoop;
 - (void)stopDuoAssetWriterLoop;
 - (void)startNextAssetWriter;
@@ -224,10 +224,9 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
         _pathHelper = aPathHelper;
         _settings = aSettings;
         _cameraFlashMode = kCarDVRCameraFlashModeOff;
-        _starred = NO;
         _batchConfiguration = NO;
         _recording = NO;
-        _isMicrophoneOn = _settings.isMicrophoneOn.boolValue;
+        _isStarred = _settings.isStarred.boolValue;
         
         [self installAVCaptureObjects];
         
@@ -249,8 +248,9 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
                           name:UIApplicationDidEnterBackgroundNotification
                         object:nil];
         
-        [_settings addObserver:self selector:@selector(handleMicrophoneOnChangedNotification)
-                        forKey:kCarDVRSettingsKeyMicrophoneOn];
+        [_settings addObserver:self
+                      selector:@selector(handleStarredChangedNotification)
+                        forKey:kCarDVRSettingsKeyStarred];
     }
     return self;
 }
@@ -613,11 +613,12 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     }
 }
 
-- (void)handleMicrophoneOnChangedNotification
+- (void)handleStarredChangedNotification
 {
-    BOOL isMicrophoneOn = self.settings.isMicrophoneOn.boolValue;
+    BOOL isStarred = self.settings.isStarred.boolValue;
+    // todo: complete
     dispatch_async( _clipWriterQueue, ^{
-        _isMicrophoneOn = isMicrophoneOn;
+        _isStarred = isStarred;
     });
 }
 

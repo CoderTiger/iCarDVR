@@ -28,8 +28,6 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 @property (weak, nonatomic) IBOutlet UIButton *stopButton;
 @property (weak, nonatomic) IBOutlet UIButton *starButton;
 @property (weak, nonatomic) IBOutlet UIButton *starredButton;
-@property (weak, nonatomic) IBOutlet UIButton *microphoneOffButton;
-@property (weak, nonatomic) IBOutlet UIButton *microphoneOnButton;
 @property (weak, nonatomic) IBOutlet UIView *previewerView;
 
 - (IBAction)flashOnButtonTouched:(id)sender;
@@ -40,8 +38,6 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 - (IBAction)stopButtonTouched:(id)sender;
 - (IBAction)starButtonTouched:(id)sender;
 - (IBAction)starredButtonTouched:(id)sender;
-- (IBAction)microphoneOffButtonTouched:(id)sender;
-- (IBAction)microphoneOnButtonTouched:(id)sender;
 
 #pragma mark - private methods
 - (void)setFlashMode:(CarDVRCameraFlashMode)aFlashMode;
@@ -51,7 +47,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 - (void)layoutSubviews;
 - (void)startRecordingVideo;
 - (void)stopRecordingVideo;
-- (void)setMicrophoneOnValue:(BOOL)anValue;
+- (void)setStarredValue:(BOOL)anValue;
 
 - (void)handleUIApplicationDidEnterBackgroundNotification;
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
@@ -178,11 +174,11 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 - (void)loadSettings
 {
     //
-    // load microphone on flag
+    // load starred flag
     //
-    BOOL isMicrophoneOn = self.settings.microphoneOn.boolValue;
-    self.microphoneOffButton.hidden = isMicrophoneOn;
-    self.microphoneOnButton.hidden = !isMicrophoneOn;
+    BOOL isStarred = self.settings.starred.boolValue;
+    self.starButton.hidden = isStarred;
+    self.starredButton.hidden = !isStarred;
 }
 
 - (void)layoutSubviews
@@ -211,12 +207,12 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     }
 }
 
-- (void)setMicrophoneOnValue:(BOOL)anValue
+- (void)setStarredValue:(BOOL)anValue
 {
-    self.settings.microphoneOn = [NSNumber numberWithBool:anValue];
-    BOOL isMicrophoneOn = self.settings.microphoneOn.boolValue;
-    self.microphoneOffButton.hidden = isMicrophoneOn;
-    self.microphoneOnButton.hidden = !isMicrophoneOn;
+    self.settings.starred = [NSNumber numberWithBool:anValue];
+    BOOL isStarred = self.settings.starred.boolValue;
+    self.starButton.hidden = isStarred;
+    self.starredButton.hidden = !isStarred;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -256,28 +252,12 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 
 - (IBAction)starButtonTouched:(id)sender
 {
-    [self.videoCapturer setStarred:YES];
-    self.starButton.hidden = self.videoCapturer.starred;
-    self.starredButton.hidden = !self.starredButton.hidden;
+    [self setStarredValue:YES];
 }
 
 - (IBAction)starredButtonTouched:(id)sender
 {
-    [self.videoCapturer setStarred:NO];
-    self.starButton.hidden = self.videoCapturer.starred;
-    self.starredButton.hidden = !self.starredButton.hidden;
-}
-
-- (IBAction)microphoneOffButtonTouched:(id)sender
-{
-#pragma unused(sender)
-    [self setMicrophoneOnValue:YES];
-}
-
-- (IBAction)microphoneOnButtonTouched:(id)sender
-{
-#pragma unused(sender)
-    [self setMicrophoneOnValue:NO];
+    [self setStarredValue:NO];
 }
 
 - (void)handleUIApplicationDidEnterBackgroundNotification

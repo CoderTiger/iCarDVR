@@ -20,14 +20,14 @@ NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips = @"maxCountOfRecordi
 NSString *const kCarDVRSettingsKeyCameraPosition = @"cameraPosition";
 NSString *const kCarDVRSettingsKeyVideoQuality = @"videoQuality";
 NSString *const kCarDVRSettingsKeyVideoFrameRate = @"videoFrameRate";
-NSString *const kCarDVRSettingsKeyMicrophoneOn = @"isMicrophoneOn";
+NSString *const kCarDVRSettingsKeyStarred = @"isStarred";
 
 static NSNumber *defaultMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 static NSNumber *maxVideoFrameRate ;// 30 fps
 static NSNumber *minVideoFrameRate;// 10 fps
-static NSNumber *defaultMicrophoneOnValue;// YES
+static NSNumber *defaultStarredValue;// NO
 
 @interface CarDVRSettings ()
 {
@@ -64,13 +64,13 @@ static NSNumber *defaultMicrophoneOnValue;// YES
     defaultMaxCountOfRecordingClips = @2;// 2 clips
     maxVideoFrameRate = @30;// 30 fps
     minVideoFrameRate = @10;// 10 fps
-    defaultMicrophoneOnValue = @YES;
+    defaultStarredValue = @NO;
     if ( !defaultMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
         || !defaultMaxCountOfRecordingClips
         || !maxVideoFrameRate
         || !minVideoFrameRate
-        || !defaultMicrophoneOnValue )
+        || !defaultStarredValue )
     {
         NSException *exception = [NSException exceptionWithName:NSMallocException
                                                          reason:@"Fault on CarDVRSettings::initialize due to out of memory"
@@ -268,27 +268,27 @@ static NSNumber *defaultMicrophoneOnValue;// YES
     }
 }
 
-- (NSNumber *)isMicrophoneOn
+- (NSNumber *)isStarred
 {
-    NSNumber *microphoneOn = [self settingValueForKey:kCarDVRSettingsKeyMicrophoneOn];
-    if ( !microphoneOn )
+    NSNumber *starred = [self settingValueForKey:kCarDVRSettingsKeyStarred];
+    if ( !starred )
     {
-        microphoneOn = defaultMicrophoneOnValue;
-        if ( microphoneOn )
+        starred = defaultStarredValue;
+        if ( starred )
         {
-            [self setSettingValue:microphoneOn forKey:kCarDVRSettingsKeyMicrophoneOn mutely:YES];
+            [self setSettingValue:starred forKey:kCarDVRSettingsKeyStarred mutely:YES];
         }
     }
-    return microphoneOn;
+    return starred;
 }
 
-- (void)setMicrophoneOn:(NSNumber *)microphoneOn
+- (void)setStarred:(NSNumber *)starred
 {
-    if ( !microphoneOn )
+    if ( !starred )
     {
         return;
     }
-    [self setSettingValue:microphoneOn forKey:kCarDVRSettingsKeyMicrophoneOn];
+    [self setSettingValue:starred forKey:kCarDVRSettingsKeyStarred];
 }
 
 - (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey
