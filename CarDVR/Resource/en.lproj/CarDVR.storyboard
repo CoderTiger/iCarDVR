@@ -209,7 +209,7 @@
                         <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                         <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Recents" id="Dr7-YI-9KR" userLabel="Tab Bar Item - Recents"/>
+                    <tabBarItem key="tabBarItem" title="Recents" image="TabRecents25x25" id="Dr7-YI-9KR" userLabel="Tab Bar Item - Recents"/>
                     <connections>
                         <outlet property="recentVideoTableView" destination="duD-lp-B7N" id="jwn-R0-tCx"/>
                     </connections>
@@ -506,16 +506,16 @@
             </objects>
             <point key="canvasLocation" x="289" y="-97"/>
         </scene>
-        <!--View Controller - Starred-->
+        <!--CarDVRStarredViewController-->
         <scene sceneID="hQB-53-o90">
             <objects>
-                <viewController id="9gA-3N-nYH" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="mjX-2I-jz9">
+                <viewController id="9gA-3N-nYH" userLabel="CarDVRStarredViewController" customClass="CarDVRStarredViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="mjX-2I-jz9" userLabel="CarDVRStarredView">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Starred" id="54c-NM-LA9"/>
+                    <tabBarItem key="tabBarItem" title="Starred" image="TabStarred25x25" id="54c-NM-LA9"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BM9-1D-nT2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -594,6 +594,8 @@
         <image name="ButtonStarred50x50" width="50" height="50"/>
         <image name="ButtonStart50x50" width="50" height="50"/>
         <image name="ButtonStop50x50" width="50" height="50"/>
+        <image name="TabRecents25x25" width="25" height="25"/>
+        <image name="TabStarred25x25" width="25" height="25"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

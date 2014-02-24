@@ -664,7 +664,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     NSLog( @"[Debug][+]%s", __PRETTY_FUNCTION__ );
 #endif// DEBUG
     dispatch_async( _clipWriterQueue, ^{
-        CarDVRAssetWriter *assetWriter = [[CarDVRAssetWriter alloc] initWithFolderPath:self.pathHelper.recentsFolderURL.path
+        NSURL *clipWriteFolderURL = _isStarred ? self.pathHelper.starredFolderURL : self.pathHelper.recentsFolderURL;
+        CarDVRAssetWriter *assetWriter = [[CarDVRAssetWriter alloc] initWithFolderPath:clipWriteFolderURL.path
                                                                               clipName:[self newRecordingClipName]
                                                                               settings:self.settings
                                                                                  error:nil];
@@ -680,7 +681,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:nil];
             [_recentRecordedClipURLs removeObjectAtIndex:0];
         }
-        
         
         dispatch_async( dispatch_get_main_queue(), ^{
             NSTimeInterval startNextAssetWriterInterval =

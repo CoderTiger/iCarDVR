@@ -36,17 +36,22 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 
 @implementation CarDVRRecentsViewController
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if ( self )
+    {
+        self.title = NSLocalizedString( @"recentsViewTitle", @"Recents" );
+    }
+    return self;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if ( self )
     {
         self.title = NSLocalizedString( @"recentsViewTitle", @"Recents" );
-        NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
-        [defaultNC addObserver:self
-                      selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
-                          name:kCarDVRVideoCapturerDidStopRecordingNotification
-                        object:nil];
     }
     return self;
 }
@@ -60,6 +65,13 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    self.title = NSLocalizedString( @"recentsViewTitle", @"Recents" );
+    NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
+    [defaultNC addObserver:self
+                  selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
+                      name:kCarDVRVideoCapturerDidStopRecordingNotification
+                    object:nil];
     
     // Prevent 'recents' list view from being covered by navigation bar and tab bar.
 //    self.navigationController.navigationBar.translucent = NO;
