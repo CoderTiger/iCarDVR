@@ -9,8 +9,10 @@
 #import "CarDVRVideoTableViewCell.h"
 #import "CarDVRVideoItem.h"
 
-static const CGFloat kThumbnailWidth = 140.00f;
-static const CGFloat kThumbnailHeight = 140.00f;
+static const CGFloat kThumbnailWidth2x = 140.00f;
+static const CGFloat kThumbnailHeight2x = 100.00f;
+static const CGFloat kThumbnailCornerRadius = 12.5f;
+static const CGFloat kThumbnailBorderWidth = 0.5f;
 static NSDateFormatter *dateFormatter;
 
 @interface CarDVRVideoTableViewCell ()
@@ -47,9 +49,12 @@ static NSDateFormatter *dateFormatter;
     }
     else
     {
-        [_videoItem generateThumbnailAsynchronouslyWithSize:CGSizeMake( kThumbnailWidth, kThumbnailHeight )
+        [_videoItem generateThumbnailAsynchronouslyWithSize:CGSizeMake( kThumbnailWidth2x, kThumbnailHeight2x )
                                           completionHandler:^(UIImage *thumbnail) {
                                               dispatch_async( dispatch_get_main_queue(), ^{
+                                                  _thumbnailImageView.layer.borderWidth = kThumbnailBorderWidth;
+                                                  _thumbnailImageView.layer.borderColor = UIColor.lightGrayColor.CGColor;
+                                                  _thumbnailImageView.layer.cornerRadius = kThumbnailCornerRadius;
                                                   self.thumbnailImageView.image = thumbnail;
                                               });
                                           }];
