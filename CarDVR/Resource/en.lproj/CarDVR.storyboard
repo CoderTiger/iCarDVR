@@ -148,7 +148,7 @@
         <!--CarDVRRecentsViewController-->
         <scene sceneID="0Ik-P6-Adw">
             <objects>
-                <viewController id="FNK-G8-EYt" userLabel="CarDVRRecentsViewController" customClass="CarDVRRecentsViewController" sceneMemberID="viewController">
+                <viewController id="FNK-G8-EYt" userLabel="CarDVRRecentsViewController" customClass="CarDVRVideoBrowserViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ZkH-vi-nRS" userLabel="CarDVRRecentsView">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -158,7 +158,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="kRecentVideoCellId" rowHeight="80" id="Jjt-di-x50" userLabel="Table View Cell - video" customClass="CarDVRVideoTableViewCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="kVideoCellId" rowHeight="80" id="Jjt-di-x50" userLabel="Table View Cell - video" customClass="CarDVRVideoTableViewCell">
                                         <rect key="frame" x="0.0" y="22" width="320" height="80"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Jjt-di-x50" id="U7m-OF-Yje">
@@ -200,8 +200,8 @@
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
-                                    <outlet property="dataSource" destination="FNK-G8-EYt" id="JR1-fb-HJc"/>
-                                    <outlet property="delegate" destination="FNK-G8-EYt" id="T4H-D8-3b3"/>
+                                    <outlet property="dataSource" destination="FNK-G8-EYt" id="WJu-yw-tGf"/>
+                                    <outlet property="delegate" destination="FNK-G8-EYt" id="rwt-kV-nfV"/>
                                 </connections>
                             </tableView>
                         </subviews>
@@ -211,7 +211,7 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Recents" image="TabRecents25x25" id="Dr7-YI-9KR" userLabel="Tab Bar Item - Recents"/>
                     <connections>
-                        <outlet property="recentVideoTableView" destination="duD-lp-B7N" id="jwn-R0-tCx"/>
+                        <outlet property="videoTableView" destination="duD-lp-B7N" id="dEI-mK-V80"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HIx-AG-3P0" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -509,13 +509,47 @@
         <!--CarDVRStarredViewController-->
         <scene sceneID="hQB-53-o90">
             <objects>
-                <viewController id="9gA-3N-nYH" userLabel="CarDVRStarredViewController" customClass="CarDVRStarredViewController" sceneMemberID="viewController">
+                <viewController id="9gA-3N-nYH" userLabel="CarDVRStarredViewController" customClass="CarDVRVideoBrowserViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mjX-2I-jz9" userLabel="CarDVRStarredView">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="80" sectionHeaderHeight="22" sectionFooterHeight="22" id="7gK-ND-mVg" userLabel="Table View - Starred videos">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="kVideoCellId" rowHeight="80" id="qjm-C9-Xcc" userLabel="Table View Cell - video" customClass="CarDVRVideoTableViewCell">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="80"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="qjm-C9-Xcc" id="lir-0G-fdh">
+                                            <rect key="frame" x="0.0" y="0.0" width="287" height="80"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="XUW-4X-UCo" userLabel="Image View - Thumbnail">
+                                                    <rect key="frame" x="5" y="5" width="70" height="70"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="thumbnailImageView" destination="XUW-4X-UCo" id="czD-Ta-zjE"/>
+                                            <segue destination="cBt-M7-Yka" kind="push" identifier="kShowVideoPlayerSegueId" id="IMk-6e-wRQ"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="9gA-3N-nYH" id="HmS-kb-kFE"/>
+                                    <outlet property="delegate" destination="9gA-3N-nYH" id="3Fb-Nj-csM"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Starred" image="TabStarred25x25" id="54c-NM-LA9"/>
+                    <connections>
+                        <outlet property="videoTableView" destination="7gK-ND-mVg" id="p23-un-pPA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BM9-1D-nT2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -581,7 +615,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cRk-Px-7t7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1238" y="-258"/>
+            <point key="canvasLocation" x="1282" y="94"/>
         </scene>
     </scenes>
     <resources>
@@ -602,4 +636,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="IMk-6e-wRQ"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -17,8 +17,7 @@
 		F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */; };
 		F6AD6E8118951B6F0006DA59 /* CarDVRMeasurementConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F6AD6E8018951B6F0006DA59 /* CarDVRMeasurementConverter.m */; };
 		F6B0F9D61820AAA200A46E3C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0F9D41820AAA100A46E3C /* Localizable.strings */; };
-		F6B0F9F41820CB1800A46E3C /* CarDVRRecentsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0F9F21820CB1800A46E3C /* CarDVRRecentsViewController.m */; };
-		F6B0F9FC1820CCC600A46E3C /* CarDVRStarredViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0F9FA1820CCC600A46E3C /* CarDVRStarredViewController.m */; };
+		F6B0F9F41820CB1800A46E3C /* CarDVRVideoBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0F9F21820CB1800A46E3C /* CarDVRVideoBrowserViewController.m */; };
 		F6B0FA041820EC0300A46E3C /* CarDVRSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0FA021820EC0300A46E3C /* CarDVRSettingsViewController.m */; };
 		F6B0FA0A1821F6F400A46E3C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA091821F6F400A46E3C /* MapKit.framework */; };
 		F6B0FA0D1821F72900A46E3C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA0C1821F72900A46E3C /* StoreKit.framework */; };
@@ -40,10 +39,10 @@
 		F6D3724C180BEBC40076B2EC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6D3724A180BEBC40076B2EC /* InfoPlist.strings */; };
 		F6D37252180BEF230076B2EC /* CarDVRCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D37250180BEF230076B2EC /* CarDVRCameraViewController.m */; };
 		F6D37258180BF90B0076B2EC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D37257180BF90B0076B2EC /* AVFoundation.framework */; };
-		F6D3725A180BFCFE0076B2EC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6D37259180BFCFE0076B2EC /* Images.xcassets */; };
 		F6F0FC22181E7760000562DF /* CarDVRVideoCapturerInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F0FC21181E7760000562DF /* CarDVRVideoCapturerInterval.m */; };
 		F6F0FC25181F589F000562DF /* CarDVRSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F0FC24181F589F000562DF /* CarDVRSettings.m */; };
 		F6F2E2F418477CB90004199D /* CarDVR.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F6F2E2F218477CB90004199D /* CarDVR.storyboard */; };
+		F6F48D5118BC32EA009DE04C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6F48D5018BC32EA009DE04C /* Images.xcassets */; };
 		F6FEE81B180CE75400034B6A /* CarDVRVideoCapturer.m in Sources */ = {isa = PBXBuildFile; fileRef = F6FEE81A180CE75400034B6A /* CarDVRVideoCapturer.m */; };
 		F6FEE820180D9CDE00034B6A /* CarDVRPathHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = F6FEE81F180D9CDE00034B6A /* CarDVRPathHelper.m */; };
 /* End PBXBuildFile section */
@@ -78,10 +77,8 @@
 		F6AD6E7F18951B6F0006DA59 /* CarDVRMeasurementConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRMeasurementConverter.h; sourceTree = "<group>"; };
 		F6AD6E8018951B6F0006DA59 /* CarDVRMeasurementConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRMeasurementConverter.m; sourceTree = "<group>"; };
 		F6B0F9D51820AAA200A46E3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
-		F6B0F9F11820CB1800A46E3C /* CarDVRRecentsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRRecentsViewController.h; sourceTree = "<group>"; };
-		F6B0F9F21820CB1800A46E3C /* CarDVRRecentsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRRecentsViewController.m; sourceTree = "<group>"; };
-		F6B0F9F91820CCC600A46E3C /* CarDVRStarredViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRStarredViewController.h; sourceTree = "<group>"; };
-		F6B0F9FA1820CCC600A46E3C /* CarDVRStarredViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRStarredViewController.m; sourceTree = "<group>"; };
+		F6B0F9F11820CB1800A46E3C /* CarDVRVideoBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRVideoBrowserViewController.h; sourceTree = "<group>"; };
+		F6B0F9F21820CB1800A46E3C /* CarDVRVideoBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRVideoBrowserViewController.m; sourceTree = "<group>"; };
 		F6B0FA011820EC0300A46E3C /* CarDVRSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRSettingsViewController.h; sourceTree = "<group>"; };
 		F6B0FA021820EC0300A46E3C /* CarDVRSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRSettingsViewController.m; sourceTree = "<group>"; };
 		F6B0FA091821F6F400A46E3C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -113,12 +110,12 @@
 		F6D3724F180BEF230076B2EC /* CarDVRCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRCameraViewController.h; sourceTree = "<group>"; };
 		F6D37250180BEF230076B2EC /* CarDVRCameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRCameraViewController.m; sourceTree = "<group>"; };
 		F6D37257180BF90B0076B2EC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		F6D37259180BFCFE0076B2EC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F6F0FC20181E7760000562DF /* CarDVRVideoCapturerInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRVideoCapturerInterval.h; sourceTree = "<group>"; };
 		F6F0FC21181E7760000562DF /* CarDVRVideoCapturerInterval.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRVideoCapturerInterval.m; sourceTree = "<group>"; };
 		F6F0FC23181F589F000562DF /* CarDVRSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRSettings.h; sourceTree = "<group>"; };
 		F6F0FC24181F589F000562DF /* CarDVRSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRSettings.m; sourceTree = "<group>"; };
 		F6F2E2F318477CB90004199D /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = CarDVR.storyboard; sourceTree = "<group>"; };
+		F6F48D5018BC32EA009DE04C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F6FEE819180CE75400034B6A /* CarDVRVideoCapturer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRVideoCapturer.h; sourceTree = "<group>"; };
 		F6FEE81A180CE75400034B6A /* CarDVRVideoCapturer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRVideoCapturer.m; sourceTree = "<group>"; };
 		F6FEE81E180D9CDE00034B6A /* CarDVRPathHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRPathHelper.h; sourceTree = "<group>"; };
@@ -263,10 +260,10 @@
 		F6D37241180BEBAA0076B2EC /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				F6F48D5018BC32EA009DE04C /* Images.xcassets */,
 				F6D37249180BEBC40076B2EC /* en.lproj */,
 				F6B0FA4F182224CD00A46E3C /* zh-Hans.lproj */,
 				F6D37242180BEBAA0076B2EC /* CarDVR-Info.plist */,
-				F6D37259180BFCFE0076B2EC /* Images.xcassets */,
 				F60D0B9318237848004162C6 /* Coverage.geojson */,
 			);
 			path = Resource;
@@ -293,12 +290,10 @@
 				F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */,
 				F6D17D881826970A003D965C /* CarDVRVideoDetailViewController.h */,
 				F6D17D891826970A003D965C /* CarDVRVideoDetailViewController.m */,
-				F6B0F9F11820CB1800A46E3C /* CarDVRRecentsViewController.h */,
-				F6B0F9F21820CB1800A46E3C /* CarDVRRecentsViewController.m */,
+				F6B0F9F11820CB1800A46E3C /* CarDVRVideoBrowserViewController.h */,
+				F6B0F9F21820CB1800A46E3C /* CarDVRVideoBrowserViewController.m */,
 				F6B0FA011820EC0300A46E3C /* CarDVRSettingsViewController.h */,
 				F6B0FA021820EC0300A46E3C /* CarDVRSettingsViewController.m */,
-				F6B0F9F91820CCC600A46E3C /* CarDVRStarredViewController.h */,
-				F6B0F9FA1820CCC600A46E3C /* CarDVRStarredViewController.m */,
 				F6D17D85182687C1003D965C /* CarDVRVideoItem.h */,
 				F6D17D86182687C1003D965C /* CarDVRVideoItem.m */,
 				F62987441847A05C00CD25E7 /* CarDVRVideoTableViewCell.h */,
@@ -428,7 +423,7 @@
 			files = (
 				F6B0F9D61820AAA200A46E3C /* Localizable.strings in Resources */,
 				F6F2E2F418477CB90004199D /* CarDVR.storyboard in Resources */,
-				F6D3725A180BFCFE0076B2EC /* Images.xcassets in Resources */,
+				F6F48D5118BC32EA009DE04C /* Images.xcassets in Resources */,
 				F6B0FA55182224CD00A46E3C /* Localizable.strings in Resources */,
 				F6D3724C180BEBC40076B2EC /* InfoPlist.strings in Resources */,
 				F6B0FA54182224CD00A46E3C /* InfoPlist.strings in Resources */,
@@ -451,14 +446,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F62987461847A05C00CD25E7 /* CarDVRVideoTableViewCell.m in Sources */,
-				F6B0F9F41820CB1800A46E3C /* CarDVRRecentsViewController.m in Sources */,
+				F6B0F9F41820CB1800A46E3C /* CarDVRVideoBrowserViewController.m in Sources */,
 				F6F0FC22181E7760000562DF /* CarDVRVideoCapturerInterval.m in Sources */,
 				F6B0FA041820EC0300A46E3C /* CarDVRSettingsViewController.m in Sources */,
 				F6D37240180BEB970076B2EC /* main.m in Sources */,
 				F6D17D87182687C1003D965C /* CarDVRVideoItem.m in Sources */,
 				F6D17D8B1826970A003D965C /* CarDVRVideoDetailViewController.m in Sources */,
 				F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */,
-				F6B0F9FC1820CCC600A46E3C /* CarDVRStarredViewController.m in Sources */,
 				F6FEE820180D9CDE00034B6A /* CarDVRPathHelper.m in Sources */,
 				F62323EC186C421600123109 /* CarDVRLocationDetector.m in Sources */,
 				F6AD6E8118951B6F0006DA59 /* CarDVRMeasurementConverter.m in Sources */,

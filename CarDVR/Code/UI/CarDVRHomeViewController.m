@@ -7,11 +7,14 @@
 //
 
 #import "CarDVRHomeViewController.h"
-#import "CarDVRRecentsViewController.h"
-#import "CarDVRStarredViewController.h"
+#import "CarDVRVideoBrowserViewController.h"
 #import "CarDVRSettingsViewController.h"
+#import "CarDVRSettings.h"
 
 static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
+static const NSUInteger kTabRecentsIndex = 0;
+static const NSUInteger kTabStarredIndex = 1;
+static const NSUInteger kTabMaxCount = 2;
 
 @interface CarDVRHomeViewController ()
 
@@ -22,6 +25,20 @@ static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
 
 @implementation CarDVRHomeViewController
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if ( self )
+    {
+        NSAssert1( ( self.viewControllers.count == kTabMaxCount ),
+                  @"Wrong count of tab views: %u",
+                  self.viewControllers.count );
+        ( (CarDVRVideoBrowserViewController *)self.viewControllers[kTabRecentsIndex] ).type = kCarDVRVideoBrowserViewControllerTypeRecents;
+        ( (CarDVRVideoBrowserViewController *)self.viewControllers[kTabStarredIndex] ).type = kCarDVRVideoBrowserViewControllerTypeStarred;
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -31,6 +48,8 @@ static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
+    
+    self.selectedIndex = self.settings.isStarred.boolValue ? kTabStarredIndex : kTabRecentsIndex;
 }
 
 - (void)didReceiveMemoryWarning
