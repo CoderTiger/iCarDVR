@@ -43,7 +43,7 @@
 //
 // CarDVRVideoBrowserView
 //
-"singleVideoSectionHeaderTitleFormat"="拍摄于：%@, 共 1 个视频";
+"singleVideoSectionHeaderTitleFormat"="拍摄于：%@，共 1 个视频";
 "multipleVideoSectionHeaderTitleFormat"="拍摄于：%@，共 %u 个视频";
 
 //
