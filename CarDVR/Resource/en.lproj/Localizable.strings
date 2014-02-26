@@ -41,6 +41,12 @@
 "videoFrameRateDimensionFormat"="%.2f fps, %.0fx%.0f";
 
 //
+// CarDVRVideoBrowserView
+//
+"singleVideoSectionHeaderTitleFormat"="Captured: %@, 1 clip";
+"multipleVideoSectionHeaderTitleFormat"="Captured: %@, %u clips";
+
+//
 // video subtitles
 //
 locationStringFormat="%.4f° %@, %.4f° %@";
