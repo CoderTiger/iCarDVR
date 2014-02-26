@@ -48,6 +48,8 @@ static NSDateFormatter *dateFormatter;
     //
     if ( _videoItem.thumbnail )
     {
+        _thumbnailImageView.layer.borderWidth = kThumbnailBorderWidth;
+        _thumbnailImageView.layer.borderColor = thumbnailBorderColor.CGColor;
         _thumbnailImageView.image = _videoItem.thumbnail;
     }
     else
