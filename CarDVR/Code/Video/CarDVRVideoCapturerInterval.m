@@ -53,6 +53,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 @property (assign, nonatomic, getter = isBatchConfiguration) BOOL batchConfiguration;
 
 #pragma mark - private methods
+- (void)configAVCaptureSession;
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession;
 - (void)installAVCaptureObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
@@ -264,6 +265,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
 - (void)startRecording
 {
+    [self configAVCaptureSession];
     dispatch_async( _clipWriterQueue, ^{
         if ( _recordingWillBeStarted || self.isRecording )
             return;
@@ -434,6 +436,15 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 }
 
 #pragma mark - private methods
+- (void)configAVCaptureSession
+{
+    [_captureSession beginConfiguration];
+    [_captureSession setSessionPreset:self.videoResolutionPreset];
+    [self installAVCaptureDeviceWithSession:_captureSession];
+    [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    [_captureSession commitConfiguration];
+}
+
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession
 {
     //
@@ -512,11 +523,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     //
     // Config & start capture session
     //
-    [_captureSession beginConfiguration];
-    [_captureSession setSessionPreset:self.videoResolutionPreset];
-    [self installAVCaptureDeviceWithSession:_captureSession];
-    [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [_captureSession commitConfiguration];
+    [self configAVCaptureSession];
     
     [self fitDeviceOrientation];
     [_captureSession startRunning];

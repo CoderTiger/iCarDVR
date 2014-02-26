@@ -18,10 +18,11 @@
 "secondsDuration"="%d seconds";
 "maxClipDurationSettingViewTitle"="Max Clip Duration";
 "resolutionLabel"="Resolution:";
-"frameRateLabel"="Frame rate:";
 "videoQualityHigh"="High";
 "videoQualityMiddle"="Middle";
 "videoQualityLow"="Low";
+"frameRateLabel"="Frame rate:";
+"frameRateFormat"="%@ fps";
 "maxClipDurationValueLabel"="%d min %d sec";
 "settingsSectionStorageInfo"="Memory Info";
 "settingsSectionAbout"="About";

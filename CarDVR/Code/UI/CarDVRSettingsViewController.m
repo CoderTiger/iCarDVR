@@ -205,7 +205,7 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
     [self setMaxRecordingClipsValue:self.settings.maxCountOfRecordingClips.unsignedIntegerValue andUpdateStepper:YES];
     [self setMaxClipDurationValue:self.settings.maxRecordingDurationPerClip.unsignedIntegerValue];
     [self setResolutionValue:self.settings.videoQuality.intValue andUpdateStepper:YES];
-    self.frameRateValueLabel.text = [self.settings.videoFrameRate stringValue];
+    self.frameRateValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"frameRateFormat", nil ), self.settings.videoFrameRate];
 }
 
 - (void)setMaxRecordingClipsValue:(NSUInteger)count andUpdateStepper:(BOOL)update

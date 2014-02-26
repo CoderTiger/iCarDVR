@@ -18,10 +18,11 @@
 "secondsDuration"="%d 秒";
 "maxClipDurationSettingViewTitle"="最长录制片段时间";
 "resolutionLabel"="分辨率：";
-"frameRateLabel"="帧率：";
 "videoQualityHigh"="高";
 "videoQualityMiddle"="中";
 "videoQualityLow"="低";
+"frameRateLabel"="帧率：";
+"frameRateFormat"="%@ fps";
 "maxClipDurationValueLabel"="%d 分 %d 秒";
 "settingsSectionStorageInfo"="内存信息";
 "settingsSectionAbout"="关于";
