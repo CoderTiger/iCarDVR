@@ -198,9 +198,13 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ( [segue.identifier isEqualToString:kShowVideoPlayerSegueId] )
     {
-        CarDVRVideoItem *videoItem = [self.videos objectAtIndex:[self.videoTableView indexPathForSelectedRow].row];
-        CarDVRVideoDetailViewController *playerViewController = [segue destinationViewController];
-        playerViewController.videoItem = videoItem;
+        NSIndexPath *indexPath = [self.videoTableView indexPathForSelectedRow];
+        if ( indexPath.section < self.videos.count && indexPath.row < [self.videos[indexPath.section] count] )
+        {
+            CarDVRVideoItem *videoItem = [self.videos[indexPath.section] objectAtIndex:indexPath.row];
+            CarDVRVideoDetailViewController *playerViewController = [segue destinationViewController];
+            playerViewController.videoItem = videoItem;
+        }
     }
 }
 
