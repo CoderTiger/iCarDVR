@@ -26,7 +26,7 @@ static NSNumber *defaultMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 static NSNumber *maxVideoFrameRate ;// 30 fps
-static NSNumber *minVideoFrameRate;// 10 fps
+static NSNumber *minVideoFrameRate;// 5 fps
 static NSNumber *defaultStarredValue;// NO
 
 @interface CarDVRSettings ()
@@ -63,7 +63,7 @@ static NSNumber *defaultStarredValue;// NO
     defaultOverlappedRecordingDuration = @1.0f;// 1 second
     defaultMaxCountOfRecordingClips = @2;// 2 clips
     maxVideoFrameRate = @30;// 30 fps
-    minVideoFrameRate = @10;// 10 fps
+    minVideoFrameRate = @5;// 10 fps
     defaultStarredValue = @NO;
     if ( !defaultMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
@@ -232,6 +232,21 @@ static NSNumber *defaultStarredValue;// NO
         }
     }
     return videoQuality;
+}
+
+- (void)setVideoQuality:(NSNumber *)videoQuality
+{
+    NSInteger videoQualityValue = videoQuality.integerValue;
+    switch ( videoQualityValue )
+    {
+        case kCarDVRVideoQualityHigh:
+        case kCarDVRVideoQualityMiddle:
+        case kCarDVRVideoQualityLow:
+            [self setSettingValue:videoQuality forKey:kCarDVRSettingsKeyVideoQuality];
+            break;
+        default:
+            break;
+    }
 }
 
 - (NSNumber *)videoFrameRate

@@ -22,7 +22,7 @@
 "videoQualityMiddle"="Middle";
 "videoQualityLow"="Low";
 "frameRateLabel"="Frame rate:";
-"frameRateFormat"="%@ fps";
+"frameRateFormat"="%u fps";
 "maxClipDurationValueLabel"="%d min %d sec";
 "settingsSectionStorageInfo"="Memory Info";
 "settingsSectionAbout"="About";

@@ -15,6 +15,8 @@ static const NSInteger kCarDVRSettingsSectionStorageInfo = 0;
 static const NSInteger kCarDVRSettingsSectionVideo = 1;
 static const NSInteger kCarDVRSettingsSectionAbout = 2;
 static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurationSettingSegueId";
+static const NSUInteger kVideoFrameRateRangePerLevel = 5;
+static const NSUInteger kMaxCountOfVideoFrameRateLevel = 6;
 
 @interface CarDVRSettingsViewController ()<CarDVRMaxClipDurationSettingViewControllerDelegate>
 
@@ -45,6 +47,7 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
 - (void)setMaxRecordingClipsValue:(NSUInteger)count andUpdateStepper:(BOOL)update;
 - (void)setMaxClipDurationValue:(NSUInteger)seconds;
 - (void)setResolutionValue:(CarDVRVideoQuality)quality andUpdateStepper:(BOOL)update;
+- (void)setFrameRateLevelValue:(NSUInteger)frameRateLevel andUpdateStepper:(BOOL)update;
 
 @end
 
@@ -154,6 +157,10 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
 
 - (IBAction)frameRateValueChanged:(id)sender
 {
+    UIStepper *stepper = sender;
+    NSUInteger frameRateLevel = (NSUInteger)stepper.value;
+    [self.settings setVideoFrameRate:[NSNumber numberWithUnsignedInteger:( frameRateLevel + 1 ) * kVideoFrameRateRangePerLevel]];
+    [self setFrameRateLevelValue:frameRateLevel andUpdateStepper:NO];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -205,7 +212,8 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
     [self setMaxRecordingClipsValue:self.settings.maxCountOfRecordingClips.unsignedIntegerValue andUpdateStepper:YES];
     [self setMaxClipDurationValue:self.settings.maxRecordingDurationPerClip.unsignedIntegerValue];
     [self setResolutionValue:self.settings.videoQuality.intValue andUpdateStepper:YES];
-    self.frameRateValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"frameRateFormat", nil ), self.settings.videoFrameRate];
+    NSUInteger frameRateLevel = self.settings.videoFrameRate.unsignedIntegerValue / kVideoFrameRateRangePerLevel - 1;
+    [self setFrameRateLevelValue:frameRateLevel andUpdateStepper:YES];
 }
 
 - (void)setMaxRecordingClipsValue:(NSUInteger)count andUpdateStepper:(BOOL)update
@@ -262,6 +270,20 @@ static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurati
         default:
             NSAssert1( NO, @"[Error] Unsupported video quality: %@", self.settings.videoQuality );
             break;
+    }
+}
+
+- (void)setFrameRateLevelValue:(NSUInteger)frameRateLevel andUpdateStepper:(BOOL)update
+{
+    if ( frameRateLevel >= kMaxCountOfVideoFrameRateLevel )
+    {
+        frameRateLevel = kMaxCountOfVideoFrameRateLevel - 1;
+    }
+    NSUInteger frameRate = ( frameRateLevel + 1 ) * kVideoFrameRateRangePerLevel;
+    self.frameRateValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"frameRateFormat", nil ), frameRate];
+    if ( update )
+    {
+        [self.frameRateStepper setValue:frameRateLevel];
     }
 }
 
