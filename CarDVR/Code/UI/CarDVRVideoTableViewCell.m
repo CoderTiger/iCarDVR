@@ -11,8 +11,9 @@
 
 static const CGFloat kThumbnailWidth2x = 140.00f;
 static const CGFloat kThumbnailHeight2x = 100.00f;
-static const CGFloat kThumbnailCornerRadius = 12.5f;
+//static const CGFloat kThumbnailCornerRadius = 12.5f;//2.0f;//2.5f;
 static const CGFloat kThumbnailBorderWidth = 0.5f;
+static UIColor *thumbnailBorderColor;
 static NSDateFormatter *dateFormatter;
 
 @interface CarDVRVideoTableViewCell ()
@@ -30,6 +31,8 @@ static NSDateFormatter *dateFormatter;
 
 + (void)initialize
 {
+    thumbnailBorderColor = [UIColor lightGrayColor];
+    
     dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateStyle:NSDateFormatterNoStyle];
     [dateFormatter setDateFormat:NSLocalizedString( @"videoCreationDateFormat", nil )];
@@ -53,8 +56,8 @@ static NSDateFormatter *dateFormatter;
                                           completionHandler:^(UIImage *thumbnail) {
                                               dispatch_async( dispatch_get_main_queue(), ^{
                                                   _thumbnailImageView.layer.borderWidth = kThumbnailBorderWidth;
-                                                  _thumbnailImageView.layer.borderColor = UIColor.lightGrayColor.CGColor;
-                                                  _thumbnailImageView.layer.cornerRadius = kThumbnailCornerRadius;
+                                                  _thumbnailImageView.layer.borderColor = thumbnailBorderColor.CGColor;
+//                                                  _thumbnailImageView.layer.cornerRadius = kThumbnailCornerRadius;
                                                   self.thumbnailImageView.image = thumbnail;
                                               });
                                           }];

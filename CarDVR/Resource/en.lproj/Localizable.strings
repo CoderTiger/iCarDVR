@@ -38,7 +38,7 @@
 "videoSizeKByteFormat"="%.2fKB";
 "videoSizeMByteFormat"="%.2fMB";
 "videoSizeGByteFormat"="%.2fGB";
-"videoFrameRateDimensionFormat"="%.2f fps, %.0f x %.0f";
+"videoFrameRateDimensionFormat"="%.2f fps, %.0fx%.0f";
 
 //
 // video subtitles
