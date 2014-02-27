@@ -265,7 +265,6 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
 - (void)startRecording
 {
-    [self configAVCaptureSession];
     dispatch_async( _clipWriterQueue, ^{
         if ( _recordingWillBeStarted || self.isRecording )
             return;

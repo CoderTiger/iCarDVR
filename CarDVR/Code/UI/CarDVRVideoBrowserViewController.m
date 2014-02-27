@@ -176,7 +176,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             if ( !error )
             {
                 [self.videos[indexPath.section] removeObjectAtIndex:indexPath.row];
-                [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:indexPath.section];
                 if ( [self.videos[indexPath.section] count] == 0 )
                 {
@@ -185,6 +184,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
                 }
                 else
                 {
+                    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                     [self.videoTableView reloadSections:indexSet withRowAnimation:UITableViewRowAnimationNone];
                 }
             }
