@@ -64,6 +64,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 - (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification;
 - (void)handleUIApplicationDidBecomeActiveNotification;
 - (void)handleUIApplicationDidEnterBackgroundNotification;
+- (void)handleCarDVRSettingsCommitEditingNotification:(NSNotification *)aNotification;
 - (void)handleStarredChangedNotification;
 - (void)startDuoAssetWriterLoop;
 - (void)stopDuoAssetWriterLoop;
@@ -249,6 +250,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
                           name:UIApplicationDidEnterBackgroundNotification
                         object:nil];
         
+        [_settings addCommitEditingObserver:self selector:@selector(handleCarDVRSettingsCommitEditingNotification:)];
         [_settings addObserver:self
                       selector:@selector(handleStarredChangedNotification)
                         forKey:kCarDVRSettingsKeyStarred];
@@ -439,7 +441,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 {
     [_captureSession beginConfiguration];
     [_captureSession setSessionPreset:self.videoResolutionPreset];
-    [self installAVCaptureDeviceWithSession:_captureSession];
     [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     [_captureSession commitConfiguration];
 }
@@ -523,6 +524,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     // Config & start capture session
     //
     [self configAVCaptureSession];
+    [self installAVCaptureDeviceWithSession:_captureSession];
     
     [self fitDeviceOrientation];
     [_captureSession startRunning];
@@ -619,10 +621,19 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     }
 }
 
+- (void)handleCarDVRSettingsCommitEditingNotification:(NSNotification *)aNotification
+{
+    NSMutableSet *changedKeys = [aNotification.userInfo objectForKey:kCarDVRSettingsCommitEditingChangedKeys];
+    if ( [changedKeys containsObject:kCarDVRSettingsKeyVideoQuality]
+        || [changedKeys containsObject:kCarDVRSettingsKeyVideoFrameRate] )
+    {
+        [self configAVCaptureSession];
+    }
+}
+
 - (void)handleStarredChangedNotification
 {
     BOOL isStarred = self.settings.isStarred.boolValue;
-    // todo: complete
     dispatch_async( _clipWriterQueue, ^{
         _isStarred = isStarred;
     });
@@ -753,12 +764,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
               fabs( _location.coordinate.longitude ),
               _location.coordinate.longitude < 0 ? @"W" : @"E",
                               _location.altitude];
-        NSLocale *currentLocale = [NSLocale currentLocale];
-        NSString *currentMeasurementSystem = [currentLocale objectForKey:NSLocaleMeasurementSystem];
-#ifdef DEBUG
-        NSLog( @"[Debug]current measurement system: %@", currentMeasurementSystem );
-#endif//DEBUG
-        
         // todo: complete
         for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
         {
