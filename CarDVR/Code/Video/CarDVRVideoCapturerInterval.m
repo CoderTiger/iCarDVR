@@ -54,6 +54,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
 #pragma mark - private methods
 - (void)configAVCaptureSession;
+- (void)configCamera;
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession;
 - (void)installAVCaptureObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
@@ -440,9 +441,37 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 - (void)configAVCaptureSession
 {
     [_captureSession beginConfiguration];
-    [_captureSession setSessionPreset:self.videoResolutionPreset];
+    if ( [_captureSession canSetSessionPreset:self.videoResolutionPreset] )
+    {
+        [_captureSession setSessionPreset:self.videoResolutionPreset];
+    }
     [_previewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     [_captureSession commitConfiguration];
+}
+
+- (void)configCamera
+{
+    AVCaptureDevice *currentCamera = [self videoDeviceWithPosition:self.settings.cameraPosition.integerValue];
+    NSError *error = nil;
+    [currentCamera lockForConfiguration:&error];
+    if ( !error )
+    {
+        @try
+        {
+            CMTime frameDuration = CMTimeMake( 1, self.settings.videoFrameRate.integerValue );
+            [currentCamera setActiveVideoMaxFrameDuration:frameDuration];
+            [currentCamera setActiveVideoMinFrameDuration:frameDuration];
+        }
+        @catch ( NSException *exception )
+        {
+            // TODO: handle exception
+            NSLog( @"[Error]failed to config current camera due to: %@", exception.description );
+        }
+        @finally
+        {
+            [currentCamera unlockForConfiguration];
+        }
+    }
 }
 
 - (void)installAVCaptureDeviceWithSession:(AVCaptureSession *)aSession
@@ -521,8 +550,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     _previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:_captureSession];
     
     //
-    // Config & start capture session
+    // Config, start
     //
+    [self configCamera];
     [self configAVCaptureSession];
     [self installAVCaptureDeviceWithSession:_captureSession];
     
@@ -624,10 +654,13 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 - (void)handleCarDVRSettingsCommitEditingNotification:(NSNotification *)aNotification
 {
     NSMutableSet *changedKeys = [aNotification.userInfo objectForKey:kCarDVRSettingsCommitEditingChangedKeys];
-    if ( [changedKeys containsObject:kCarDVRSettingsKeyVideoQuality]
-        || [changedKeys containsObject:kCarDVRSettingsKeyVideoFrameRate] )
+    if ( [changedKeys containsObject:kCarDVRSettingsKeyVideoQuality] )
     {
         [self configAVCaptureSession];
+    }
+    if ( [changedKeys containsObject:kCarDVRSettingsKeyVideoFrameRate] )
+    {
+        [self configCamera];
     }
 }
 
