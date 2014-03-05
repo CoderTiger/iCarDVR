@@ -11,11 +11,17 @@
 
 typedef enum
 {
-    kCarDVRVideoQualityHigh,
-    kCarDVRVideoQualityMiddle,
-    kCarDVRVideoQualityLow
+    kCarDVRVideoResolutionHigh,
+    kCarDVRVideoResolutionMiddle,
+    kCarDVRVideoResolutionLow,
+    kCarDVRVideoResolution352x288,
+    kCarDVRVideoResolution640x480,
+    kCarDVRVideoResolution1280x720,
+    kCarDVRVideoResolution1920x1080,
+    kCarDVRVideoResolutioniFrame960x540,
+    kCarDVRVideoResolutioniFrame1280x720
 }
-CarDVRVideoQuality;
+CarDVRVideoResolution;
 
 typedef enum
 {

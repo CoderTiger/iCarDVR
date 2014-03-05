@@ -201,16 +201,28 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
 - (NSString *const)videoResolutionPreset
 {
-    switch ( _settings.videoQuality.integerValue )
+    switch ( _settings.videoResolution.integerValue )
     {
-        case kCarDVRVideoQualityHigh:
+        case kCarDVRVideoResolutionHigh:
             return AVCaptureSessionPresetHigh;
-        case kCarDVRVideoQualityMiddle:
+        case kCarDVRVideoResolutionMiddle:
             return AVCaptureSessionPresetMedium;
-        case kCarDVRVideoQualityLow:
+        case kCarDVRVideoResolutionLow:
             return AVCaptureSessionPresetLow;
+        case kCarDVRVideoResolution352x288:
+            return AVCaptureSessionPreset352x288;
+        case kCarDVRVideoResolution640x480:
+            return AVCaptureSessionPreset640x480;
+        case kCarDVRVideoResolution1280x720:
+            return AVCaptureSessionPreset1280x720;
+        case kCarDVRVideoResolution1920x1080:
+            return AVCaptureSessionPreset1920x1080;
+        case kCarDVRVideoResolutioniFrame960x540:
+            return AVCaptureSessionPresetiFrame960x540;
+        case kCarDVRVideoResolutioniFrame1280x720:
+            return AVCaptureSessionPresetiFrame1280x720;
         default:
-            NSAssert1( NO, @"Unsupported video quality: %@", _settings.videoQuality );
+            NSAssert1( NO, @"Unsupported video quality: %@", _settings.videoResolution );
             break;
     }
     return AVCaptureSessionPresetHigh;// return AVCaptureSessionPresetHigh by default.
@@ -552,9 +564,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     //
     // Config, start
     //
-    [self configCamera];
     [self configAVCaptureSession];
     [self installAVCaptureDeviceWithSession:_captureSession];
+    [self configCamera];
     
     [self fitDeviceOrientation];
     [_captureSession startRunning];
@@ -654,7 +666,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 - (void)handleCarDVRSettingsCommitEditingNotification:(NSNotification *)aNotification
 {
     NSMutableSet *changedKeys = [aNotification.userInfo objectForKey:kCarDVRSettingsCommitEditingChangedKeys];
-    if ( [changedKeys containsObject:kCarDVRSettingsKeyVideoQuality] )
+    if ( [changedKeys containsObject:kCarDVRSettingsKeyVideoResolution] )
     {
         [self configAVCaptureSession];
     }

@@ -18,7 +18,7 @@ NSString *const kCarDVRSettingsKeyMaxRecordingDuration = @"maxRecordingDuration"
 NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration = @"overlappedRecordingDuration";
 NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips = @"maxCountOfRecordingClips";
 NSString *const kCarDVRSettingsKeyCameraPosition = @"cameraPosition";
-NSString *const kCarDVRSettingsKeyVideoQuality = @"videoQuality";
+NSString *const kCarDVRSettingsKeyVideoResolution = @"videoResolution";
 NSString *const kCarDVRSettingsKeyVideoFrameRate = @"videoFrameRate";
 NSString *const kCarDVRSettingsKeyStarred = @"isStarred";
 
@@ -220,29 +220,35 @@ static NSNumber *defaultStarredValue;// NO
     }
 }
 
-- (NSNumber *)videoQuality
+- (NSNumber *)videoResolution
 {
-    NSNumber *videoQuality = [self settingValueForKey:kCarDVRSettingsKeyVideoQuality];
-    if ( !videoQuality )
+    NSNumber *videoResolution = [self settingValueForKey:kCarDVRSettingsKeyVideoResolution];
+    if ( !videoResolution )
     {
-        videoQuality = [NSNumber numberWithInteger:kCarDVRVideoQualityHigh];
-        if ( videoQuality )
+        videoResolution = [NSNumber numberWithInteger:kCarDVRVideoResolutionHigh];
+        if ( videoResolution )
         {
-            [self setSettingValue:videoQuality forKey:kCarDVRSettingsKeyVideoQuality mutely:YES];
+            [self setSettingValue:videoResolution forKey:kCarDVRSettingsKeyVideoResolution mutely:YES];
         }
     }
-    return videoQuality;
+    return videoResolution;
 }
 
-- (void)setVideoQuality:(NSNumber *)videoQuality
+- (void)setVideoResolution:(NSNumber *)videoResolution
 {
-    NSInteger videoQualityValue = videoQuality.integerValue;
-    switch ( videoQualityValue )
+    NSInteger videoResolutionValue = videoResolution.integerValue;
+    switch ( videoResolutionValue )
     {
-        case kCarDVRVideoQualityHigh:
-        case kCarDVRVideoQualityMiddle:
-        case kCarDVRVideoQualityLow:
-            [self setSettingValue:videoQuality forKey:kCarDVRSettingsKeyVideoQuality];
+        case kCarDVRVideoResolutionHigh:
+        case kCarDVRVideoResolutionMiddle:
+        case kCarDVRVideoResolutionLow:
+        case kCarDVRVideoResolution352x288:
+        case kCarDVRVideoResolution640x480:
+        case kCarDVRVideoResolution1280x720:
+        case kCarDVRVideoResolution1920x1080:
+        case kCarDVRVideoResolutioniFrame960x540:
+        case kCarDVRVideoResolutioniFrame1280x720:
+            [self setSettingValue:videoResolution forKey:kCarDVRSettingsKeyVideoResolution];
             break;
         default:
             break;

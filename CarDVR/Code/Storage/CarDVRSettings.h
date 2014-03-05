@@ -15,7 +15,7 @@ NSString *const kCarDVRSettingsKeyMaxRecordingDuration;
 NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration;
 NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips;
 NSString *const kCarDVRSettingsKeyCameraPosition;
-NSString *const kCarDVRSettingsKeyVideoQuality;
+NSString *const kCarDVRSettingsKeyVideoResolution;
 NSString *const kCarDVRSettingsKeyVideoFrameRate;
 NSString *const kCarDVRSettingsKeyStarred;
 
@@ -30,7 +30,7 @@ NSString *const kCarDVRSettingsKeyStarred;
 @property (copy, nonatomic) NSNumber *overlappedRecordingDuration;// second, NSTimeInterval
 @property (copy, nonatomic) NSNumber *maxCountOfRecordingClips;// NSUinteger [2, 10]
 @property (copy, nonatomic) NSNumber *cameraPosition;// CarDVRCameraPosition
-@property (copy, nonatomic) NSNumber *videoQuality;// CarDVRVideoQuality
+@property (copy, nonatomic) NSNumber *videoResolution;// CarDVRVideoResolution
 @property (copy, nonatomic) NSNumber *videoFrameRate;// NSUinteger [10, 30]
 @property (copy, nonatomic, getter = isStarred) NSNumber *starred;// BOOL
 
