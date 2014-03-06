@@ -44,6 +44,7 @@
 		F6F2E2F418477CB90004199D /* CarDVR.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F6F2E2F218477CB90004199D /* CarDVR.storyboard */; };
 		F6F48D5118BC32EA009DE04C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6F48D5018BC32EA009DE04C /* Images.xcassets */; };
 		F6F8EA9F18C6D0DA00C54CC3 /* CarDVRResolutionSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F8EA9E18C6D0DA00C54CC3 /* CarDVRResolutionSettingViewController.m */; };
+		F6FB968818C8B5DA00857BA2 /* libGPX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6FB968518C8B5CB00857BA2 /* libGPX.a */; };
 		F6FEE81B180CE75400034B6A /* CarDVRVideoCapturer.m in Sources */ = {isa = PBXBuildFile; fileRef = F6FEE81A180CE75400034B6A /* CarDVRVideoCapturer.m */; };
 		F6FEE820180D9CDE00034B6A /* CarDVRPathHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = F6FEE81F180D9CDE00034B6A /* CarDVRPathHelper.m */; };
 /* End PBXBuildFile section */
@@ -55,6 +56,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = F6D37207180BE9C00076B2EC;
 			remoteInfo = CarDVR;
+		};
+		F6FB968418C8B5CB00857BA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6FB967F18C8B5CB00857BA2 /* GPX.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6FB95CD18C8B01300857BA2;
+			remoteInfo = GPX;
+		};
+		F6FB968618C8B5CB00857BA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F6FB967F18C8B5CB00857BA2 /* GPX.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F6FB95DD18C8B01400857BA2;
+			remoteInfo = GPXTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -119,6 +134,7 @@
 		F6F48D5018BC32EA009DE04C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F6F8EA9D18C6D0DA00C54CC3 /* CarDVRResolutionSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRResolutionSettingViewController.h; sourceTree = "<group>"; };
 		F6F8EA9E18C6D0DA00C54CC3 /* CarDVRResolutionSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRResolutionSettingViewController.m; sourceTree = "<group>"; };
+		F6FB967F18C8B5CB00857BA2 /* GPX.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GPX.xcodeproj; path = GPX/GPX.xcodeproj; sourceTree = "<group>"; };
 		F6FEE819180CE75400034B6A /* CarDVRVideoCapturer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRVideoCapturer.h; sourceTree = "<group>"; };
 		F6FEE81A180CE75400034B6A /* CarDVRVideoCapturer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRVideoCapturer.m; sourceTree = "<group>"; };
 		F6FEE81E180D9CDE00034B6A /* CarDVRPathHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRPathHelper.h; sourceTree = "<group>"; };
@@ -130,6 +146,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6FB968818C8B5DA00857BA2 /* libGPX.a in Frameworks */,
 				F62323E8186C34BB00123109 /* CoreLocation.framework in Frameworks */,
 				F6D17D9118279931003D965C /* MediaPlayer.framework in Frameworks */,
 				F6D37258180BF90B0076B2EC /* AVFoundation.framework in Frameworks */,
@@ -203,6 +220,7 @@
 		F6D3720A180BE9C00076B2EC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F6FB967F18C8B5CB00857BA2 /* GPX.xcodeproj */,
 				F62323E7186C34BB00123109 /* CoreLocation.framework */,
 				F6D17D9018279931003D965C /* MediaPlayer.framework */,
 				F6B0FA0C1821F72900A46E3C /* StoreKit.framework */,
@@ -305,6 +323,15 @@
 				F62987451847A05C00CD25E7 /* CarDVRVideoTableViewCell.m */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		F6FB968018C8B5CB00857BA2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F6FB968518C8B5CB00857BA2 /* libGPX.a */,
+				F6FB968718C8B5CB00857BA2 /* GPXTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F6FEE818180CE6A000034B6A /* Video */ = {
@@ -413,6 +440,12 @@
 			mainGroup = F6D371FF180BE9C00076B2EC;
 			productRefGroup = F6D37209180BE9C00076B2EC /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F6FB968018C8B5CB00857BA2 /* Products */;
+					ProjectRef = F6FB967F18C8B5CB00857BA2 /* GPX.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F6D37207180BE9C00076B2EC /* CarDVR */,
@@ -420,6 +453,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F6FB968518C8B5CB00857BA2 /* libGPX.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGPX.a;
+			remoteRef = F6FB968418C8B5CB00857BA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F6FB968718C8B5CB00857BA2 /* GPXTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = GPXTests.xctest;
+			remoteRef = F6FB968618C8B5CB00857BA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F6D37206180BE9C00076B2EC /* Resources */ = {

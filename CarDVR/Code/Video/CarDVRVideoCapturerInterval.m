@@ -368,6 +368,10 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
               aLocation.coordinate.longitude < 0 ? @"W" : @"E" );
 #endif// DEBUG
         _location = aLocation;
+        for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
+        {
+            [assetWriter didUpdateToLocation:_location];
+        }
     });
 }
 
@@ -809,7 +813,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
               fabs( _location.coordinate.longitude ),
               _location.coordinate.longitude < 0 ? @"W" : @"E",
                               _location.altitude];
-        // todo: complete
         for ( CarDVRAssetWriter *assetWriter in _duoAssetWriter )
         {
             [assetWriter addSubtitle:subtitle];

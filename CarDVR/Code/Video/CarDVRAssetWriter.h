@@ -31,5 +31,6 @@
 - (BOOL)finishWriting;
 - (void)writeSampleBuffer:(CMSampleBufferRef)aSampleBuffer ofType:(NSString *)aMediaType;
 - (void)addSubtitle:(NSString *)aSubtitle;
+- (void)didUpdateToLocation:(CLLocation *)aLocation;
 
 @end

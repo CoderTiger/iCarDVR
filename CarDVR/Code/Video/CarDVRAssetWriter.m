@@ -7,6 +7,7 @@
 //
 
 #import "CarDVRAssetWriter.h"
+#import <GPX/GPX.h>
 #import "CarDVRSettings.h"
 
 static NSString *const kSrtRecordFormat = @"%u\r\n%02d:%02d:%02d,%03lld --> %02d:%02d:%02d,%03lld\r\n%@\r\n\r\n";
@@ -19,13 +20,17 @@ static NSDateFormatter *subtitleDateFormatter;
     NSDate *_creationTime;
     NSString *_previousSubtitle;
     NSDate *_previousSubtitleTime;
+    
+    GPXRoot *_gpxRoot;
+    GPXTrack *_gpxTrack;
+    NSURL *_gpxFileURL;
 }
 
 @property (weak, nonatomic, readonly) CarDVRSettings *settings;
 @property (strong, nonatomic) NSFileHandle *srtFileHandle;
-@property (strong, nonatomic) NSFileHandle *gpxFileHandle;
 
 #pragma mark - Private methods
+- (void)constructGPXHarness;
 - (void)writePreviousSubtitle;
 
 @end
@@ -56,12 +61,13 @@ static NSDateFormatter *subtitleDateFormatter;
     {
         _subtitlesSequenceId = 1;
         _creationTime = [NSDate date];
+        
         NSString *videoFileName = [aClipName stringByAppendingPathExtension:@"mov"];
         NSString *srtFileName = [aClipName stringByAppendingPathExtension:@"srt"];
         NSString *gpxFileName = [aClipName stringByAppendingPathExtension:@"gpx"];
         NSURL *videoFileURL = [NSURL fileURLWithPath:[aFolderPath stringByAppendingPathComponent:videoFileName] isDirectory:NO];
         NSURL *srtFileURL = [NSURL fileURLWithPath:[aFolderPath stringByAppendingPathComponent:srtFileName] isDirectory:NO];
-        NSURL *gpxFileURL = [NSURL fileURLWithPath:[aFolderPath stringByAppendingPathComponent:gpxFileName] isDirectory:NO];
+        _gpxFileURL = [NSURL fileURLWithPath:[aFolderPath stringByAppendingPathComponent:gpxFileName] isDirectory:NO];
         _writer = [[AVAssetWriter alloc] initWithURL:videoFileURL fileType:AVFileTypeQuickTimeMovie error:anOutError];
         if ( !_writer )
         {
@@ -70,13 +76,13 @@ static NSDateFormatter *subtitleDateFormatter;
         }
         [[NSFileManager defaultManager] createFileAtPath:srtFileURL.path contents:nil attributes:nil];
         _srtFileHandle = [NSFileHandle fileHandleForWritingToURL:srtFileURL error:anOutError];
-//        _srtFileHandle = [[NSFileHandle alloc] initWithFileDescriptor:NULL closeOnDealloc:YES];
         if ( !_srtFileHandle )
         {
-            NSLog( @"[Error] Failed to create subtitles file with error: \"%@\"", (*anOutError) ? (*anOutError).description : @"" );
-            return nil;
+            NSLog( @"[Error] Failed to create subtitles file with error: \"%@\"",
+                  (*anOutError) ? (*anOutError).description : @"Unknown reason" );
         }
-        // todo: complete
+        
+        [self constructGPXHarness];
         
         _settings = aSettings;
     }
@@ -90,7 +96,12 @@ static NSDateFormatter *subtitleDateFormatter;
     {
         [self writePreviousSubtitle];
         _srtFileHandle = nil;
-        _gpxFileHandle = nil;
+        NSError *error;
+        [_gpxRoot.gpx writeToURL:_gpxFileURL atomically:YES encoding:NSUTF8StringEncoding error:&error];
+        if ( error )
+        {
+            NSLog( @"[Error]failed to write GPX file due to: %@", error.description );
+        }
     }
     return finished;
 }
@@ -143,7 +154,38 @@ static NSDateFormatter *subtitleDateFormatter;
     _previousSubtitle = aSubtitle;
 }
 
+- (void)didUpdateToLocation:(CLLocation *)aLocation
+{
+    GPXTrackPoint *trackPoint = [_gpxTrack newTrackpointWithLatitude:(CGFloat)aLocation.coordinate.latitude
+                                                           longitude:(CGFloat)aLocation.coordinate.longitude];
+    trackPoint.time = [NSDate date];
+    trackPoint.elevation = (CGFloat)aLocation.altitude;
+}
+
 #pragma mark - Private methods
+- (void)constructGPXHarness
+{
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSString *appName = [mainBundle objectForInfoDictionaryKey:(__bridge NSString*)kCFBundleNameKey];
+    
+    _gpxRoot = [GPXRoot rootWithCreator:appName];
+    
+    GPXMetadata *metadata = [[GPXMetadata alloc] init];
+    metadata.name = @"iCarDVR GPX File";
+    metadata.copyright = [GPXCopyright copyroghtWithAuthor:@"iAutoD.com"];
+    NSDateFormatter *yearFormatter = [[NSDateFormatter alloc] init];
+    [yearFormatter setDateStyle:NSDateFormatterNoStyle];
+    [yearFormatter setDateFormat:@"yyyy"];
+    metadata.copyright.year = [yearFormatter dateFromString:@"2014"];
+    metadata.link = [GPXLink linkWithHref:@"http://www.iAutoD.com/iCarDVR"];
+    metadata.link.text = appName;
+    metadata.time = [NSDate date];
+    _gpxRoot.metadata = metadata;
+    
+    
+    _gpxTrack = [_gpxRoot newTrack];
+}
+
 - (void)writePreviousSubtitle
 {
     if ( _previousSubtitle )
