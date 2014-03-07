@@ -170,10 +170,30 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         if ( editingStyle == UITableViewCellEditingStyleDelete )
         {
             CarDVRVideoItem *videoItem = [self.videos[indexPath.section] objectAtIndex:indexPath.row];
-            NSError *error = nil;
+            NSError *error;
             NSFileManager *defaultManager = [NSFileManager defaultManager];
             [defaultManager removeItemAtURL:videoItem.videoClipURLs.videoFileURL error:&error];
-            if ( !error )
+#ifdef DEBUG
+            if ( error )
+            {
+                NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.videoFileURL, error.description );
+            }
+#endif
+            [defaultManager removeItemAtURL:videoItem.videoClipURLs.srtFileURL error:&error];
+#ifdef DEBUG
+            if ( error )
+            {
+                NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.srtFileURL, error.description );
+            }
+#endif
+            [defaultManager removeItemAtURL:videoItem.videoClipURLs.gpxFileURL error:&error];
+#ifdef DEBUG
+            if ( error )
+            {
+                NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.gpxFileURL, error.description );
+            }
+#endif
+//            if ( !error )
             {
                 [self.videos[indexPath.section] removeObjectAtIndex:indexPath.row];
                 NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:indexPath.section];
@@ -188,8 +208,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
                     [self.videoTableView reloadSections:indexSet withRowAnimation:UITableViewRowAnimationNone];
                 }
             }
-            [defaultManager removeItemAtURL:videoItem.videoClipURLs.srtFileURL error:&error];
-            [defaultManager removeItemAtURL:videoItem.videoClipURLs.gpxFileURL error:&error];
         }
     }
 }
@@ -269,6 +287,11 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         CarDVRVideoItem *videoItem = [[CarDVRVideoItem alloc] initWithVideoClipURLs:videoClipURLs];
         if ( !videoItem )
         {
+            // remove truncated or invalid video files
+            NSFileManager *defaultFileManager = [NSFileManager defaultManager];
+            [defaultFileManager removeItemAtURL:videoClipURLs.videoFileURL error:nil];
+            [defaultFileManager removeItemAtURL:videoClipURLs.srtFileURL error:nil];
+            [defaultFileManager removeItemAtURL:videoClipURLs.gpxFileURL error:nil];
             continue;
         }
         

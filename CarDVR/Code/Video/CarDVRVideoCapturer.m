@@ -101,6 +101,11 @@ NSString *const kCarDVRVideoCapturerUpdateSubtitlesNotification = @"kCarDVRVideo
     [_interval stopRecording];
 }
 
+- (void)captureStillImage
+{
+    [_interval captureStillImage];
+}
+
 - (void)fitDeviceOrientation
 {
     [_interval fitDeviceOrientation];

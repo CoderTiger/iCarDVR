@@ -8,6 +8,8 @@
 
 #import "CarDVRVideoCapturerInterval.h"
 #import <AVFoundation/AVFoundation.h>
+#import <ImageIO/CGImageProperties.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 #import "CarDVRPathHelper.h"
 #import "CarDVRSettings.h"
 #import "CarDVRAssetWriter.h"
@@ -25,6 +27,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
     AVCaptureSession *_captureSession;
     AVCaptureConnection *_audioConnection;
 	AVCaptureConnection *_videoConnection;
+    AVCaptureStillImageOutput *_stillImageOutput;
     
     // Only accessed on movie writing queue (including self.recording)
     // duo asset writers
@@ -73,6 +76,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 - (BOOL)stopAssetWriter:(CarDVRAssetWriter *)anAssetWriter;
 - (void)stopOldestAssetWriter;
 - (void)updateSubtitles;
+- (CGImageRef)imageFromSampleBuffer:(CMSampleBufferRef)aSampleBuffer;
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPosition;
 - (AVCaptureDevice *)audioDevice;
@@ -325,6 +329,51 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 #endif// DEBUG
 }
 
+- (void)captureStillImage
+{
+    AVCaptureConnection *videoConnection = nil;
+    for ( AVCaptureConnection *connection in _stillImageOutput.connections )
+    {
+        for ( AVCaptureInputPort *port in [connection inputPorts] )
+        {
+            if ( [[port mediaType] isEqual:AVMediaTypeVideo] )
+            {
+                videoConnection = connection;
+                break;
+            }
+        }
+        if ( videoConnection )
+        {
+            break;
+        }
+    }
+    
+    [_stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection
+                                                   completionHandler:^( CMSampleBufferRef imageDataSampleBuffer, NSError *error ) {
+        if ( error )
+        {
+            NSLog( @"[Error]failed to capture still image due to: %@", error.description );
+        }
+        else
+        {
+            // todo: complete
+            CFDictionaryRef exifAttachments = CMGetAttachment( imageDataSampleBuffer, kCGImagePropertyExifDictionary, NULL );
+            if ( exifAttachments )
+            {
+                // Do something with the attachments.
+            }
+            CGImageRef imageRef = [self imageFromSampleBuffer:imageDataSampleBuffer];
+            
+            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+            [library writeImageToSavedPhotosAlbum:imageRef metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
+                // todo: complete
+            }];
+            
+            CGImageRelease( imageRef );
+        }
+    }];
+}
+
 - (void)fitDeviceOrientation
 {
     UIInterfaceOrientation statusBarOrientation = [[UIApplication sharedApplication] statusBarOrientation];
@@ -535,7 +584,12 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     
     [videoOutput setAlwaysDiscardsLateVideoFrames:YES];
     
-    // remark: 如果设置了 kCVPixelBufferPixelFormatTypeKey 属性，播放器打不开（或很久才能打开？），如果需要打水印，这里可能需要调查解决
+    //
+    // remark: 如果设置了 kCVPixelBufferPixelFormatTypeKey 属性为 kCVPixelFormatType_32BGRA，会导致如下问题：
+    // 1. 内存大量占用；
+    // 2. 内存大量占用导致：播放器打不开或很久才能打开；
+    // 3. 内存占用太大导致程序crash。
+    //
 //	[videoOutput setVideoSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
 //                                                              forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
     dispatch_queue_t videoCaptureQueue = dispatch_queue_create( kVideoCaptureQueueName, DISPATCH_QUEUE_SERIAL );
@@ -549,6 +603,16 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         // TODO: handle error
     }
     _videoConnection = [videoOutput connectionWithMediaType:AVMediaTypeVideo];
+    
+    //
+    // Create & install still image output
+    //
+    _stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+    [_stillImageOutput setOutputSettings:@{ AVVideoCodecKey : AVVideoCodecJPEG }];
+    if ( [aSession canAddOutput:_stillImageOutput] )
+    {
+        [aSession addOutput:_stillImageOutput];
+    }
 }
 
 - (void)installAVCaptureObjects
@@ -829,6 +893,28 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                                                                 object:self.capturer];
         });
     });
+}
+
+- (CGImageRef)imageFromSampleBuffer:(CMSampleBufferRef)aSampleBuffer
+{
+    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer( aSampleBuffer );
+    CVPixelBufferLockBaseAddress( imageBuffer, 0 );
+    
+    uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddressOfPlane( imageBuffer, 0 );
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow( imageBuffer );
+    size_t width = CVPixelBufferGetWidth( imageBuffer );
+    size_t height = CVPixelBufferGetHeight( imageBuffer );
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    CGContextRef newContext = CGBitmapContextCreate( baseAddress, width, height, 8, bytesPerRow, colorSpace,
+                                                    kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst );
+    CGImageRef newImage = CGBitmapContextCreateImage( newContext );
+    
+    CGContextRelease( newContext );
+    CGColorSpaceRelease( colorSpace );
+    CVPixelBufferUnlockBaseAddress( imageBuffer, 0 );
+    
+    return newImage;
 }
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPostion

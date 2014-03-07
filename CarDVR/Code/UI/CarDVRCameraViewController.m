@@ -248,7 +248,7 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 
 - (IBAction)fotoButtonTouched:(id)sender
 {
-    // TODO: complete
+    [self.videoCapturer captureStillImage];
 }
 
 - (IBAction)startButtonTouched:(id)sender

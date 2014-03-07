@@ -24,6 +24,7 @@
 
 - (void)startRecording;
 - (void)stopRecording;
+- (void)captureStillImage;
 - (void)fitDeviceOrientation;
 - (void)focus;
 - (void)didUpdateToLocation:(CLLocation *)aLocation;
