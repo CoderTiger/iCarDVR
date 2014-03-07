@@ -532,6 +532,12 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         // TODO: handle error
     }
     AVCaptureVideoDataOutput *videoOutput = [[AVCaptureVideoDataOutput alloc] init];
+    
+    [videoOutput setAlwaysDiscardsLateVideoFrames:YES];
+    
+    // remark: 如果设置了 kCVPixelBufferPixelFormatTypeKey 属性，播放器打不开（或很久才能打开？），如果需要打水印，这里可能需要调查解决
+//	[videoOutput setVideoSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
+//                                                              forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
     dispatch_queue_t videoCaptureQueue = dispatch_queue_create( kVideoCaptureQueueName, DISPATCH_QUEUE_SERIAL );
     [videoOutput setSampleBufferDelegate:self queue:videoCaptureQueue];
     if ( [aSession canAddOutput:videoOutput] )
@@ -819,6 +825,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         }
         dispatch_async( dispatch_get_main_queue(), ^{
             [self performSelector:@selector(updateSubtitles) withObject:nil afterDelay:kSubtitlesUpdatingInterval];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerUpdateSubtitlesNotification
+                                                                object:self.capturer];
         });
     });
 }
@@ -1048,11 +1056,14 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 #pragma mark - methods processing video
 - (void)processVideoSample:(CMSampleBufferRef)aSampleBuffer withFormat:(CMFormatDescriptionRef)aFormatDescription
 {
+#if CARDVR_WARTERMARK_ON
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer( aSampleBuffer );
     CVPixelBufferLockBaseAddress( imageBuffer, 0 );
-    // TODO: complete
     
+    // todo: complete
+
     CVPixelBufferUnlockBaseAddress( imageBuffer, 0 );
+#endif
 }
 
 @end

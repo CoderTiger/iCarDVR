@@ -12,6 +12,7 @@
 
 NSString *const kCarDVRVideoCapturerDidStartRecordingNotification = @"kCarDVRVideoCapturerDidStartRecordingNotification";
 NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVideoCapturerDidStopRecordingNotification";
+NSString *const kCarDVRVideoCapturerUpdateSubtitlesNotification = @"kCarDVRVideoCapturerUpdateSubtitlesNotification";
 
 @interface CarDVRVideoCapturer ()
 {

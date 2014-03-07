@@ -14,12 +14,14 @@
 #import "CarDVRSettings.h"
 
 static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
+static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 
 @interface CarDVRCameraViewController ()<CarDVRLocationDetectorDelegate>
 
 @property (strong, nonatomic) CarDVRVideoCapturer *videoCapturer;
 @property (strong, nonatomic) CarDVRLocationDetector *locationDetector;
 @property (weak, readonly) CarDVRSettings *settings;
+@property (strong, nonatomic) NSDate *startRecordingDate;
 
 @property (weak, nonatomic) IBOutlet UIButton *flashOnButton;
 @property (weak, nonatomic) IBOutlet UIButton *flashAutoButton;
@@ -29,6 +31,9 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 @property (weak, nonatomic) IBOutlet UIButton *starButton;
 @property (weak, nonatomic) IBOutlet UIButton *starredButton;
 @property (weak, nonatomic) IBOutlet UIView *previewerView;
+@property (weak, nonatomic) IBOutlet UIView *recordingStatusTipView;
+@property (weak, nonatomic) IBOutlet UILabel *recordingDurationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *recordingSignLabel;
 
 - (IBAction)flashOnButtonTouched:(id)sender;
 - (IBAction)flashAutoButtonTouched:(id)sender;
@@ -52,6 +57,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 - (void)handleUIApplicationDidEnterBackgroundNotification;
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
+- (void)handleCarDVRVideoCapturerUpdateSubtitlesNotification;
 
 @end
 
@@ -76,6 +82,7 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [self installVideoCapturer];
     [self installLocationDetector];
     [self loadSettings];
+    self.recordingStatusTipView.layer.cornerRadius = kRecordingStatusTivViewCornerRadius;
     NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
     [defaultNC addObserver:self
                   selector:@selector(handleUIApplicationDidEnterBackgroundNotification)
@@ -88,6 +95,10 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [defaultNC addObserver:self
                   selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
                       name:kCarDVRVideoCapturerDidStopRecordingNotification
+                    object:nil];
+    [defaultNC addObserver:self
+                  selector:@selector(handleCarDVRVideoCapturerUpdateSubtitlesNotification)
+                      name:kCarDVRVideoCapturerUpdateSubtitlesNotification
                     object:nil];
 }
 
@@ -268,8 +279,12 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
 {
     [self.locationDetector start];
+    self.startRecordingDate = [NSDate date];
     self.startButton.hidden = YES;
     self.stopButton.hidden = NO;
+    self.recordingStatusTipView.hidden = NO;
+    self.recordingDurationLabel.text = @"00:00:00";
+    self.recordingSignLabel.hidden = NO;
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
@@ -278,7 +293,22 @@ static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
     [self.locationDetector stop];
     self.startButton.hidden = NO;
     self.stopButton.hidden = YES;
+    self.recordingStatusTipView.hidden = YES;
     [UIApplication sharedApplication].idleTimerDisabled = NO;
+}
+
+- (void)handleCarDVRVideoCapturerUpdateSubtitlesNotification
+{
+    NSDate *currentDate = [NSDate date];
+    NSTimeInterval recordingDuration = [currentDate timeIntervalSinceDate:self.startRecordingDate];
+    div_t hourDuration = div( recordingDuration, 3600 );
+    div_t minDuration = div( hourDuration.rem, 60 );
+    self.recordingDurationLabel.text = [NSString stringWithFormat:@"%02d:%02d:%02d",
+                                        hourDuration.quot, minDuration.quot, minDuration.rem];
+    self.recordingSignLabel.alpha = 0;
+    [UIView animateWithDuration:0.5f animations:^{
+        self.recordingSignLabel.alpha = 1.0f;
+    }];
 }
 
 #pragma mark - from CarDVRLocationDetectorDelegate

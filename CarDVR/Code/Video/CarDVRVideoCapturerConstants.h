@@ -37,7 +37,8 @@ typedef enum
     kCarDVRCameraFlashModeAuto
 }CarDVRCameraFlashMode;
 
-FOUNDATION_EXTERN NSString *const kCarDVRVideoCapturerDidStartRecordingNotification;
-FOUNDATION_EXTERN NSString *const kCarDVRVideoCapturerDidStopRecordingNotification;
+NSString *const kCarDVRVideoCapturerDidStartRecordingNotification;
+NSString *const kCarDVRVideoCapturerDidStopRecordingNotification;
+NSString *const kCarDVRVideoCapturerUpdateSubtitlesNotification;
 
 #endif

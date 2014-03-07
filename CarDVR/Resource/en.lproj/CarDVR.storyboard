@@ -33,6 +33,27 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </view>
+                            <view hidden="YES" alpha="0.5" contentMode="scaleToFill" id="7N1-nB-aDf" userLabel="View - Recording Status Tip">
+                                <rect key="frame" x="93" y="47" width="134" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:01:58" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9Jv-1c-2wZ">
+                                        <rect key="frame" x="23" y="3" width="104" height="29"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="•" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CnX-gw-pvB">
+                                        <rect key="frame" x="0.0" y="0.0" width="28" height="36"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                        <color key="textColor" red="0.98804209183673475" green="0.21332907309598811" blue="0.057740152676397226" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ue8-p1-Sch" userLabel="Button - FlashOff">
                                 <rect key="frame" x="20" y="20" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -135,6 +156,9 @@
                         <outlet property="flashOffButton" destination="ue8-p1-Sch" id="AwN-kV-uie"/>
                         <outlet property="flashOnButton" destination="nlz-ru-kJl" id="yCc-2h-cYS"/>
                         <outlet property="previewerView" destination="vkf-FK-KE8" id="unt-d7-yMy"/>
+                        <outlet property="recordingDurationLabel" destination="9Jv-1c-2wZ" id="wL3-lb-G4i"/>
+                        <outlet property="recordingSignLabel" destination="CnX-gw-pvB" id="WiK-je-C4K"/>
+                        <outlet property="recordingStatusTipView" destination="7N1-nB-aDf" id="8ym-Jl-jhL"/>
                         <outlet property="starButton" destination="itA-kT-pFL" id="GYR-nb-AOl"/>
                         <outlet property="starredButton" destination="Tlc-nh-4xy" id="r7y-zF-7DL"/>
                         <outlet property="startButton" destination="laU-cJ-phG" id="bYf-Jd-qwx"/>
