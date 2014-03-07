@@ -284,7 +284,9 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
     self.stopButton.hidden = NO;
     self.recordingStatusTipView.hidden = NO;
     self.recordingDurationLabel.text = @"00:00:00";
-    self.recordingSignLabel.hidden = NO;
+    [UIView animateWithDuration:0.5f animations:^{
+        self.recordingStatusTipView.alpha = 0.5f;
+    }];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
@@ -293,7 +295,7 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
     [self.locationDetector stop];
     self.startButton.hidden = NO;
     self.stopButton.hidden = YES;
-    self.recordingStatusTipView.hidden = YES;
+    self.recordingStatusTipView.alpha = 0;
     [UIApplication sharedApplication].idleTimerDisabled = NO;
 }
 
