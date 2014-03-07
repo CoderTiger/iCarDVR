@@ -274,6 +274,7 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 - (void)handleUIApplicationDidEnterBackgroundNotification
 {
     [self setFlashMode:kCarDVRCameraFlashModeOff];
+    [self stopRecordingVideo];
 }
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
