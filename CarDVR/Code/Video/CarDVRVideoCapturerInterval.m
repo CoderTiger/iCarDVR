@@ -76,7 +76,6 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 - (BOOL)stopAssetWriter:(CarDVRAssetWriter *)anAssetWriter;
 - (void)stopOldestAssetWriter;
 - (void)updateSubtitles;
-- (CGImageRef)imageFromSampleBuffer:(CMSampleBufferRef)aSampleBuffer;
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPosition;
 - (AVCaptureDevice *)audioDevice;
@@ -331,6 +330,14 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
 - (void)captureStillImage
 {
+    if ( _stillImageOutput.isCapturingStillImage )
+    {
+        return;
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartCapturingImageNotification
+                                                        object:self.capturer];
+    
     AVCaptureConnection *videoConnection = nil;
     for ( AVCaptureConnection *connection in _stillImageOutput.connections )
     {
@@ -356,20 +363,21 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
         }
         else
         {
-            // todo: complete
             CFDictionaryRef exifAttachments = CMGetAttachment( imageDataSampleBuffer, kCGImagePropertyExifDictionary, NULL );
             if ( exifAttachments )
             {
                 // Do something with the attachments.
             }
-            CGImageRef imageRef = [self imageFromSampleBuffer:imageDataSampleBuffer];
-            
+            NSData *jpegData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
             ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-            [library writeImageToSavedPhotosAlbum:imageRef metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
-                // todo: complete
+            [library writeImageDataToSavedPhotosAlbum:jpegData metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
+                dispatch_async( dispatch_get_main_queue(), ^{
+                    // todo: complete
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopCapturingImageNotification
+                                                                        object:self
+                                                                      userInfo:nil];
+                });
             }];
-            
-            CGImageRelease( imageRef );
         }
     }];
 }
@@ -893,28 +901,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                                                                 object:self.capturer];
         });
     });
-}
-
-- (CGImageRef)imageFromSampleBuffer:(CMSampleBufferRef)aSampleBuffer
-{
-    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer( aSampleBuffer );
-    CVPixelBufferLockBaseAddress( imageBuffer, 0 );
-    
-    uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddressOfPlane( imageBuffer, 0 );
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow( imageBuffer );
-    size_t width = CVPixelBufferGetWidth( imageBuffer );
-    size_t height = CVPixelBufferGetHeight( imageBuffer );
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
-    CGContextRef newContext = CGBitmapContextCreate( baseAddress, width, height, 8, bytesPerRow, colorSpace,
-                                                    kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst );
-    CGImageRef newImage = CGBitmapContextCreateImage( newContext );
-    
-    CGContextRelease( newContext );
-    CGColorSpaceRelease( colorSpace );
-    CVPixelBufferUnlockBaseAddress( imageBuffer, 0 );
-    
-    return newImage;
 }
 
 - (AVCaptureDevice *)videoDeviceWithPosition:(CarDVRCameraPosition)aPostion

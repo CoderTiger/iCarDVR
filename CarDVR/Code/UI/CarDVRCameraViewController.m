@@ -34,6 +34,7 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 @property (weak, nonatomic) IBOutlet UIView *recordingStatusTipView;
 @property (weak, nonatomic) IBOutlet UILabel *recordingDurationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *recordingSignLabel;
+@property (weak, nonatomic) IBOutlet UIView *flashEffectMaskView;
 
 - (IBAction)flashOnButtonTouched:(id)sender;
 - (IBAction)flashAutoButtonTouched:(id)sender;
@@ -58,6 +59,8 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
 - (void)handleCarDVRVideoCapturerUpdateSubtitlesNotification;
+- (void)handleCarDVRVideoCapturerDidStartCapturingImageNotification;
+- (void)handleCarDVRVideoCapturerDidStopCapturingImageNotification:(NSNotification *)aNotification;
 
 @end
 
@@ -99,6 +102,14 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
     [defaultNC addObserver:self
                   selector:@selector(handleCarDVRVideoCapturerUpdateSubtitlesNotification)
                       name:kCarDVRVideoCapturerUpdateSubtitlesNotification
+                    object:nil];
+    [defaultNC addObserver:self
+                  selector:@selector(handleCarDVRVideoCapturerDidStartCapturingImageNotification)
+                      name:kCarDVRVideoCapturerDidStartCapturingImageNotification
+                    object:nil];
+    [defaultNC addObserver:self
+                  selector:@selector(handleCarDVRVideoCapturerDidStopCapturingImageNotification:)
+                      name:kCarDVRVideoCapturerDidStopCapturingImageNotification
                     object:nil];
 }
 
@@ -314,6 +325,20 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
     [UIView animateWithDuration:0.5f animations:^{
         self.recordingSignLabel.alpha = 1.0f;
     }];
+}
+
+- (void)handleCarDVRVideoCapturerDidStartCapturingImageNotification
+{
+    const NSTimeInterval kFlashDuration = 1.0f;
+    self.flashEffectMaskView.alpha = 0.9f;
+    [UIView animateWithDuration:kFlashDuration animations:^{
+        self.flashEffectMaskView.alpha = 0;
+    }];
+}
+
+- (void)handleCarDVRVideoCapturerDidStopCapturingImageNotification:(NSNotification *)aNotification
+{
+    // todo: complete
 }
 
 #pragma mark - from CarDVRLocationDetectorDelegate
