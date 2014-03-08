@@ -287,11 +287,14 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         CarDVRVideoItem *videoItem = [[CarDVRVideoItem alloc] initWithVideoClipURLs:videoClipURLs];
         if ( !videoItem )
         {
-            // remove truncated or invalid video files
-            NSFileManager *defaultFileManager = [NSFileManager defaultManager];
-            [defaultFileManager removeItemAtURL:videoClipURLs.videoFileURL error:nil];
-            [defaultFileManager removeItemAtURL:videoClipURLs.srtFileURL error:nil];
-            [defaultFileManager removeItemAtURL:videoClipURLs.gpxFileURL error:nil];
+            if ( !self.switchFromRecordingCamera )
+            {
+                // remove truncated or invalid video files
+                NSFileManager *defaultFileManager = [NSFileManager defaultManager];
+                [defaultFileManager removeItemAtURL:videoClipURLs.videoFileURL error:nil];
+                [defaultFileManager removeItemAtURL:videoClipURLs.srtFileURL error:nil];
+                [defaultFileManager removeItemAtURL:videoClipURLs.gpxFileURL error:nil];
+            }
             continue;
         }
         

@@ -33,6 +33,10 @@ static const NSUInteger kTabMaxCount = 2;
         NSAssert1( ( self.viewControllers.count == kTabMaxCount ),
                   @"Wrong count of tab views: %u",
                   self.viewControllers.count );
+        if ( self.viewControllers.count != kTabMaxCount )
+        {
+            return nil;
+        }
         ( (CarDVRVideoBrowserViewController *)self.viewControllers[kTabRecentsIndex] ).type = kCarDVRVideoBrowserViewControllerTypeRecents;
         ( (CarDVRVideoBrowserViewController *)self.viewControllers[kTabStarredIndex] ).type = kCarDVRVideoBrowserViewControllerTypeStarred;
     }
@@ -50,6 +54,8 @@ static const NSUInteger kTabMaxCount = 2;
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
     
     self.selectedIndex = self.settings.isStarred.boolValue ? kTabStarredIndex : kTabRecentsIndex;
+    CarDVRVideoBrowserViewController *selectedView = [self.viewControllers objectAtIndex:self.selectedIndex];
+    selectedView.switchFromRecordingCamera = self.switchFromRecordingCamera;
 }
 
 - (void)didReceiveMemoryWarning

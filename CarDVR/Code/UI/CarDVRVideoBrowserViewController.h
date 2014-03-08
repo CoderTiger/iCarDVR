@@ -19,5 +19,6 @@ typedef enum
 @interface CarDVRVideoBrowserViewController : UIViewController
 
 @property (assign, nonatomic) CarDVRVideoBrowserViewControllerType type;
+@property (assign, nonatomic) BOOL switchFromRecordingCamera;
 
 @end

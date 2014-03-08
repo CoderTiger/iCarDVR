@@ -14,5 +14,6 @@
 @interface CarDVRHomeViewController : UITabBarController
 
 @property (weak, nonatomic) CarDVRSettings *settings;
+@property (assign, nonatomic) BOOL switchFromRecordingCamera;
 
 @end

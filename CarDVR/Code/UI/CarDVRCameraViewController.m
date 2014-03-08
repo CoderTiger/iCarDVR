@@ -133,9 +133,11 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 #pragma unused( sender )
     if ( [segue.identifier isEqualToString:kShowHomeSegueId] )
     {
+        BOOL isRecording = self.videoCapturer.isRecording;
         [self stopRecordingVideo];
         CarDVRHomeViewController *homeViewController = segue.destinationViewController;
         homeViewController.settings = self.settings;
+        homeViewController.switchFromRecordingCamera = isRecording;
     }
 }
 
