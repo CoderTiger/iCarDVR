@@ -843,19 +843,6 @@
             </objects>
             <point key="canvasLocation" x="1780" y="-264"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="PgM-zW-gLS">
-            <objects>
-                <viewController id="ibi-Lg-Ouu" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="LIb-ZZ-sqL">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="AOW-F8-zwY" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-        </scene>
     </scenes>
     <resources>
         <image name="ButtonFlashAuto50x50" width="50" height="50"/>

@@ -363,19 +363,62 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
         }
         else
         {
+            NSBundle *mainBundle = [NSBundle mainBundle];
+            NSString *appName = [mainBundle objectForInfoDictionaryKey:(__bridge NSString*)kCFBundleNameKey];
             CFDictionaryRef exifAttachments = CMGetAttachment( imageDataSampleBuffer, kCGImagePropertyExifDictionary, NULL );
             if ( exifAttachments )
             {
-                // Do something with the attachments.
+                NSDictionary *exifDict = (__bridge NSDictionary *)exifAttachments;
+                [exifDict setValue:appName forKey:@"Software"];
             }
             NSData *jpegData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
             ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
             [library writeImageDataToSavedPhotosAlbum:jpegData metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
                 dispatch_async( dispatch_get_main_queue(), ^{
-                    // todo: complete
+                    __block NSError *lastError = error;
+                    if ( !error )
+                    {
+                        __block BOOL appAlbumExists = NO;
+                        [library enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                            if ( group )
+                            {
+                                NSString *groupName = [group valueForProperty:ALAssetsGroupPropertyName];
+                                if ( [groupName compare:appName] == NSOrderedSame )
+                                {
+                                    appAlbumExists = YES;
+                                    [library assetForURL:assetURL resultBlock:^(ALAsset *asset) {
+                                        [group addAsset:asset];
+                                    } failureBlock:^(NSError *error) {
+                                        lastError = error;
+                                    }];
+                                    *stop = YES;
+                                }
+                            }
+                            else if ( !appAlbumExists )// reach the end of enumeration when group is nil.
+                            {
+                                ALAssetsLibrary *weakLibrary = library;
+                                [library addAssetsGroupAlbumWithName:appName resultBlock:^(ALAssetsGroup *group) {
+                                    [weakLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
+                                        [group addAsset:asset];
+                                    } failureBlock:^(NSError *error) {
+                                        lastError = error;
+                                    }];
+                                } failureBlock:^(NSError *error) {
+                                    lastError = error;
+                                }];
+                            }
+                        } failureBlock:^(NSError *error) {
+                            lastError = error;
+                        }];
+                    }
+                    NSDictionary *userInfo;
+                    if ( lastError )
+                    {
+                        userInfo = @{kCarDVRErrorKey: lastError};
+                    }
                     [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopCapturingImageNotification
                                                                         object:self
-                                                                      userInfo:nil];
+                                                                      userInfo:userInfo];
                 });
             }];
         }

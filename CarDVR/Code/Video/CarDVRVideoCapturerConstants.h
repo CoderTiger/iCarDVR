@@ -42,5 +42,6 @@ NSString *const kCarDVRVideoCapturerDidStopRecordingNotification;
 NSString *const kCarDVRVideoCapturerUpdateSubtitlesNotification;
 NSString *const kCarDVRVideoCapturerDidStartCapturingImageNotification;
 NSString *const kCarDVRVideoCapturerDidStopCapturingImageNotification;
+NSString *const kCarDVRErrorKey;
 
 #endif
