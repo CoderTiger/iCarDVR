@@ -43,5 +43,6 @@ NSString *const kCarDVRVideoCapturerUpdateSubtitlesNotification;
 NSString *const kCarDVRVideoCapturerDidStartCapturingImageNotification;
 NSString *const kCarDVRVideoCapturerDidStopCapturingImageNotification;
 NSString *const kCarDVRErrorKey;
+NSString *const kCarDVRClipURLListKey;
 
 #endif

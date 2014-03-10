@@ -132,9 +132,18 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
             return;
         _recording = recording;
         dispatch_async( dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:
-             _recording?kCarDVRVideoCapturerDidStartRecordingNotification:kCarDVRVideoCapturerDidStopRecordingNotification
-                                                                object:self.capturer];
+            if ( _recording )
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStartRecordingNotification
+                                                                    object:self.capturer];
+            }
+            else
+            {
+                NSDictionary *userInfo = @{kCarDVRClipURLListKey: _recentRecordedClipURLs};
+                [[NSNotificationCenter defaultCenter] postNotificationName:kCarDVRVideoCapturerDidStopRecordingNotification
+                                                                    object:self.capturer
+                                                                  userInfo:userInfo];
+            }
         } );
     }
 }
