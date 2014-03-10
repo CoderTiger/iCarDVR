@@ -32,7 +32,6 @@
     if ( _videoItem )
     {
         self.title = [NSString stringWithFormat:NSLocalizedString( @"playerViewTitleFormat", nil ), _videoItem.videoFileName];
-        _videoItem.locations;
     }
 }
 
