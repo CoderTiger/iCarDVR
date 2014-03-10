@@ -19,6 +19,7 @@
 @property (readonly, nonatomic) CGSize dimension;
 @property (readonly, nonatomic) unsigned long long videoFileSize;
 @property (strong, readonly, nonatomic) UIImage *thumbnail;
+@property (strong, readonly, nonatomic) NSArray *locations;
 
 - (id)initWithVideoClipURLs:(CarDVRVideoClipURLs *)aVideoClipURLs;
 - (void)generateThumbnailAsynchronouslyWithSize:(CGSize)aSize completionHandler:(void (^)(UIImage *thumbnail)) aCompletionHandler;

@@ -8,9 +8,43 @@
 
 #import "CarDVRVideoItem.h"
 #import <AVFoundation/AVFoundation.h>
+#import <GPX/GPX.h>
 #import "CarDVRPathHelper.h"
+#import "CarDVRLocation.h"
 
 @implementation CarDVRVideoItem
+
+@synthesize locations=_locations;
+
+- (NSArray *)locations
+{
+    if ( !_locations )
+    {
+        GPXRoot *gpxRoot = [GPXParser parseGPXAtURL:self.videoClipURLs.gpxFileURL];
+        if ( gpxRoot && gpxRoot.tracks.count > 0 )
+        {
+            GPXTrack *gpxTrack = [gpxRoot.tracks objectAtIndex:0];
+            if ( gpxTrack && gpxTrack.tracksegments.count > 0 )
+            {
+                GPXTrackSegment *gpxTrackSegment = [gpxTrack.tracksegments objectAtIndex:0];
+                if ( gpxTrackSegment && gpxTrackSegment.trackpoints.count > 0 )
+                {
+                    NSMutableArray *newLocations = [NSMutableArray arrayWithCapacity:gpxTrackSegment.trackpoints.count];
+                    for ( GPXTrackPoint *gpxTrackPoint in gpxTrackSegment.trackpoints )
+                    {
+                        CarDVRLocation *location = [CarDVRLocation locationWithLatitude:gpxTrackPoint.latitude
+                                                                              longitude:gpxTrackPoint.longitude
+                                                                               altitude:gpxTrackPoint.elevation
+                                                                              timestamp:gpxTrackPoint.time];
+                        [newLocations addObject:location];
+                    }
+                    _locations = newLocations;
+                }
+            }
+        }
+    }
+    return _locations;
+}
 
 - (id)initWithVideoClipURLs:(CarDVRVideoClipURLs *)aVideoClipURLs
 {
