@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5051" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="8QN-74-2je">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="8QN-74-2je">
     <dependencies>
         <deployment defaultVersion="1280" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -634,13 +634,13 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Route" id="C3W-kB-70C" userLabel="Section - Map">
+                            <tableViewSection id="iHT-6k-7ua" userLabel="Section - Details">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="200" id="0b6-ke-Qh9">
-                                        <rect key="frame" x="0.0" y="222" width="320" height="200"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="W9f-PA-WQs">
+                                        <rect key="frame" x="0.0" y="200" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0b6-ke-Qh9" id="s9G-Qo-T6V" userLabel="Content View - Map">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="W9f-PA-WQs" id="zPf-Yk-PVe">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -652,7 +652,17 @@
                             <outlet property="delegate" destination="cBt-M7-Yka" id="XTL-4k-Qui"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="rb4-bJ-ajK"/>
+                        <barButtonItem image="ButtonMap25x25" id="UpL-dC-w7W" userLabel="Bar Button Item - Tracks">
+                            <connections>
+                                <segue destination="bwN-QC-s3w" kind="push" id="CFO-er-ubj"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="5wl-yo-8v3"/>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="h2l-Sb-aFC"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="playerCellView" destination="gpM-Ll-ULw" id="b08-BC-PEp"/>
                         <outlet property="playerPaneView" destination="hTn-WY-R98" id="8XT-4x-X00"/>
@@ -661,6 +671,36 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cRk-Px-7t7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1282" y="94"/>
+        </scene>
+        <!--CarDVRTracksViewController-->
+        <scene sceneID="iXD-bz-1B7">
+            <objects>
+                <viewController id="bwN-QC-s3w" userLabel="CarDVRTracksViewController" customClass="CarDVRTracksViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Em6-rl-B6X" userLabel="CarDVRTracksView">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" id="iuj-49-MFy">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </mapView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="qDJ-Sp-7Vk">
+                                <rect key="frame" x="73" y="456" width="175" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <segments>
+                                    <segment title="Map"/>
+                                    <segment title="Satellite"/>
+                                    <segment title="Hybrid"/>
+                                </segments>
+                            </segmentedControl>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Tracks" id="Hum-T9-51K"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="X3B-2z-fcm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1709" y="488"/>
         </scene>
         <!--CarDVRResolutionSettingViewController-->
         <scene sceneID="Hmj-bd-4Jv">
@@ -850,6 +890,7 @@
         <image name="ButtonFlashOn50x50" width="50" height="50"/>
         <image name="ButtonFoto50x50" width="50" height="50"/>
         <image name="ButtonHome50x50" width="50" height="50"/>
+        <image name="ButtonMap25x25" width="25" height="25"/>
         <image name="ButtonStar50x50" width="50" height="50"/>
         <image name="ButtonStarred50x50" width="50" height="50"/>
         <image name="ButtonStart50x50" width="50" height="50"/>

@@ -42,6 +42,7 @@
 		F6D3724C180BEBC40076B2EC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6D3724A180BEBC40076B2EC /* InfoPlist.strings */; };
 		F6D37252180BEF230076B2EC /* CarDVRCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6D37250180BEF230076B2EC /* CarDVRCameraViewController.m */; };
 		F6D37258180BF90B0076B2EC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D37257180BF90B0076B2EC /* AVFoundation.framework */; };
+		F6EC81F318D070B6002785B5 /* CarDVRTracksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6EC81F218D070B6002785B5 /* CarDVRTracksViewController.m */; };
 		F6F0FC22181E7760000562DF /* CarDVRVideoCapturerInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F0FC21181E7760000562DF /* CarDVRVideoCapturerInterval.m */; };
 		F6F0FC25181F589F000562DF /* CarDVRSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F0FC24181F589F000562DF /* CarDVRSettings.m */; };
 		F6F2E2F418477CB90004199D /* CarDVR.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F6F2E2F218477CB90004199D /* CarDVR.storyboard */; };
@@ -133,6 +134,8 @@
 		F6D3724F180BEF230076B2EC /* CarDVRCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRCameraViewController.h; sourceTree = "<group>"; };
 		F6D37250180BEF230076B2EC /* CarDVRCameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRCameraViewController.m; sourceTree = "<group>"; };
 		F6D37257180BF90B0076B2EC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		F6EC81F118D070B6002785B5 /* CarDVRTracksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRTracksViewController.h; sourceTree = "<group>"; };
+		F6EC81F218D070B6002785B5 /* CarDVRTracksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRTracksViewController.m; sourceTree = "<group>"; };
 		F6F0FC20181E7760000562DF /* CarDVRVideoCapturerInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRVideoCapturerInterval.h; sourceTree = "<group>"; };
 		F6F0FC21181E7760000562DF /* CarDVRVideoCapturerInterval.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRVideoCapturerInterval.m; sourceTree = "<group>"; };
 		F6F0FC23181F589F000562DF /* CarDVRSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRSettings.h; sourceTree = "<group>"; };
@@ -324,12 +327,14 @@
 				F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */,
 				F6F8EA9D18C6D0DA00C54CC3 /* CarDVRResolutionSettingViewController.h */,
 				F6F8EA9E18C6D0DA00C54CC3 /* CarDVRResolutionSettingViewController.m */,
-				F6D17D881826970A003D965C /* CarDVRVideoDetailViewController.h */,
-				F6D17D891826970A003D965C /* CarDVRVideoDetailViewController.m */,
-				F6B0F9F11820CB1800A46E3C /* CarDVRVideoBrowserViewController.h */,
-				F6B0F9F21820CB1800A46E3C /* CarDVRVideoBrowserViewController.m */,
 				F6B0FA011820EC0300A46E3C /* CarDVRSettingsViewController.h */,
 				F6B0FA021820EC0300A46E3C /* CarDVRSettingsViewController.m */,
+				F6EC81F118D070B6002785B5 /* CarDVRTracksViewController.h */,
+				F6EC81F218D070B6002785B5 /* CarDVRTracksViewController.m */,
+				F6B0F9F11820CB1800A46E3C /* CarDVRVideoBrowserViewController.h */,
+				F6B0F9F21820CB1800A46E3C /* CarDVRVideoBrowserViewController.m */,
+				F6D17D881826970A003D965C /* CarDVRVideoDetailViewController.h */,
+				F6D17D891826970A003D965C /* CarDVRVideoDetailViewController.m */,
 				F6D17D85182687C1003D965C /* CarDVRVideoItem.h */,
 				F6D17D86182687C1003D965C /* CarDVRVideoItem.m */,
 				F62987441847A05C00CD25E7 /* CarDVRVideoTableViewCell.h */,
@@ -527,6 +532,7 @@
 				F6298749184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m in Sources */,
 				F6214005183DB2EF004630FE /* CarDVRAssetWriter.m in Sources */,
 				F6F8EA9F18C6D0DA00C54CC3 /* CarDVRResolutionSettingViewController.m in Sources */,
+				F6EC81F318D070B6002785B5 /* CarDVRTracksViewController.m in Sources */,
 				F6D3723F180BEB970076B2EC /* CarDVRAppDelegate.m in Sources */,
 				F6D37252180BEF230076B2EC /* CarDVRCameraViewController.m in Sources */,
 				F6F0FC25181F589F000562DF /* CarDVRSettings.m in Sources */,

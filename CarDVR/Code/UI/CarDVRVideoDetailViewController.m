@@ -50,6 +50,7 @@
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
     
+    self.navigationController.toolbar.translucent = NO;
     [self installPlayerControllerWithContentURL:self.videoItem.videoClipURLs.videoFileURL];
 }
 
@@ -57,12 +58,18 @@
 {
 #pragma unused( animated )
     [self layoutSubviews];
+    self.navigationController.toolbarHidden = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
 #pragma unused( animated )
     [self layoutSubviews];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    self.navigationController.toolbarHidden = YES;
 }
 
 - (void)didReceiveMemoryWarning
