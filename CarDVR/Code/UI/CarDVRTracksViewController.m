@@ -10,6 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "CarDVRSettings.h"
 #import "CarDVRVideoItem.h"
+#import "CarDVRLocation.h"
 
 @interface CarDVRTracksViewController ()
 
@@ -20,6 +21,9 @@
 @property (readonly, nonatomic) NSInteger selectedMapTypeSegmentIndex;
 
 - (IBAction)selectedMapTypeChanged:(id)sender;
+
+#pragma mark - Private methods
+- (void)centerMap;
 
 @end
 
@@ -84,6 +88,8 @@
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
+    
+    [self centerMap];
 }
 
 - (void)didReceiveMemoryWarning
@@ -114,4 +120,32 @@
             break;
     }
 }
+
+#pragma mark - Private methods
+- (void)centerMap
+{
+    CLLocationDegrees maxLat = -90.0f;
+    CLLocationDegrees minLat = 90.0f;
+	CLLocationDegrees maxLon = -180.0f;
+	CLLocationDegrees minLon = 180.0f;
+    for ( NSInteger idx = 0; idx < self.videoItem.locations.count; idx++ )
+    {
+        CarDVRLocation *location = self.videoItem.locations[idx];
+        if ( location.latitude > maxLat )
+            maxLat = location.latitude;
+        if ( location.latitude < minLat )
+            minLat = location.latitude;
+        if ( location.longitude > maxLon )
+            maxLon = location.longitude;
+        if ( location.longitude < minLon )
+            minLon = location.longitude;
+    }
+    MKCoordinateRegion region;
+    region.center.latitude = ( maxLat + minLat ) / 2;
+	region.center.longitude = ( maxLon + minLon ) / 2;
+	region.span.latitudeDelta = maxLat - minLat;
+	region.span.longitudeDelta = maxLon - minLon;
+    [self.mapView setRegion:region animated:YES];
+}
+
 @end
