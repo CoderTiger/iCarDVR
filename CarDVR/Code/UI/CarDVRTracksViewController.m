@@ -11,6 +11,7 @@
 #import "CarDVRSettings.h"
 #import "CarDVRVideoItem.h"
 #import "CarDVRLocation.h"
+#import "CarDVRAnnotation.h"
 
 @interface CarDVRTracksViewController ()
 
@@ -89,6 +90,10 @@
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
     
+    [self.mapTypeSegmentedControl setTitle:NSLocalizedString( @"stadardMapTypeName", nil ) forSegmentAtIndex:0];
+    [self.mapTypeSegmentedControl setTitle:NSLocalizedString( @"satelliteMapTypeName", nil ) forSegmentAtIndex:1];
+    [self.mapTypeSegmentedControl setTitle:NSLocalizedString( @"hybridMapTypeName", nil ) forSegmentAtIndex:2];
+    
     [self centerMap];
 }
 
@@ -124,11 +129,16 @@
 #pragma mark - Private methods
 - (void)centerMap
 {
+    NSUInteger locationCount = self.videoItem.locations.count;
+    if ( !locationCount )
+    {
+        return;
+    }
     CLLocationDegrees maxLat = -90.0f;
     CLLocationDegrees minLat = 90.0f;
 	CLLocationDegrees maxLon = -180.0f;
 	CLLocationDegrees minLon = 180.0f;
-    for ( NSInteger idx = 0; idx < self.videoItem.locations.count; idx++ )
+    for ( NSInteger idx = 0; idx < locationCount; idx++ )
     {
         CarDVRLocation *location = self.videoItem.locations[idx];
         if ( location.latitude > maxLat )
@@ -143,9 +153,19 @@
     MKCoordinateRegion region;
     region.center.latitude = ( maxLat + minLat ) / 2;
 	region.center.longitude = ( maxLon + minLon ) / 2;
-	region.span.latitudeDelta = maxLat - minLat;
-	region.span.longitudeDelta = maxLon - minLon;
+	region.span.latitudeDelta = ( maxLat - minLat ) * 1.2;
+	region.span.longitudeDelta = ( maxLon - minLon ) * 1.2;
     [self.mapView setRegion:region animated:YES];
+    
+    CarDVRAnnotation *startAnnotation = [[CarDVRAnnotation alloc] initWithLocation:self.videoItem.locations[0]
+                                                                                title:NSLocalizedString( @"startAnnotation", nil )];
+    [self.mapView addAnnotation:startAnnotation];
+    if ( locationCount > 1 )
+    {
+        CarDVRAnnotation *endAnnotation = [[CarDVRAnnotation alloc] initWithLocation:[self.videoItem.locations lastObject]
+                                                                               title:NSLocalizedString( @"endAnnotation", nil )];
+        [self.mapView addAnnotation:endAnnotation];
+    }
 }
 
 @end

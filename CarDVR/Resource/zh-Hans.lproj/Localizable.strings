@@ -59,6 +59,15 @@
 "multipleVideoSectionHeaderTitleFormat"="拍摄于：%@，共 %u 个视频";
 
 //
+// CarDVRTracksView
+//
+"startAnnotation"="起始点";
+"endAnnotation"="结束点";
+"stadardMapTypeName"="标准";
+"satelliteMapTypeName"="卫星";
+"hybridMapTypeName"="混合";
+
+//
 // video subtitles
 //
 locationStringFormat="%.4f° %@, %.4f° %@";

@@ -59,6 +59,15 @@
 "multipleVideoSectionHeaderTitleFormat"="Captured: %@, %u clips";
 
 //
+// CarDVRTracksView
+//
+"startAnnotation"="Start";
+"endAnnotation"="End";
+"stadardMapTypeName"="Standard";
+"satelliteMapTypeName"="Satellite";
+"hybridMapTypeName"="Hybrid";
+
+//
 // video subtitles
 //
 locationStringFormat="%.4f° %@, %.4f° %@";
