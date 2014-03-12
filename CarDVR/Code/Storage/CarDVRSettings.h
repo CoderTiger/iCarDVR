@@ -18,6 +18,14 @@ NSString *const kCarDVRSettingsKeyCameraPosition;
 NSString *const kCarDVRSettingsKeyVideoResolution;
 NSString *const kCarDVRSettingsKeyVideoFrameRate;
 NSString *const kCarDVRSettingsKeyStarred;
+NSString *const kCarDVRSettingsKeyTracksMapType;
+
+typedef enum
+{
+    kCarDVRMapTypeStandard = 0,
+    kCarDVRMapTypeSatellite,
+    kCarDVRMapTypeHybrid
+}CarDVRMapType;
 
 @class CarDVRPathHelper;
 @interface CarDVRSettings : NSObject
@@ -33,6 +41,7 @@ NSString *const kCarDVRSettingsKeyStarred;
 @property (copy, nonatomic) NSNumber *videoResolution;// CarDVRVideoResolution
 @property (copy, nonatomic) NSNumber *videoFrameRate;// NSUinteger [10, 30]
 @property (copy, nonatomic, getter = isStarred) NSNumber *starred;// BOOL
+@property (copy, nonatomic) NSNumber *tracksMapType;// CarDVRMapType
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
 

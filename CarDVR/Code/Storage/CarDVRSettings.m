@@ -21,6 +21,7 @@ NSString *const kCarDVRSettingsKeyCameraPosition = @"cameraPosition";
 NSString *const kCarDVRSettingsKeyVideoResolution = @"videoResolution";
 NSString *const kCarDVRSettingsKeyVideoFrameRate = @"videoFrameRate";
 NSString *const kCarDVRSettingsKeyStarred = @"isStarred";
+NSString *const kCarDVRSettingsKeyTracksMapType = @"tracksMapType";
 
 static NSNumber *defaultMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
@@ -28,6 +29,7 @@ static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 static NSNumber *maxVideoFrameRate ;// 30 fps
 static NSNumber *minVideoFrameRate;// 5 fps
 static NSNumber *defaultStarredValue;// NO
+static NSNumber *defaultTracksMapType; // kCarDVRMapTypeStandard
 
 @interface CarDVRSettings ()
 {
@@ -55,22 +57,24 @@ static NSNumber *defaultStarredValue;// NO
 
 + (void)initialize
 {
-#ifdef DEBUG
+#if USE_DEBUG_SETTINGS
     defaultMaxRecordingDurationPerClip = @5.0f;// 5 seconds
-#else// !DEBUG
-    defaultMaxRecordingDurationPerClip = @30.0f;// 30 seconds
-#endif// DEBUG
+#else// !USE_DEBUG_SETTINGS
+    defaultMaxRecordingDurationPerClip = @60.0f;// 60 seconds
+#endif// USE_DEBUG_SETTINGS
     defaultOverlappedRecordingDuration = @1.0f;// 1 second
-    defaultMaxCountOfRecordingClips = @2;// 2 clips
+    defaultMaxCountOfRecordingClips = @3;// 2 clips
     maxVideoFrameRate = @30;// 30 fps
     minVideoFrameRate = @5;// 10 fps
     defaultStarredValue = @NO;
+    defaultTracksMapType = [NSNumber numberWithInteger:kCarDVRMapTypeStandard];
     if ( !defaultMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
         || !defaultMaxCountOfRecordingClips
         || !maxVideoFrameRate
         || !minVideoFrameRate
-        || !defaultStarredValue )
+        || !defaultStarredValue
+        || !defaultTracksMapType )
     {
         NSException *exception = [NSException exceptionWithName:NSMallocException
                                                          reason:@"Fault on CarDVRSettings::initialize due to out of memory"
@@ -103,9 +107,6 @@ static NSNumber *defaultStarredValue;// NO
 
 - (NSNumber *)maxRecordingDurationPerClip
 {
-#if USE_DEBUG_CLIP_DURATION
-    return @5.0f;
-#endif// USE_DEBUG_CLIP_DURATION
     NSNumber *maxRecordingDurationPerClip = [self settingValueForKey:kCarDVRSettingsKeyMaxRecordingDuration];
     if ( !maxRecordingDurationPerClip )
     {
@@ -310,6 +311,39 @@ static NSNumber *defaultStarredValue;// NO
         return;
     }
     [self setSettingValue:starred forKey:kCarDVRSettingsKeyStarred];
+}
+
+- (NSNumber *)tracksMapType
+{
+    NSNumber *tracksMapType = [self settingValueForKey:kCarDVRSettingsKeyTracksMapType];
+    if ( !tracksMapType )
+    {
+        tracksMapType = defaultTracksMapType;
+        if ( tracksMapType )
+        {
+            [self setSettingValue:tracksMapType forKey:kCarDVRSettingsKeyTracksMapType mutely:YES];
+        }
+    }
+    return tracksMapType;
+}
+
+- (void)setTracksMapType:(NSNumber *)tracksMapType
+{
+    if ( !tracksMapType )
+    {
+        return;
+    }
+    NSInteger tracksMapTypeValue = tracksMapType.integerValue;
+    switch ( tracksMapTypeValue )
+    {
+        case kCarDVRMapTypeStandard:
+        case kCarDVRMapTypeSatellite:
+        case kCarDVRMapTypeHybrid:
+            [self setSettingValue:tracksMapType forKey:kCarDVRSettingsKeyTracksMapType];
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey

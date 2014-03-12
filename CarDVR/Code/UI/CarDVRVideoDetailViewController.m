@@ -7,8 +7,11 @@
 //
 
 #import "CarDVRVideoDetailViewController.h"
-#import "CarDVRVideoItem.h"
 #import <MediaPlayer/MediaPlayer.h>
+#import "CarDVRVideoItem.h"
+#import "CarDVRTracksViewController.h"
+
+static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 
 @interface CarDVRVideoDetailViewController ()
 
@@ -26,15 +29,6 @@
 
 @implementation CarDVRVideoDetailViewController
 
-- (void)setVideoItem:(CarDVRVideoItem *)videoItem
-{
-    _videoItem = videoItem;
-    if ( _videoItem )
-    {
-        self.title = [NSString stringWithFormat:NSLocalizedString( @"playerViewTitleFormat", nil ), _videoItem.videoFileName];
-    }
-}
-
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -44,6 +38,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.title = NSLocalizedString( @"playerViewTitle", nil );
     
     // Prevent sub views from being covered by navigation bar
     self.navigationController.navigationBar.translucent = NO;
@@ -121,6 +116,17 @@
 - (void)handleMPMoviePlayerDidExitFullscreenNotification
 {
     [self layoutSubviews];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+#pragma unused( sender )
+    if ( [segue.identifier isEqualToString:kShowTracksViewSegueId] )
+    {
+        CarDVRTracksViewController *tracksViewController = segue.destinationViewController;
+        tracksViewController.settings = self.settings;
+        tracksViewController.videoItem = self.videoItem;
+    }
 }
 
 @end

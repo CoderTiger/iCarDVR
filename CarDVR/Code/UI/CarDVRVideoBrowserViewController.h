@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CarDVRPathHelper.h"
 
 typedef enum
 {
@@ -16,8 +15,13 @@ typedef enum
     kCarDVRVideoBrowserViewControllerTypeStarred
 } CarDVRVideoBrowserViewControllerType;
 
+@class CarDVRSettings;
+@class CarDVRPathHelper;
+
 @interface CarDVRVideoBrowserViewController : UIViewController
 
+@property (weak, nonatomic) CarDVRSettings *settins;
+@property (weak, nonatomic) CarDVRPathHelper *pathHelper;
 @property (assign, nonatomic) CarDVRVideoBrowserViewControllerType type;
 @property (assign, nonatomic) BOOL switchFromRecordingCamera;
 

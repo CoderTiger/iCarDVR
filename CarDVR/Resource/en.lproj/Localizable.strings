@@ -1,10 +1,14 @@
 /* Localized versions of UI text */
+//
+// View Titles
+//
 "homeViewTitle"="Home";
 "cameraViewTitle"="Camera";
 "recentsViewTitle"="Recents";
 "starredViewTitle"="Starred";
 "settingsViewTitle"="Settings";
-"playerViewTitleFormat"="%@";
+"playerViewTitle"="Video";
+"tracksViewTitle"="Tracks";
 
 //
 // CarDVRSettingsView

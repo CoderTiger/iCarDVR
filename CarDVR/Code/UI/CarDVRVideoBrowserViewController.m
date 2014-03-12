@@ -13,6 +13,7 @@
 #import "CarDVRVideoCapturerConstants.h"
 #import "CarDVRVideoTableViewCell.h"
 #import "CarDVRVideoClipURLs.h"
+#import "CarDVRPathHelper.h"
 
 static NSDateFormatter *videoCreationDateFormatter;
 
@@ -24,7 +25,6 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 @property (weak, nonatomic) IBOutlet UITableView *videoTableView;
 
 @property (strong, nonatomic) NSMutableArray *videos;
-@property (weak, nonatomic) CarDVRPathHelper *pathHelper;
 
 #pragma mark - private methods
 - (void)loadVideosAsync;
@@ -221,6 +221,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         {
             CarDVRVideoItem *videoItem = [self.videos[indexPath.section] objectAtIndex:indexPath.row];
             CarDVRVideoDetailViewController *playerViewController = [segue destinationViewController];
+            playerViewController.settings = self.settins;
             playerViewController.videoItem = videoItem;
         }
     }
@@ -239,16 +240,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSMutableArray *videos = [NSMutableArray array];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
-    CarDVRPathHelper *pathHelper = appDelegate.pathHelper;
+    
     NSURL *videoFolderURL;
     switch ( self.type )
     {
         case kCarDVRVideoBrowserViewControllerTypeRecents:
-            videoFolderURL = pathHelper.recentsFolderURL;
+            videoFolderURL = self.pathHelper.recentsFolderURL;
             break;
         case kCarDVRVideoBrowserViewControllerTypeStarred:
-            videoFolderURL = pathHelper.starredFolderURL;
+            videoFolderURL = self.pathHelper.starredFolderURL;
             break;
         default:
             break;

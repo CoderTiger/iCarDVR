@@ -10,6 +10,7 @@
 #import "CarDVRVideoBrowserViewController.h"
 #import "CarDVRSettingsViewController.h"
 #import "CarDVRSettings.h"
+#import "CarDVRAppDelegate.h"
 
 static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
 static const NSUInteger kTabRecentsIndex = 0;
@@ -18,12 +19,24 @@ static const NSUInteger kTabMaxCount = 2;
 
 @interface CarDVRHomeViewController ()
 
-@property (weak, nonatomic) CarDVRPathHelper *pathHelper;
+@property (weak, readonly, nonatomic) CarDVRPathHelper *pathHelper;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *settingBarButtonItem;
 
 @end
 
 @implementation CarDVRHomeViewController
+
+@synthesize pathHelper = _pathHelper;
+
+- (CarDVRPathHelper *)pathHelper
+{
+    if ( !_pathHelper )
+    {
+        CarDVRAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+        _pathHelper = appDelegate.pathHelper;
+    }
+    return _pathHelper;
+}
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -52,10 +65,13 @@ static const NSUInteger kTabMaxCount = 2;
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
-    
-    self.selectedIndex = self.settings.isStarred.boolValue ? kTabStarredIndex : kTabRecentsIndex;
-    CarDVRVideoBrowserViewController *selectedView = [self.viewControllers objectAtIndex:self.selectedIndex];
-    selectedView.switchFromRecordingCamera = self.switchFromRecordingCamera;
+   
+    for ( CarDVRVideoBrowserViewController *videoBrowserViewController in self.viewControllers )
+    {
+        videoBrowserViewController.switchFromRecordingCamera = self.switchFromRecordingCamera;
+        videoBrowserViewController.settins = self.settings;
+        videoBrowserViewController.pathHelper = self.pathHelper;
+    }
 }
 
 - (void)didReceiveMemoryWarning

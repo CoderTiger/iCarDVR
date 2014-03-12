@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class CarDVRSettings;
 @class CarDVRVideoItem;
 
 @interface CarDVRVideoDetailViewController : UITableViewController
 
+@property (weak, nonatomic) CarDVRSettings *settings;
 @property (weak, nonatomic) CarDVRVideoItem *videoItem;
 
 @end
