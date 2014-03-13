@@ -72,6 +72,7 @@ static const NSUInteger kTabMaxCount = 2;
         videoBrowserViewController.settins = self.settings;
         videoBrowserViewController.pathHelper = self.pathHelper;
     }
+    self.selectedIndex = self.settings.isStarred.boolValue ? kTabStarredIndex : kTabRecentsIndex;
 }
 
 - (void)didReceiveMemoryWarning
