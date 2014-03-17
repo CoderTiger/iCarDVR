@@ -188,6 +188,7 @@
         [self.mapView addAnnotation:endAnnotation];
     }
     
+    // TODO: try to drow tracks with overlay manner
     CarDVRTracksOverlay *tracksOverlay = [[CarDVRTracksOverlay alloc] initWithVideoItem:self.videoItem];
 //    [self.mapView addOverlay:tracksOverlay];
     [self.mapView addAnnotation:tracksOverlay];

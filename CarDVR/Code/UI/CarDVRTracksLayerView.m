@@ -25,6 +25,8 @@ static const CGFloat kPolylineWidth = 4.0f;
 
 - (CGPoint)centerOffset
 {
+    // REMARKS: derived from MKAnnotationView,
+    // HACK here to redraw tracks when scaling or moving map view.
     [self setNeedsDisplay];
     return [super centerOffset];
 }
