@@ -12,8 +12,10 @@
 #import "CarDVRVideoItem.h"
 #import "CarDVRLocation.h"
 #import "CarDVRAnnotation.h"
+#import "CarDVRTracksOverlay.h"
+#import "CarDVRTracksLayerView.h"
 
-@interface CarDVRTracksViewController ()
+@interface CarDVRTracksViewController ()<MKMapViewDelegate>
 
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *mapTypeSegmentedControl;
@@ -126,6 +128,25 @@
     }
 }
 
+#pragma mark - from MKMapViewDelegate
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
+{
+    if ( [annotation isKindOfClass:[CarDVRTracksOverlay class]] )
+    {
+        CarDVRTracksLayerView *tracksLayerView =
+            (CarDVRTracksLayerView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"CarDVRTracksLayerView"];
+        if ( !tracksLayerView )
+        {
+            tracksLayerView = [[CarDVRTracksLayerView alloc] initWithAnnotation:annotation
+                                                                reuseIdentifier:@"CarDVRTracksLayerView"];
+        }
+        tracksLayerView.mapView = self.mapView;
+        tracksLayerView.videoItem = self.videoItem;
+        return tracksLayerView;
+    }
+    return nil;
+}
+
 #pragma mark - Private methods
 - (void)centerMap
 {
@@ -166,6 +187,10 @@
                                                                                title:NSLocalizedString( @"endAnnotation", nil )];
         [self.mapView addAnnotation:endAnnotation];
     }
+    
+    CarDVRTracksOverlay *tracksOverlay = [[CarDVRTracksOverlay alloc] initWithVideoItem:self.videoItem];
+//    [self.mapView addOverlay:tracksOverlay];
+    [self.mapView addAnnotation:tracksOverlay];
 }
 
 @end

@@ -654,7 +654,7 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="rb4-bJ-ajK"/>
-                        <barButtonItem image="ButtonMap25x25" id="UpL-dC-w7W" userLabel="Bar Button Item - Tracks">
+                        <barButtonItem image="ButtonTracks25x25" id="UpL-dC-w7W" userLabel="Bar Button Item - Tracks">
                             <connections>
                                 <segue destination="bwN-QC-s3w" kind="push" identifier="kShowTracksViewSegueId" id="CFO-er-ubj"/>
                             </connections>
@@ -683,6 +683,9 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" id="iuj-49-MFy">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="bwN-QC-s3w" id="FhJ-jN-1dJ"/>
+                                </connections>
                             </mapView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="qDJ-Sp-7Vk">
                                 <rect key="frame" x="73" y="456" width="175" height="29"/>
@@ -897,11 +900,11 @@
         <image name="ButtonFlashOn50x50" width="50" height="50"/>
         <image name="ButtonFoto50x50" width="50" height="50"/>
         <image name="ButtonHome50x50" width="50" height="50"/>
-        <image name="ButtonMap25x25" width="25" height="25"/>
         <image name="ButtonStar50x50" width="50" height="50"/>
         <image name="ButtonStarred50x50" width="50" height="50"/>
         <image name="ButtonStart50x50" width="50" height="50"/>
         <image name="ButtonStop50x50" width="50" height="50"/>
+        <image name="ButtonTracks25x25" width="25" height="25"/>
         <image name="TabRecents25x25" width="25" height="25"/>
         <image name="TabStarred25x25" width="25" height="25"/>
     </resources>
@@ -911,6 +914,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="dmg-e5-7ne"/>
+        <segue reference="IMk-6e-wRQ"/>
     </inferredMetricsTieBreakers>
 </document>

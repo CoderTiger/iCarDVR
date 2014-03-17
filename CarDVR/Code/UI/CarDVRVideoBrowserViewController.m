@@ -148,6 +148,10 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
     if ( indexPath.section < self.videos.count && indexPath.row < [self.videos[indexPath.section] count] )
     {
         cell = [tableView dequeueReusableCellWithIdentifier:kVideoCellId];
+        if ( !cell )
+        {
+            cell = [[CarDVRVideoTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kVideoCellId];
+        }
         CarDVRVideoItem *videoItem = [self.videos[indexPath.section] objectAtIndex:indexPath.row];
         cell.videoItem = videoItem;
     }
