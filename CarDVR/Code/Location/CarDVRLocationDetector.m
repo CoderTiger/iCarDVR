@@ -56,7 +56,6 @@
         return;
     }
     [_locationManager stopUpdatingLocation];
-    // todo: complete
 }
 
 #pragma mark - from CLLocationManagerDelegate
