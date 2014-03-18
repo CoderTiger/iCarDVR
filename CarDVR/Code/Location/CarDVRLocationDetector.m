@@ -46,7 +46,6 @@
     [self installLocationManager];
     
     [_locationManager startUpdatingLocation];
-    // todo: complete
 }
 
 - (void)stop
