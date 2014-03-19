@@ -7,14 +7,19 @@
 //
 
 #import "CarDVRLocationDetector.h"
+#import <MapKit/MapKit.h>
 
-@interface CarDVRLocationDetector ()<CLLocationManagerDelegate>
+#define USE_CORE_LOCATION_SERVICE 0
+
+@interface CarDVRLocationDetector ()<CLLocationManagerDelegate, MKMapViewDelegate>
 {
     CLLocationManager *_locationManager;
+    MKMapView *_mapView;
 }
 
 #pragma mark - Private methods
 - (void)installLocationManager;
+- (void)installMapView;
 - (void)didUpdateToLocation:(CLLocation *)aLocation;
 
 @end
@@ -43,9 +48,13 @@
         NSLog( @"[Error] location services NOT enabled" );
         return;
     }
+#if USE_CORE_LOCATION_SERVICE
     [self installLocationManager];
-    
     [_locationManager startUpdatingLocation];
+#else// !USE_CORE_LOCATION_SERVICE
+    [self installMapView];
+    _mapView.showsUserLocation = YES;
+#endif// USE_CORE_LOCATION_SERVICE
 }
 
 - (void)stop
@@ -55,7 +64,11 @@
         NSLog( @"[Error] location services NOT enabled" );
         return;
     }
+#if USE_CORE_LOCATION_SERVICE
     [_locationManager stopUpdatingLocation];
+#else// !USE_CORE_LOCATION_SERVICE
+    _mapView.showsUserLocation = NO;
+#endif// USE_CORE_LOCATION_SERVICE
 }
 
 #pragma mark - from CLLocationManagerDelegate
@@ -79,6 +92,12 @@
 }
 
 
+#pragma mark - from MKMapViewDelegate
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
+{
+    [self didUpdateToLocation:userLocation.location];
+}
+
 #pragma mark - Private methods
 - (void)installLocationManager
 {
@@ -88,6 +107,14 @@
     _locationManager.delegate = self;
     _locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
     _locationManager.distanceFilter = kCLDistanceFilterNone;
+}
+
+- (void)installMapView
+{
+    if ( _mapView )
+        return;
+    _mapView = [[MKMapView alloc] init];
+    _mapView.delegate = self;
 }
 
 - (void)didUpdateToLocation:(CLLocation *)aLocation
