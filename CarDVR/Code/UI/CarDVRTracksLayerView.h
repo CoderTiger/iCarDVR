@@ -16,6 +16,6 @@
 @property (weak, nonatomic) MKMapView *mapView;
 @property (weak, nonatomic) CarDVRVideoItem *videoItem;
 
-- (id)initWithMapView:(MKMapView *)mapView videoItem:(CarDVRVideoItem *)videoItem;
+- (void)mapViewRegionChanged;
 
 @end

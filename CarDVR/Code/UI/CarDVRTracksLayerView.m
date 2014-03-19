@@ -12,50 +12,36 @@
 
 static const CGFloat kPolylineWidth = 4.0f;
 
-@implementation CarDVRTracksLayerView
+@interface CarDVRInternalTracksLayerView : UIView
 
-- (void)setMapView:(MKMapView *)mapView
+@property (weak, nonatomic) MKMapView *mapView;
+@property (weak, nonatomic) CarDVRVideoItem *videoItem;
+
+- (void)mapViewRegionChanged;
+
+@end
+
+@implementation CarDVRInternalTracksLayerView
+
+- (id)init
 {
-    if ( _mapView != mapView )
+    self = [super init];
+    if ( self )
     {
-        _mapView = mapView;
-        self.frame = CGRectMake( 0, 0, _mapView.frame.size.width, _mapView.frame.size.height );
+        self.backgroundColor = [UIColor clearColor];
+        self.clipsToBounds = NO;
+        self.userInteractionEnabled = NO;
     }
+    return self;
 }
 
-- (CGPoint)centerOffset
+- (void)mapViewRegionChanged
 {
-    // REMARKS: derived from MKAnnotationView,
-    // HACK here to redraw tracks when scaling or moving map view.
+    self.frame = CGRectMake( -kPolylineWidth,
+                            -kPolylineWidth,
+                            _mapView.frame.size.width + kPolylineWidth * 2,
+                            _mapView.frame.size.height + kPolylineWidth * 2 );
     [self setNeedsDisplay];
-    return [super centerOffset];
-}
-
-- (id)initWithAnnotation:(id<MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier
-{
-    self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
-    if ( self )
-    {
-        self.backgroundColor = [UIColor clearColor];
-        self.clipsToBounds = NO;
-        self.userInteractionEnabled = NO;
-    }
-    return self;
-}
-
-- (id)initWithMapView:(MKMapView *)mapView videoItem:(CarDVRVideoItem *)videoItem
-{
-    self = [super initWithFrame:CGRectMake( 0, 0, mapView.frame.size.width, mapView.frame.size.height )];
-    if ( self )
-    {
-        _mapView = mapView;
-        _videoItem = videoItem;
-        self.backgroundColor = [UIColor clearColor];
-        self.clipsToBounds = NO;
-        self.userInteractionEnabled = NO;
-        [_mapView addSubview:self];
-    }
-    return self;
 }
 
 - (void)drawRect:(CGRect)rect
@@ -75,7 +61,7 @@ static const CGFloat kPolylineWidth = 4.0f;
         {
 			CarDVRLocation* location = [locations objectAtIndex:i];
 			CGPoint point = [self.mapView convertCoordinate:CLLocationCoordinate2DMake( location.latitude, location.longitude )
-                                          toPointToView:self];
+                                              toPointToView:self];
 			
 			if ( i == 0 )
 				CGContextMoveToPoint( context, point.x, point.y );
@@ -85,6 +71,67 @@ static const CGFloat kPolylineWidth = 4.0f;
 		
 		CGContextStrokePath( context );
 	}
+}
+
+@end
+
+@interface CarDVRTracksLayerView ()
+
+@property (weak, nonatomic) CarDVRInternalTracksLayerView *internalTracksLayerView;
+
+@end
+
+@implementation CarDVRTracksLayerView
+
+- (void)setMapView:(MKMapView *)mapView
+{
+    if ( _mapView != mapView )
+    {
+        _mapView = mapView;
+        CarDVRInternalTracksLayerView *internalTracksLayerView = [[CarDVRInternalTracksLayerView alloc] init];
+        internalTracksLayerView.mapView = _mapView;
+        internalTracksLayerView.videoItem = _videoItem;
+        [_mapView addSubview:internalTracksLayerView];
+        internalTracksLayerView.frame = CGRectMake( -kPolylineWidth,
+                                                   -kPolylineWidth,
+                                                   _mapView.frame.size.width + kPolylineWidth * 2,
+                                                   _mapView.frame.size.height + kPolylineWidth * 2 );
+        _internalTracksLayerView = internalTracksLayerView;
+    }
+}
+
+- (void)setVideoItem:(CarDVRVideoItem *)videoItem
+{
+    if ( _videoItem != videoItem )
+    {
+        _videoItem = videoItem;
+        _internalTracksLayerView.videoItem = videoItem;
+    }
+}
+
+- (void)mapViewRegionChanged
+{
+    [self.internalTracksLayerView mapViewRegionChanged];
+}
+
+- (CGPoint)centerOffset
+{
+    // REMARKS: derived from MKAnnotationView,
+    // HACK here to reposition and redraw tracks when scaling or moving map view.
+    [self.internalTracksLayerView mapViewRegionChanged];
+    return [super centerOffset];
+}
+
+- (id)initWithAnnotation:(id<MKAnnotation>)annotation reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithAnnotation:annotation reuseIdentifier:reuseIdentifier];
+    if ( self )
+    {
+        self.backgroundColor = [UIColor clearColor];
+        self.clipsToBounds = NO;
+        self.userInteractionEnabled = NO;
+    }
+    return self;
 }
 
 @end

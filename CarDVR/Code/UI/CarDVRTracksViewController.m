@@ -22,6 +22,7 @@
 
 @property (readonly, nonatomic) MKMapType mapType;
 @property (readonly, nonatomic) NSInteger selectedMapTypeSegmentIndex;
+@property (weak, nonatomic) CarDVRTracksLayerView *tracksLayerView;
 
 - (IBAction)selectedMapTypeChanged:(id)sender;
 
@@ -142,9 +143,16 @@
         }
         tracksLayerView.mapView = self.mapView;
         tracksLayerView.videoItem = self.videoItem;
+        _tracksLayerView = tracksLayerView;
         return tracksLayerView;
     }
     return nil;
+}
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+#pragma unused( mapView, animated )
+    [self.tracksLayerView mapViewRegionChanged];
 }
 
 #pragma mark - Private methods
