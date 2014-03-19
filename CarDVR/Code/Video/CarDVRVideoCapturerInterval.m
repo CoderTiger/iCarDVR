@@ -296,22 +296,25 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
         if ( _recordingWillBeStarted || self.isRecording )
             return;
         _recordingWillBeStarted = YES;
-        //
-        // Remove the recent recorded clips.
-        //
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtURL:self.pathHelper.recentsFolderURL
-                                                  includingPropertiesForKeys:nil
-                                                                     options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                                                       error:nil];
-        if ( recentRecordedClips )
+        
+        if ( self.settings.removeClipsInRecentsBeforeRecording.boolValue )
         {
-            for ( NSURL *clipFileURL in recentRecordedClips )
+            //
+            // Remove the recent recorded clips.
+            //
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            NSArray *recentRecordedClips = [fileManager contentsOfDirectoryAtURL:self.pathHelper.recentsFolderURL
+                                                      includingPropertiesForKeys:nil
+                                                                         options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants
+                                                                           error:nil];
+            if ( recentRecordedClips )
             {
-                [fileManager removeItemAtURL:clipFileURL error:nil];
+                for ( NSURL *clipFileURL in recentRecordedClips )
+                {
+                    [fileManager removeItemAtURL:clipFileURL error:nil];
+                }
             }
         }
-        
         //
         // Prepare recent recoreded clips
         //
@@ -865,17 +868,24 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                                                                               clipName:[self newRecordingClipName]
                                                                               settings:self.settings
                                                                                  error:nil];
+        if ( _location )
+        {
+            [assetWriter didUpdateToLocation:_location];
+        }
         [_duoAssetWriter addObject:assetWriter];
         assetWriter.recordingWillBeStarted = YES;
         [_recentRecordedClipURLs addObject:assetWriter.writer.outputURL];
-        if ( _recentRecordedClipURLs.count > _settings.maxCountOfRecordingClips.unsignedIntegerValue )
+        if ( !self.settings.isStarred.boolValue )
         {
-            NSURL *oldestClipURL = [_recentRecordedClipURLs objectAtIndex:0];
+            if ( _recentRecordedClipURLs.count > _settings.maxCountOfRecordingClips.unsignedIntegerValue )
+            {
+                NSURL *oldestClipURL = [_recentRecordedClipURLs objectAtIndex:0];
 #ifdef DEBUG
-            NSLog( @"[Debug] removing clip: %@", oldestClipURL );
+                NSLog( @"[Debug] removing clip: %@", oldestClipURL );
 #endif// DEBUG
-            [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:nil];
-            [_recentRecordedClipURLs removeObjectAtIndex:0];
+                [[NSFileManager defaultManager] removeItemAtURL:oldestClipURL error:nil];
+                [_recentRecordedClipURLs removeObjectAtIndex:0];
+            }
         }
         
         dispatch_async( dispatch_get_main_queue(), ^{

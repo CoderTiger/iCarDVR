@@ -46,11 +46,23 @@
 "videoDurationSizeFormat"="%@, %@";
 "videoSecondsDurationFormat"="%u sec";
 "videoMinutesSecondsDurationFormat"="%u min %u sec";
-"videoSizeByteFormat"="%lluB";
-"videoSizeKByteFormat"="%.2fKB";
-"videoSizeMByteFormat"="%.2fMB";
-"videoSizeGByteFormat"="%.2fGB";
+"videoSizeByteFormat"="%llu B";
+"videoSizeKByteFormat"="%.2f KB";
+"videoSizeMByteFormat"="%.2f MB";
+"videoSizeGByteFormat"="%.2f GB";
 "videoFrameRateDimensionFormat"="%.2f fps, %.0fx%.0f";
+
+//
+// CarDVRVideoDetailView
+//
+"creationDateLabel"="Captured:";
+"durationLabel"="Duration:";
+"sizeLabel"="Size:";
+"filesLabel"="Files:";
+"videoFrameRateFormat"="%.2f fps";
+"videoResolutionFormat"="%.0fx%.0f";
+"starredPrompt"="Starred";
+"close"="close";
 
 //
 // CarDVRVideoBrowserView

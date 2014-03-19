@@ -19,7 +19,27 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 @property (weak, nonatomic) IBOutlet UIView *playerPaneView;
 @property (weak, nonatomic) IBOutlet UIView *playerCellView;
 
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *starButton;
+
+@property (weak, nonatomic) IBOutlet UILabel *creationDateLabel;
+@property (weak, nonatomic) IBOutlet UILabel *creationDateValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *durationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *durationValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *sizeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *sizeValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *frameRateLabel;
+@property (weak, nonatomic) IBOutlet UILabel *frameRateValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *resolutionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *resolutionValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *filesLabel;
+@property (weak, nonatomic) IBOutlet UILabel *videoFileValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *srtFileValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *gpxFileValueLabel;
+
+- (IBAction)starButtonTouched:(id)sender;
+
 #pragma mark - private methods
+- (void)installDetailsInfo;
 - (void)installPlayerControllerWithContentURL:(NSURL *)aURL;
 - (void)layoutSubviews;
 
@@ -38,14 +58,30 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    //
+    // Set title.
+    //
     self.title = NSLocalizedString( @"playerViewTitle", nil );
     
+    //
+    // enable/disable 'Star' button
+    //
+    self.starButton.enabled = self.starEnabled;
+    
+    //
     // Prevent sub views from being covered by navigation bar
+    //
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
     
     self.navigationController.toolbar.translucent = NO;
+    
+    //
+    // Install video data.
+    //
+    [self installDetailsInfo];
     [self installPlayerControllerWithContentURL:self.videoItem.videoClipURLs.videoFileURL];
 }
 
@@ -86,6 +122,84 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 }
 
 #pragma mark - private methods
+- (void)installDetailsInfo
+{
+    self.creationDateLabel.text = NSLocalizedString( @"creationDateLabel", nil );
+    self.durationLabel.text = NSLocalizedString( @"durationLabel", nil );
+    self.sizeLabel.text = NSLocalizedString( @"sizeLabel", nil );
+    self.frameRateLabel.text = NSLocalizedString( @"frameRateLabel", nil );
+    self.resolutionLabel.text = NSLocalizedString( @"resolutionLabel", nil );
+    self.filesLabel.text = NSLocalizedString( @"filesLabel", nil );
+    
+    // set creationg date
+    NSDateFormatter *videoCreationDateFormatter = [[NSDateFormatter alloc] init];
+    [videoCreationDateFormatter setDateStyle:NSDateFormatterNoStyle];
+    [videoCreationDateFormatter setDateFormat:NSLocalizedString( @"videoCreationDateFormat", nil )];
+    self.creationDateValueLabel.text = [videoCreationDateFormatter stringFromDate:self.videoItem.creationDate];
+    
+    // set duration
+    NSString *durationText;
+    NSUInteger durationSeconds = self.videoItem.duration;
+    if ( durationSeconds < 60 )// < 1 minute
+    {
+        durationText = [NSString stringWithFormat:NSLocalizedString( @"videoSecondsDurationFormat", nil ),
+                        durationSeconds];
+    }
+    else
+    {
+        durationText = [NSString stringWithFormat:NSLocalizedString( @"videoMinutesSecondsDurationFormat", nil ),
+                        durationSeconds / 60, durationSeconds % 60];
+    }
+    self.durationValueLabel.text = durationText;
+    
+    // set size
+    NSString *fileSizeText;
+    if ( self.videoItem.videoFileSize < 1024 )// < 1KB
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeByteFormat", nil ),
+                        self.videoItem.videoFileSize];
+    }
+    else if ( self.videoItem.videoFileSize < 1024 * 1024 )// < 1MB
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeKByteFormat", nil ),
+                        self.videoItem.videoFileSize / 1024.0];
+    }
+    else if ( self.videoItem.videoFileSize < 1024 * 1024 * 1024 )// < 1GB
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeMByteFormat", nil ),
+                        self.videoItem.videoFileSize / ( 1024.0 * 1024.0 )];
+    }
+    else
+    {
+        fileSizeText = [NSString stringWithFormat:NSLocalizedString( @"videoSizeGByteFormat", nil ),
+                        self.videoItem.videoFileSize / ( 1024.0 * 1024.0 * 1024.0 )];
+    }
+    self.sizeValueLabel.text = fileSizeText;
+    
+    // set frame rate, resolution
+    self.frameRateValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"videoFrameRateFormat", nil ), self.videoItem.frameRate];
+    self.resolutionValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"videoResolutionFormat", nil ),
+                                      self.videoItem.dimension.width, self.videoItem.dimension.height];
+    
+    // set files
+    self.videoFileValueLabel.text = self.videoItem.videoFileName;
+    self.srtFileValueLabel.text = self.videoItem.videoClipURLs.srtFileURL.lastPathComponent;
+    self.gpxFileValueLabel.text = self.videoItem.videoClipURLs.gpxFileURL.lastPathComponent;
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    if ( ![defaultManager fileExistsAtPath:self.videoItem.videoClipURLs.videoFileURL.path] )
+    {
+        self.videoFileValueLabel.textColor = [UIColor lightGrayColor];
+    }
+    if ( ![defaultManager fileExistsAtPath:self.videoItem.videoClipURLs.srtFileURL.path] )
+    {
+        self.srtFileValueLabel.textColor = [UIColor lightGrayColor];
+    }
+    if ( ![defaultManager fileExistsAtPath:self.videoItem.videoClipURLs.gpxFileURL.path] )
+    {
+        self.gpxFileValueLabel.textColor = [UIColor lightGrayColor];
+    }
+}
+
 - (void)installPlayerControllerWithContentURL:(NSURL *)aURL
 {
     if ( _playerController )
@@ -129,4 +243,18 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
     }
 }
 
+- (IBAction)starButtonTouched:(id)sender
+{
+#pragma unused( sender )
+    // todo: complete
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString( @"starredPrompt", nil )
+                                                        message:nil
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString( @"close", nil )
+                                              otherButtonTitles:nil];
+    [alertView show];
+    self.starButton.enabled = NO;
+}
 @end

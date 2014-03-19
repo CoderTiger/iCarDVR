@@ -19,6 +19,7 @@ NSString *const kCarDVRSettingsKeyVideoResolution;
 NSString *const kCarDVRSettingsKeyVideoFrameRate;
 NSString *const kCarDVRSettingsKeyStarred;
 NSString *const kCarDVRSettingsKeyTracksMapType;
+NSString *const kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording;
 
 typedef enum
 {
@@ -42,6 +43,7 @@ typedef enum
 @property (copy, nonatomic) NSNumber *videoFrameRate;// NSUinteger [10, 30]
 @property (copy, nonatomic, getter = isStarred) NSNumber *starred;// BOOL
 @property (copy, nonatomic) NSNumber *tracksMapType;// CarDVRMapType
+@property (copy, nonatomic) NSNumber *removeClipsInRecentsBeforeRecording;// BOOL
 
 - (id)initWithPathHelper:(CarDVRPathHelper *)aPathHelper;
 

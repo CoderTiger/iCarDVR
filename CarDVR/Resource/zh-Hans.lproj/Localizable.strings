@@ -46,11 +46,23 @@
 "videoDurationSizeFormat"="%@, %@";
 "videoSecondsDurationFormat"="%u秒";
 "videoMinutesSecondsDurationFormat"="%u分%u秒";
-"videoSizeByteFormat"="%lluB";
-"videoSizeKByteFormat"="%.2fKB";
-"videoSizeMByteFormat"="%.2fMB";
-"videoSizeGByteFormat"="%.2fGB";
+"videoSizeByteFormat"="%llu B";
+"videoSizeKByteFormat"="%.2f KB";
+"videoSizeMByteFormat"="%.2f MB";
+"videoSizeGByteFormat"="%.2f GB";
 "videoFrameRateDimensionFormat"="%.2f fps, %.0fx%.0f";
+
+//
+// CarDVRVideoDetailView
+//
+"creationDateLabel"="拍摄时间：";
+"durationLabel"="视频时长：";
+"sizeLabel"="视频大小：";
+"filesLabel"="关联文件：";
+"videoFrameRateFormat"="%.2f fps";
+"videoResolutionFormat"="%.0fx%.0f";
+"starredPrompt"="已收藏";
+"close"="关闭";
 
 //
 // CarDVRVideoBrowserView

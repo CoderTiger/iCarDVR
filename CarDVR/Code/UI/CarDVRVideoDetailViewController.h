@@ -15,5 +15,6 @@
 
 @property (weak, nonatomic) CarDVRSettings *settings;
 @property (weak, nonatomic) CarDVRVideoItem *videoItem;
+@property (assign, nonatomic) BOOL starEnabled;
 
 @end

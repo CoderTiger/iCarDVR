@@ -22,14 +22,17 @@ NSString *const kCarDVRSettingsKeyVideoResolution = @"videoResolution";
 NSString *const kCarDVRSettingsKeyVideoFrameRate = @"videoFrameRate";
 NSString *const kCarDVRSettingsKeyStarred = @"isStarred";
 NSString *const kCarDVRSettingsKeyTracksMapType = @"tracksMapType";
+NSString *const kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording = @"removeClipsInRecentsBeforeRecording";
 
-static NSNumber *defaultMaxRecordingDurationPerClip;// 30 seconds
+static NSNumber *defaultMaxRecordingDurationPerClip;// 60 seconds
+static NSNumber *minMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
 static NSNumber *maxVideoFrameRate ;// 30 fps
 static NSNumber *minVideoFrameRate;// 5 fps
 static NSNumber *defaultStarredValue;// NO
-static NSNumber *defaultTracksMapType; // kCarDVRMapTypeStandard
+static NSNumber *defaultTracksMapType;// kCarDVRMapTypeStandard
+static NSNumber *defaultRemoveClipsInRecentsBeforeRecording;// NO
 
 @interface CarDVRSettings ()
 {
@@ -62,19 +65,23 @@ static NSNumber *defaultTracksMapType; // kCarDVRMapTypeStandard
 #else// !USE_DEBUG_SETTINGS
     defaultMaxRecordingDurationPerClip = @60.0f;// 60 seconds
 #endif// USE_DEBUG_SETTINGS
+    minMaxRecordingDurationPerClip = @30.0f;// 30 seconds
     defaultOverlappedRecordingDuration = @1.0f;// 1 second
     defaultMaxCountOfRecordingClips = @3;// 2 clips
     maxVideoFrameRate = @30;// 30 fps
     minVideoFrameRate = @5;// 10 fps
     defaultStarredValue = @NO;
     defaultTracksMapType = [NSNumber numberWithInteger:kCarDVRMapTypeStandard];
+    defaultRemoveClipsInRecentsBeforeRecording = @NO;
     if ( !defaultMaxRecordingDurationPerClip
+        || !minMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
         || !defaultMaxCountOfRecordingClips
         || !maxVideoFrameRate
         || !minVideoFrameRate
         || !defaultStarredValue
-        || !defaultTracksMapType )
+        || !defaultTracksMapType
+        || !defaultRemoveClipsInRecentsBeforeRecording )
     {
         NSException *exception = [NSException exceptionWithName:NSMallocException
                                                          reason:@"Fault on CarDVRSettings::initialize due to out of memory"
@@ -125,9 +132,9 @@ static NSNumber *defaultTracksMapType; // kCarDVRMapTypeStandard
     {
         return;
     }
-    if ( [maxRecordingDurationPerClip compare:defaultMaxRecordingDurationPerClip] == NSOrderedAscending )
+    if ( [maxRecordingDurationPerClip compare:minMaxRecordingDurationPerClip] == NSOrderedAscending )
     {
-        maxRecordingDurationPerClip = defaultMaxRecordingDurationPerClip;
+        maxRecordingDurationPerClip = minMaxRecordingDurationPerClip;
     }
     [self setSettingValue:maxRecordingDurationPerClip forKey:kCarDVRSettingsKeyMaxRecordingDuration];
 }
@@ -344,6 +351,31 @@ static NSNumber *defaultTracksMapType; // kCarDVRMapTypeStandard
         default:
             break;
     }
+}
+
+- (NSNumber *)removeClipsInRecentsBeforeRecording
+{
+    NSNumber *removeClipsInRecentsBeforeRecording = [self settingValueForKey:kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording];
+    if ( !removeClipsInRecentsBeforeRecording )
+    {
+        removeClipsInRecentsBeforeRecording = defaultRemoveClipsInRecentsBeforeRecording;
+        if ( removeClipsInRecentsBeforeRecording )
+        {
+            [self setSettingValue:removeClipsInRecentsBeforeRecording
+                           forKey:kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording
+                           mutely:YES];
+        }
+    }
+    return removeClipsInRecentsBeforeRecording;
+}
+
+- (void)setRemoveClipsInRecentsBeforeRecording:(NSNumber *)removeClipsInRecentsBeforeRecording
+{
+    if ( !removeClipsInRecentsBeforeRecording )
+    {
+        return;
+    }
+    [self setSettingValue:removeClipsInRecentsBeforeRecording forKey:kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording];
 }
 
 - (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey

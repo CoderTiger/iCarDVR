@@ -164,6 +164,11 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
     return YES;
 }
 
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return UITableViewCellEditingStyleDelete;
+}
+
 - (void)tableView:(UITableView *)tableView
 commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -227,6 +232,10 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             CarDVRVideoDetailViewController *playerViewController = [segue destinationViewController];
             playerViewController.settings = self.settins;
             playerViewController.videoItem = videoItem;
+            if ( self.type == kCarDVRVideoBrowserViewControllerTypeRecents )
+            {
+                playerViewController.starEnabled = YES;
+            }
         }
     }
 }
