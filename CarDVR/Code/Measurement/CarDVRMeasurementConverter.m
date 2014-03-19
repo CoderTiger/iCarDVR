@@ -32,12 +32,12 @@
     BOOL usesMetricSystem = [[self.locale objectForKey:NSLocaleUsesMetricSystem] boolValue];
     if ( usesMetricSystem )
     {
-        // todo: complete
+        // TODO: complete
     }
     else// assume American measurement units
     {
 //        aLocation.altitude;
-        // todo: complete
+        // TODO: complete
     }
     return localString;
 }

@@ -338,7 +338,7 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 
 - (void)handleCarDVRVideoCapturerDidStopCapturingImageNotification:(NSNotification *)aNotification
 {
-    // todo: complete
+    // TODO: complete
 }
 
 #pragma mark - from CarDVRLocationDetectorDelegate

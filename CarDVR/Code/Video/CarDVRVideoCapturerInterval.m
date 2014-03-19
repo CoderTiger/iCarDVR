@@ -1194,7 +1194,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer( aSampleBuffer );
     CVPixelBufferLockBaseAddress( imageBuffer, 0 );
     
-    // todo: complete
+    // TODO: complete
 
     CVPixelBufferUnlockBaseAddress( imageBuffer, 0 );
 #endif

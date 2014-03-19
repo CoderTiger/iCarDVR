@@ -246,7 +246,7 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 - (IBAction)starButtonTouched:(id)sender
 {
 #pragma unused( sender )
-    // todo: complete
+    // TODO: complete
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString( @"starredPrompt", nil )
