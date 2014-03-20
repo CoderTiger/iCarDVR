@@ -12,15 +12,15 @@
 #import "CarDVRSettings.h"
 #import "CarDVRAppDelegate.h"
 
-static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
 static const NSUInteger kTabRecentsIndex = 0;
 static const NSUInteger kTabStarredIndex = 1;
 static const NSUInteger kTabMaxCount = 2;
 
-@interface CarDVRHomeViewController ()
+@interface CarDVRHomeViewController ()<UITabBarControllerDelegate>
 
 @property (weak, readonly, nonatomic) CarDVRPathHelper *pathHelper;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *settingBarButtonItem;
+
+- (IBAction)editButtonItemTouched:(id)sender;
 
 @end
 
@@ -61,7 +61,6 @@ static const NSUInteger kTabMaxCount = 2;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
-    self.settingBarButtonItem.title = NSLocalizedString( @"settingsViewTitle", @"Settings" );    
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
@@ -86,12 +85,17 @@ static const NSUInteger kTabMaxCount = 2;
     self.navigationController.navigationBarHidden = NO;
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (IBAction)editButtonItemTouched:(id)sender
 {
-    if ( [segue.identifier isEqualToString:kShowPreSettingsSegueId] )
+}
+
+#pragma mark - from UITabBarControllerDelegate
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController
+{
+#pragma unused( tabBarController )
+    if ( [viewController isKindOfClass:[CarDVRVideoBrowserViewController class]] )
     {
-        CarDVRSettingsViewController *preSettingsViewController = [[segue.destinationViewController viewControllers] objectAtIndex:0];
-        preSettingsViewController.settings = self.settings;
+        // todo: complete
     }
 }
 

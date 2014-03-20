@@ -149,6 +149,16 @@
                                     <action selector="starredButtonTouched:" destination="cUn-8x-vle" eventType="touchUpInside" id="Lsc-kO-RXK"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="92U-PN-ZU4">
+                                <rect key="frame" x="20" y="259" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Settings" image="ButtonSettings50x50">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="GWm-dg-BoL" kind="modal" identifier="kShowPreSettingsSegueId" id="OMP-VP-uIX"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
@@ -263,7 +273,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tic-aa-v5Z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="817" y="-915"/>
+            <point key="canvasLocation" x="305" y="-915"/>
         </scene>
         <!--CarDVRSettingsViewController-->
         <scene sceneID="MCp-HA-FY4">
@@ -466,7 +476,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5If-sG-sn5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1238" y="-915"/>
+            <point key="canvasLocation" x="754" y="-915"/>
         </scene>
         <!--CarDVRMaxClipDurationSettingViewController-->
         <scene sceneID="Rg1-xJ-lCD">
@@ -503,16 +513,16 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GSk-vS-fSI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1780" y="-915"/>
+            <point key="canvasLocation" x="1320" y="-1247"/>
         </scene>
         <!--CarDVRHomeViewController-->
         <scene sceneID="2eh-e5-utt">
             <objects>
                 <tabBarController definesPresentationContext="YES" id="OTC-8v-f6v" userLabel="CarDVRHomeViewController" customClass="CarDVRHomeViewController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" title="Home" id="ONa-WY-5gy">
-                        <barButtonItem key="rightBarButtonItem" title="Setting" id="Ev8-oe-iMX">
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="Ev8-oe-iMX">
                             <connections>
-                                <segue destination="GWm-dg-BoL" kind="modal" identifier="kShowPreSettingsSegueId" id="qy7-cx-PLf"/>
+                                <action selector="editButtonItemTouched:" destination="OTC-8v-f6v" id="mrx-QE-IC8"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -524,14 +534,13 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <outlet property="settingBarButtonItem" destination="Ev8-oe-iMX" id="PoV-DG-0hg"/>
                         <segue destination="FNK-G8-EYt" kind="relationship" relationship="viewControllers" id="Xma-Kn-FTi"/>
                         <segue destination="9gA-3N-nYH" kind="relationship" relationship="viewControllers" id="Txx-Kx-v89"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r3a-aX-CDk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="289" y="-97"/>
+            <point key="canvasLocation" x="333" y="-97"/>
         </scene>
         <!--CarDVRStarredViewController-->
         <scene sceneID="hQB-53-o90">
@@ -818,7 +827,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X3B-2z-fcm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1709" y="488"/>
+            <point key="canvasLocation" x="1757" y="94"/>
         </scene>
         <!--CarDVRResolutionSettingViewController-->
         <scene sceneID="Hmj-bd-4Jv">
@@ -999,7 +1008,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U9W-E8-zmd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1780" y="-264"/>
+            <point key="canvasLocation" x="1320" y="-580"/>
         </scene>
     </scenes>
     <resources>
@@ -1008,6 +1017,7 @@
         <image name="ButtonFlashOn50x50" width="50" height="50"/>
         <image name="ButtonFoto50x50" width="50" height="50"/>
         <image name="ButtonHome50x50" width="50" height="50"/>
+        <image name="ButtonSettings50x50" width="50" height="50"/>
         <image name="ButtonStar50x50" width="50" height="50"/>
         <image name="ButtonStarred50x50" width="50" height="50"/>
         <image name="ButtonStart50x50" width="50" height="50"/>

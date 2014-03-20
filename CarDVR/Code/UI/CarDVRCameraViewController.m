@@ -12,8 +12,10 @@
 #import "CarDVRAppDelegate.h"
 #import "CarDVRLocationDetector.h"
 #import "CarDVRSettings.h"
+#import "CarDVRSettingsViewController.h"
 
 static NSString *const kShowHomeSegueId = @"kShowHomeSegueId";
+static NSString *const kShowPreSettingsSegueId = @"kShowPreSettingsSegueId";
 static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 
 @interface CarDVRCameraViewController ()<CarDVRLocationDetectorDelegate>
@@ -149,6 +151,12 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
         CarDVRHomeViewController *homeViewController = segue.destinationViewController;
         homeViewController.settings = self.settings;
         homeViewController.switchFromRecordingCamera = isRecording;
+    }
+    else if ( [segue.identifier isEqualToString:kShowPreSettingsSegueId] )
+    {
+        [self stopRecordingVideo];
+        CarDVRSettingsViewController *preSettingsViewController = [[segue.destinationViewController viewControllers] objectAtIndex:0];
+        preSettingsViewController.settings = self.settings;
     }
 }
 
