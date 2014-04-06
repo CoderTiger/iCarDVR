@@ -24,5 +24,7 @@ typedef enum
 @property (weak, nonatomic) CarDVRPathHelper *pathHelper;
 @property (assign, nonatomic) CarDVRVideoBrowserViewControllerType type;
 @property (assign, nonatomic) BOOL switchFromRecordingCamera;
+@property (assign, nonatomic, getter = isEditable) BOOL editable;
+@property (weak, nonatomic) CarDVRVideoBrowserViewController *ownerViewController;
 
 @end

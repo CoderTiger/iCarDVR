@@ -26,6 +26,8 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 
 @property (strong, nonatomic) NSMutableArray *videos;
 
+- (IBAction)doneButtonItemTouched:(id)sender;
+
 #pragma mark - private methods
 - (void)loadVideosAsync;
 - (NSMutableArray *)loadVideos;
@@ -82,17 +84,20 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
     // Do any additional setup after loading the view from its nib.
     [self typeChanged];
     
-    NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
-    [defaultNC addObserver:self
-                  selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
-                      name:kCarDVRVideoCapturerDidStopRecordingNotification
-                    object:nil];
-    
-    // Prevent 'recents' list view from being covered by navigation bar and tab bar.
-//    self.navigationController.navigationBar.translucent = NO;
-    self.tabBarController.tabBar.translucent = NO;
-    if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
-        self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
+    if ( !self.isEditable )
+    {
+        NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
+        [defaultNC addObserver:self
+                      selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
+                          name:kCarDVRVideoCapturerDidStopRecordingNotification
+                        object:nil];
+        
+        // Prevent 'recents' list view from being covered by navigation bar and tab bar.
+//        self.navigationController.navigationBar.translucent = NO;
+        self.tabBarController.tabBar.translucent = NO;
+        if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
+            self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
+    }
     
     [self loadVideosAsync];
 }
@@ -106,20 +111,22 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 #pragma mark - from UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [self.videos count];
+    NSMutableArray *videos = self.isEditable ? self.ownerViewController.videos : self.videos;
+    return [videos count];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     NSString *title;
-    if ( section < self.videos.count )
+    NSMutableArray *videos = self.isEditable ? self.ownerViewController.videos : self.videos;
+    if ( section < videos.count )
     {
-        CarDVRVideoItem *videoItem = [self.videos[section] objectAtIndex:0];
+        CarDVRVideoItem *videoItem = [videos[section] objectAtIndex:0];
         NSString *creationDate = [videoCreationDateFormatter stringFromDate:videoItem.creationDate];
-        if ( [self.videos[section] count] > 1 )
+        if ( [videos[section] count] > 1 )
         {
             title = [NSString stringWithFormat:NSLocalizedString( @"multipleVideoSectionHeaderTitleFormat", nil ),
-                     creationDate, [self.videos[section] count]];
+                     creationDate, [videos[section] count]];
         }
         else
         {
@@ -134,9 +141,10 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 {
 #pragma unused( tableView )
     NSInteger numberOfRows = 0;
-    if ( section < self.videos.count )
+    NSMutableArray *videos = self.isEditable ? self.ownerViewController.videos : self.videos;
+    if ( section < videos.count )
     {
-        numberOfRows = [self.videos[section] count];
+        numberOfRows = [videos[section] count];
     }
     return numberOfRows;
 }
@@ -145,14 +153,15 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 {
 #pragma unused( tableView )
     CarDVRVideoTableViewCell *cell;
-    if ( indexPath.section < self.videos.count && indexPath.row < [self.videos[indexPath.section] count] )
+    NSMutableArray *videos = self.isEditable ? self.ownerViewController.videos : self.videos;
+    if ( indexPath.section < videos.count && indexPath.row < [videos[indexPath.section] count] )
     {
         cell = [tableView dequeueReusableCellWithIdentifier:kVideoCellId];
         if ( !cell )
         {
             cell = [[CarDVRVideoTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kVideoCellId];
         }
-        CarDVRVideoItem *videoItem = [self.videos[indexPath.section] objectAtIndex:indexPath.row];
+        CarDVRVideoItem *videoItem = [videos[indexPath.section] objectAtIndex:indexPath.row];
         cell.videoItem = videoItem;
     }
     return cell;
@@ -240,12 +249,27 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     }
 }
 
+- (IBAction)doneButtonItemTouched:(id)sender
+{
+    [self.navigationController dismissModalViewControllerAnimated:YES];
+}
+
 #pragma mark - private methods
 - (void)loadVideosAsync
 {
     dispatch_async( dispatch_get_current_queue(), ^{
-        self.videos = [self loadVideos];
-        [self.videoTableView reloadData];
+        if ( self.isEditable )
+        {
+            if ( self.ownerViewController.videos.count > 0 )
+            {
+                [self.videoTableView reloadData];
+            }
+        }
+        else
+        {
+            self.videos = [self loadVideos];
+            [self.videoTableView reloadData];
+        }
     });
 }
 

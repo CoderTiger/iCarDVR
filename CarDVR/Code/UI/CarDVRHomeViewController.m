@@ -15,12 +15,11 @@
 static const NSUInteger kTabRecentsIndex = 0;
 static const NSUInteger kTabStarredIndex = 1;
 static const NSUInteger kTabMaxCount = 2;
+static NSString *const kShowPreVideoEditableBrowserSegueId = @"kShowPreVideoEditableBrowserSegueId";
 
 @interface CarDVRHomeViewController ()<UITabBarControllerDelegate>
 
 @property (weak, readonly, nonatomic) CarDVRPathHelper *pathHelper;
-
-- (IBAction)editButtonItemTouched:(id)sender;
 
 @end
 
@@ -59,7 +58,7 @@ static const NSUInteger kTabMaxCount = 2;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Do any addit ional setup after loading the view from its nib.
     self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
@@ -85,8 +84,26 @@ static const NSUInteger kTabMaxCount = 2;
     self.navigationController.navigationBarHidden = NO;
 }
 
-- (IBAction)editButtonItemTouched:(id)sender
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    if ( [segue.identifier isEqualToString:kShowPreVideoEditableBrowserSegueId] )
+    {
+        CarDVRVideoBrowserViewController *videoBrowserViewController = [[segue.destinationViewController viewControllers] objectAtIndex:0];
+        videoBrowserViewController.editable = YES;
+        videoBrowserViewController.ownerViewController = [self.viewControllers objectAtIndex:self.selectedIndex];
+        switch ( self.selectedIndex )
+        {
+            case kTabRecentsIndex:
+                videoBrowserViewController.type = kCarDVRVideoBrowserViewControllerTypeRecents;
+                break;
+            case kTabStarredIndex:
+                videoBrowserViewController.type = kCarDVRVideoBrowserViewControllerTypeStarred;
+                break;
+            default:
+                videoBrowserViewController.type = kCarDVRVideoBrowserViewControllerTypeUnkown;
+                break;
+        }
+    }
 }
 
 #pragma mark - from UITabBarControllerDelegate

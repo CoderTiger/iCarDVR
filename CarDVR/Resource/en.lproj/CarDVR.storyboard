@@ -522,7 +522,7 @@
                     <navigationItem key="navigationItem" title="Home" id="ONa-WY-5gy">
                         <barButtonItem key="rightBarButtonItem" systemItem="edit" id="Ev8-oe-iMX">
                             <connections>
-                                <action selector="editButtonItemTouched:" destination="OTC-8v-f6v" id="mrx-QE-IC8"/>
+                                <segue destination="s2f-fp-FQv" kind="modal" identifier="kShowPreVideoEditableBrowserSegueId" modalTransitionStyle="crossDissolve" id="sKJ-Ug-Cpg"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -541,6 +541,100 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r3a-aX-CDk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="333" y="-97"/>
+        </scene>
+        <!--CarDVRPreVideoEditableBrowserViewController-->
+        <scene sceneID="bPo-tJ-QzB">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="s2f-fp-FQv" userLabel="CarDVRPreVideoEditableBrowserViewController" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="cJC-oP-TeF">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Oxl-c9-CRT" kind="relationship" relationship="rootViewController" id="xDg-W0-zuD"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RyC-td-guN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-118" y="553"/>
+        </scene>
+        <!--CarDVRVideoEditableBrowserViewController-->
+        <scene sceneID="7yP-CR-1fw">
+            <objects>
+                <viewController id="Oxl-c9-CRT" userLabel="CarDVRVideoEditableBrowserViewController" customClass="CarDVRVideoBrowserViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DdL-lm-pNF" userLabel="CarDVRVideoEditableBrowserView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="65" sectionHeaderHeight="10" sectionFooterHeight="10" id="OvG-Vd-GPN" userLabel="Table View - Videos">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="kVideoCellId" rowHeight="65" id="Xmb-xo-gzD" userLabel="Table View Cell - video" customClass="CarDVRVideoTableViewCell">
+                                        <rect key="frame" x="0.0" y="119" width="320" height="65"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xmb-xo-gzD" id="foN-OB-bGP">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="65"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="mkw-bl-fRm" userLabel="Image View - Thumbnail">
+                                                    <rect key="frame" x="5" y="8" width="70" height="50"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Creation Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QVb-Vm-3Nc">
+                                                    <rect key="frame" x="83" y="3" width="243" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Duration &amp; Size" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cLT-3b-KVm">
+                                                    <rect key="frame" x="83" y="25" width="243" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Frame rate &amp; Resolution" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4bf-PB-w5R">
+                                                    <rect key="frame" x="83" y="44" width="204" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="dateLabel" destination="QVb-Vm-3Nc" id="33U-5J-G7Z"/>
+                                            <outlet property="durationSizeLabel" destination="cLT-3b-KVm" id="o9b-bI-nEx"/>
+                                            <outlet property="frameRateResolutionLabel" destination="4bf-PB-w5R" id="YVV-Jg-Waz"/>
+                                            <outlet property="thumbnailImageView" destination="mkw-bl-fRm" id="Hz4-Ts-Eao"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="Oxl-c9-CRT" id="n3z-Zx-N2f"/>
+                                    <outlet property="delegate" destination="Oxl-c9-CRT" id="j0J-sP-bcP"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Xfy-Uz-hrt">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="hgv-n5-h1G">
+                            <connections>
+                                <action selector="doneButtonItemTouched:" destination="Oxl-c9-CRT" id="6xK-dW-Lmi"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <connections>
+                        <outlet property="videoTableView" destination="OvG-Vd-GPN" id="sY9-Ft-VR6"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="V27-Jb-r3F" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="333" y="553"/>
         </scene>
         <!--CarDVRStarredViewController-->
         <scene sceneID="hQB-53-o90">
@@ -1032,6 +1126,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="dmg-e5-7ne"/>
+        <segue reference="IMk-6e-wRQ"/>
     </inferredMetricsTieBreakers>
 </document>
