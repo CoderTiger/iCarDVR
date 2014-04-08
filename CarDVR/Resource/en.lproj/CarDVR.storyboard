@@ -5,10 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
-        <!--Navigation Controller-->
+        <!--CarDVRRootNavigationController-->
         <scene sceneID="2tM-ZY-Vbf">
             <objects>
-                <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="8QN-74-2je" sceneMemberID="viewController">
+                <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="8QN-74-2je" userLabel="CarDVRRootNavigationController" sceneMemberID="viewController">
                     <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="OgN-Ud-cbu">
                         <autoresizingMask key="autoresizingMask"/>
@@ -642,9 +642,9 @@
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="gkr-4e-mMt"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" id="Xfy-Uz-hrt">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="hgv-n5-h1G">
+                        <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="hgv-n5-h1G">
                             <connections>
-                                <action selector="doneButtonItemTouched:" destination="Oxl-c9-CRT" id="6xK-dW-Lmi"/>
+                                <action selector="cancelButtonItemTouched:" destination="Oxl-c9-CRT" id="uBD-GQ-kAe"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

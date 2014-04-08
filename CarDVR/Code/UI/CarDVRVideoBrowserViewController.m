@@ -21,13 +21,7 @@ static NSString *const kVideoCellId = @"kVideoCellId";
 static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotification";
 
-@protocol CarDVRVideoEditableBrowserViewControllerDelegate <NSObject>
-
-- (void)videoEditableBrowserViewControllerDone:(CarDVRVideoBrowserViewController *) controller;
-
-@end
-
-@interface CarDVRVideoBrowserViewController ()<UITableViewDataSource, UITableViewDelegate>
+@interface CarDVRVideoBrowserViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *videoTableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *starButtonItem;
@@ -36,7 +30,7 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
 @property (strong, nonatomic) NSMutableArray *videos;
 @property (strong, nonatomic) NSMutableSet *markedIndexes;
 
-- (IBAction)doneButtonItemTouched:(id)sender;
+- (IBAction)cancelButtonItemTouched:(id)sender;
 - (IBAction)starButtonItemTouched:(id)sender;
 - (IBAction)deleteButtonItemTouched:(id)sender;
 
@@ -44,6 +38,7 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
 - (void)loadVideosAsync;
 - (NSMutableArray *)loadVideos;
 - (void)typeChanged;
+- (void)editableVideoBrowserViewControllerDone:(CarDVRVideoBrowserViewController *)controller;
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
@@ -107,6 +102,7 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
                         object:nil];
         _markedIndexes = [[NSMutableSet alloc] init];
         
+        self.navigationController.navigationBar.translucent = NO;
         self.navigationController.toolbar.translucent = NO;
     }
     else
@@ -130,13 +126,20 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
 - (void)viewWillAppear:(BOOL)animated
 {
 #pragma unused( animated )
-    self.navigationController.toolbarHidden = NO;
+    if ( self.isEditable )
+    {
+        self.videoTableView.contentOffset = self.ownerViewController.videoTableView.contentOffset;
+        self.navigationController.toolbarHidden = NO;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
 #pragma unused( animated )
-    self.navigationController.toolbarHidden = YES;
+    if ( self.isEditable )
+    {
+        self.navigationController.toolbarHidden = YES;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -292,8 +295,15 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         {
             [self.markedIndexes addObject:indexPath];
         }
-        self.starButtonItem.enabled = self.markedIndexes.count > 0;
-        self.deleteButtonItem.enabled = self.starButtonItem.enabled;
+        self.deleteButtonItem.enabled = self.markedIndexes.count > 0;
+        if ( self.type == kCarDVRVideoBrowserViewControllerTypeRecents )
+        {
+            self.starButtonItem.enabled = self.deleteButtonItem.enabled;
+        }
+        else
+        {
+            self.starButtonItem.enabled = NO;
+        }
         [tableView reloadData];
     }
 }
@@ -317,10 +327,12 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     }
 }
 
-- (IBAction)doneButtonItemTouched:(id)sender
+- (IBAction)cancelButtonItemTouched:(id)sender
 {
 #pragma unused( sender )
+    [self.ownerViewController editableVideoBrowserViewControllerDone:self];
     [self.navigationController dismissModalViewControllerAnimated:YES];
+    
 }
 
 - (IBAction)starButtonItemTouched:(id)sender
@@ -449,6 +461,11 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         default:
             break;
     }
+}
+
+- (void)editableVideoBrowserViewControllerDone:(CarDVRVideoBrowserViewController *)controller
+{
+    self.videoTableView.contentOffset = controller.videoTableView.contentOffset;
 }
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
