@@ -545,10 +545,15 @@
         <!--CarDVRPreVideoEditableBrowserViewController-->
         <scene sceneID="bPo-tJ-QzB">
             <objects>
-                <navigationController definesPresentationContext="YES" id="s2f-fp-FQv" userLabel="CarDVRPreVideoEditableBrowserViewController" sceneMemberID="viewController">
+                <navigationController definesPresentationContext="YES" toolbarHidden="NO" id="s2f-fp-FQv" userLabel="CarDVRPreVideoEditableBrowserViewController" sceneMemberID="viewController">
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="cJC-oP-TeF">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="eOh-AT-8ye">
+                        <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="Oxl-c9-CRT" kind="relationship" relationship="rootViewController" id="xDg-W0-zuD"/>
                     </connections>
@@ -565,7 +570,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="65" sectionHeaderHeight="10" sectionFooterHeight="10" id="OvG-Vd-GPN" userLabel="Table View - Videos">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="none" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="65" sectionHeaderHeight="10" sectionFooterHeight="10" id="OvG-Vd-GPN" userLabel="Table View - Videos">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -620,6 +625,22 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="8xX-dm-lze"/>
+                        <barButtonItem enabled="NO" image="TabStarred25x25" id="nCq-6F-Wdz" userLabel="Bar Button Item - Star">
+                            <connections>
+                                <action selector="starButtonItemTouched:" destination="Oxl-c9-CRT" id="b14-JY-7BA"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="mXv-dW-bJg"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="9lX-0y-EFB"/>
+                        <barButtonItem enabled="NO" systemItem="trash" id="muL-M4-BCB">
+                            <connections>
+                                <action selector="deleteButtonItemTouched:" destination="Oxl-c9-CRT" id="i0e-RD-6Qh"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="gkr-4e-mMt"/>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" id="Xfy-Uz-hrt">
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="hgv-n5-h1G">
                             <connections>
@@ -629,6 +650,8 @@
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
+                        <outlet property="deleteButtonItem" destination="muL-M4-BCB" id="51a-df-BrD"/>
+                        <outlet property="starButtonItem" destination="nCq-6F-Wdz" id="zLY-Gj-yjg"/>
                         <outlet property="videoTableView" destination="OvG-Vd-GPN" id="sY9-Ft-VR6"/>
                     </connections>
                 </viewController>

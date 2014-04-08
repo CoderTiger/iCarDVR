@@ -21,13 +21,24 @@ static NSString *const kVideoCellId = @"kVideoCellId";
 static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotification";
 
+@protocol CarDVRVideoEditableBrowserViewControllerDelegate <NSObject>
+
+- (void)videoEditableBrowserViewControllerDone:(CarDVRVideoBrowserViewController *) controller;
+
+@end
+
 @interface CarDVRVideoBrowserViewController ()<UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *videoTableView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *starButtonItem;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *deleteButtonItem;
 
 @property (strong, nonatomic) NSMutableArray *videos;
+@property (strong, nonatomic) NSMutableSet *markedIndexes;
 
 - (IBAction)doneButtonItemTouched:(id)sender;
+- (IBAction)starButtonItemTouched:(id)sender;
+- (IBAction)deleteButtonItemTouched:(id)sender;
 
 #pragma mark - private methods
 - (void)loadVideosAsync;
@@ -94,6 +105,9 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
                       selector:@selector(handleLoadDidCompleteNotification)
                           name:kLoadDidCompleteNotification
                         object:nil];
+        _markedIndexes = [[NSMutableSet alloc] init];
+        
+        self.navigationController.toolbar.translucent = NO;
     }
     else
     {
@@ -111,6 +125,18 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
     }
     
     [self loadVideosAsync];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+#pragma unused( animated )
+    self.navigationController.toolbarHidden = NO;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+#pragma unused( animated )
+    self.navigationController.toolbarHidden = YES;
 }
 
 - (void)didReceiveMemoryWarning
@@ -174,6 +200,18 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
         }
         CarDVRVideoItem *videoItem = [videos[indexPath.section] objectAtIndex:indexPath.row];
         cell.videoItem = videoItem;
+        
+        if ( self.isEditable )
+        {
+            if ( [self.markedIndexes containsObject:indexPath] )
+            {
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            }
+            else
+            {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+        }
     }
     return cell;
 }
@@ -241,6 +279,25 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     }
 }
 
+#pragma mark - from UITableViewDelegate
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ( self.isEditable )
+    {
+        if ( [self.markedIndexes containsObject:indexPath] )
+        {
+            [self.markedIndexes removeObject:indexPath];
+        }
+        else
+        {
+            [self.markedIndexes addObject:indexPath];
+        }
+        self.starButtonItem.enabled = self.markedIndexes.count > 0;
+        self.deleteButtonItem.enabled = self.starButtonItem.enabled;
+        [tableView reloadData];
+    }
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ( [segue.identifier isEqualToString:kShowVideoPlayerSegueId] )
@@ -262,7 +319,20 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 
 - (IBAction)doneButtonItemTouched:(id)sender
 {
+#pragma unused( sender )
     [self.navigationController dismissModalViewControllerAnimated:YES];
+}
+
+- (IBAction)starButtonItemTouched:(id)sender
+{
+#pragma unused( sender )
+    // TODO: complete
+}
+
+- (IBAction)deleteButtonItemTouched:(id)sender
+{
+#pragma unused( sender )
+    // TODO: complete
 }
 
 #pragma mark - private methods
