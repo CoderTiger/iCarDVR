@@ -19,6 +19,7 @@ static NSDateFormatter *videoCreationDateFormatter;
 
 static NSString *const kVideoCellId = @"kVideoCellId";
 static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
+static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotification";
 
 @interface CarDVRVideoBrowserViewController ()<UITableViewDataSource, UITableViewDelegate>
 
@@ -35,6 +36,8 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
+
+- (void)handleLoadDidCompleteNotification;
 
 @end
 
@@ -84,7 +87,15 @@ static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
     // Do any additional setup after loading the view from its nib.
     [self typeChanged];
     
-    if ( !self.isEditable )
+    if ( self.isEditable )
+    {
+        NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
+        [defaultNC addObserver:self
+                      selector:@selector(handleLoadDidCompleteNotification)
+                          name:kLoadDidCompleteNotification
+                        object:nil];
+    }
+    else
     {
         NSNotificationCenter *defaultNC = [NSNotificationCenter defaultCenter];
         [defaultNC addObserver:self
@@ -379,6 +390,11 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification
 {
     [self loadVideosAsync];
+}
+
+- (void)handleLoadDidCompleteNotification
+{
+    [self.videoTableView reloadData];
 }
 
 @end
