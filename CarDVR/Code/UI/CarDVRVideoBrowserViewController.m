@@ -39,6 +39,8 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
 - (NSMutableArray *)loadVideos;
 - (void)typeChanged;
 - (void)editableVideoBrowserViewControllerDone:(CarDVRVideoBrowserViewController *)controller;
+- (void)deleteVideoClipAtIndexPath:(NSIndexPath *)indexPath;
+- (void)deleteVideoClipsAtIndexPaths:(NSArray *)indexPaths;
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
@@ -235,49 +237,12 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 forRowAtIndexPath:(NSIndexPath *)indexPath
 {
 #pragma unused( tableView )
-    if ( indexPath.section < self.videos.count && indexPath.row < [self.videos[indexPath.section] count] )
+    NSMutableArray *videos = self.isEditable ? self.ownerViewController.videos : self.videos;
+    if ( indexPath.section < videos.count && indexPath.row < [videos[indexPath.section] count] )
     {
         if ( editingStyle == UITableViewCellEditingStyleDelete )
         {
-            CarDVRVideoItem *videoItem = [self.videos[indexPath.section] objectAtIndex:indexPath.row];
-            NSError *error;
-            NSFileManager *defaultManager = [NSFileManager defaultManager];
-            [defaultManager removeItemAtURL:videoItem.videoClipURLs.videoFileURL error:&error];
-#ifdef DEBUG
-            if ( error )
-            {
-                NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.videoFileURL, error.description );
-            }
-#endif
-            [defaultManager removeItemAtURL:videoItem.videoClipURLs.srtFileURL error:&error];
-#ifdef DEBUG
-            if ( error )
-            {
-                NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.srtFileURL, error.description );
-            }
-#endif
-            [defaultManager removeItemAtURL:videoItem.videoClipURLs.gpxFileURL error:&error];
-#ifdef DEBUG
-            if ( error )
-            {
-                NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.gpxFileURL, error.description );
-            }
-#endif
-//            if ( !error )
-            {
-                [self.videos[indexPath.section] removeObjectAtIndex:indexPath.row];
-                NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:indexPath.section];
-                if ( [self.videos[indexPath.section] count] == 0 )
-                {
-                    [self.videos removeObjectAtIndex:indexPath.section];
-                    [tableView deleteSections:indexSet withRowAnimation:UITableViewRowAnimationNone];
-                }
-                else
-                {
-                    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self.videoTableView reloadSections:indexSet withRowAnimation:UITableViewRowAnimationNone];
-                }
-            }
+            [self deleteVideoClipAtIndexPath:indexPath];
         }
     }
 }
@@ -344,7 +309,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (IBAction)deleteButtonItemTouched:(id)sender
 {
 #pragma unused( sender )
-    // TODO: complete
+    [self deleteVideoClipsAtIndexPaths:[self.markedIndexes allObjects]];
 }
 
 #pragma mark - private methods
@@ -466,6 +431,97 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)editableVideoBrowserViewControllerDone:(CarDVRVideoBrowserViewController *)controller
 {
     self.videoTableView.contentOffset = controller.videoTableView.contentOffset;
+}
+
+- (void)deleteVideoClipAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self deleteVideoClipsAtIndexPaths:@[indexPath]];
+}
+
+- (void)deleteVideoClipsAtIndexPaths:(NSArray *)indexPaths
+{
+    NSMutableArray *videos = self.isEditable ? self.ownerViewController.videos : self.videos;
+    
+    //
+    // mark video clips for deleting.
+    //
+    NSMutableIndexSet *sectionSetToDelete = [NSMutableIndexSet indexSet];
+    NSMutableDictionary *videosToDelete = [NSMutableDictionary dictionary];
+    for ( NSIndexPath *indexPath in indexPaths )
+    {
+        CarDVRVideoItem *videoItem = [videos[indexPath.section] objectAtIndex:indexPath.row];
+        NSError *error;
+        NSFileManager *defaultManager = [NSFileManager defaultManager];
+        [defaultManager removeItemAtURL:videoItem.videoClipURLs.videoFileURL error:&error];
+#ifdef DEBUG
+        if ( error )
+        {
+            NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.videoFileURL, error.description );
+        }
+#endif
+        [defaultManager removeItemAtURL:videoItem.videoClipURLs.srtFileURL error:&error];
+#ifdef DEBUG
+        if ( error )
+        {
+            NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.srtFileURL, error.description );
+        }
+#endif
+        [defaultManager removeItemAtURL:videoItem.videoClipURLs.gpxFileURL error:&error];
+#ifdef DEBUG
+        if ( error )
+        {
+            NSLog( @"[Error]failed to delete '%@':\n%@", videoItem.videoClipURLs.gpxFileURL, error.description );
+        }
+#endif
+        NSNumber *sectionNumber = [NSNumber numberWithInteger:indexPath.section];
+        NSMutableIndexSet *videoClipIndexSet = [videosToDelete objectForKey:sectionNumber];
+        if ( !videoClipIndexSet )
+        {
+            videoClipIndexSet = [NSMutableIndexSet indexSet];
+            [videosToDelete setObject:videoClipIndexSet forKey:sectionNumber];
+        }
+        [videoClipIndexSet addIndex:indexPath.row];
+        
+        if ( self.isEditable )
+        {
+            [self.markedIndexes removeObject:indexPath];
+        }
+    }
+    
+    //
+    // delete marked video clips.
+    //
+    [videosToDelete enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSNumber *sectionNumber = key;
+        NSIndexSet *videoClipIndexSet = obj;
+        [videos[sectionNumber.integerValue] removeObjectsAtIndexes:videoClipIndexSet];
+        if ( [videos[sectionNumber.integerValue] count] == 0 )
+        {
+            [sectionSetToDelete addIndex:sectionNumber.integerValue];
+        }
+    }];
+    [videos removeObjectsAtIndexes:sectionSetToDelete];
+    
+    //
+    // delete rows from video table view.
+    //
+    if ( self.isEditable )
+    {
+        [self.ownerViewController.videoTableView beginUpdates];
+        if ( sectionSetToDelete.count > 0 )
+        {
+            [self.ownerViewController.videoTableView deleteSections:sectionSetToDelete withRowAnimation:UITableViewRowAnimationNone];
+        }
+        [self.ownerViewController.videoTableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+        [self.ownerViewController.videoTableView endUpdates];
+    }
+    [self.videoTableView beginUpdates];
+    if ( sectionSetToDelete.count > 0 )
+    {
+        [self.videoTableView deleteSections:sectionSetToDelete withRowAnimation:UITableViewRowAnimationNone];
+    }
+    [self.videoTableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+    [self.videoTableView endUpdates];
 }
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
