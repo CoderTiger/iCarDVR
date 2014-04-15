@@ -18,9 +18,6 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 @property (strong, nonatomic) MPMoviePlayerController *playerController;
 @property (weak, nonatomic) IBOutlet UIView *playerPaneView;
 @property (weak, nonatomic) IBOutlet UIView *playerCellView;
-
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *starButton;
-
 @property (weak, nonatomic) IBOutlet UILabel *creationDateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *creationDateValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *durationLabel;
@@ -35,8 +32,6 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 @property (weak, nonatomic) IBOutlet UILabel *videoFileValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *srtFileValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gpxFileValueLabel;
-
-- (IBAction)starButtonTouched:(id)sender;
 
 #pragma mark - private methods
 - (void)installDetailsInfo;
@@ -63,11 +58,6 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
     // Set title.
     //
     self.title = NSLocalizedString( @"playerViewTitle", nil );
-    
-    //
-    // enable/disable 'Star' button
-    //
-    self.starButton.enabled = self.starEnabled;
     
     //
     // Prevent sub views from being covered by navigation bar
@@ -243,18 +233,4 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
     }
 }
 
-- (IBAction)starButtonTouched:(id)sender
-{
-#pragma unused( sender )
-    // TODO: complete
-    NSFileManager *defaultManager = [NSFileManager defaultManager];
-    
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString( @"starredPrompt", nil )
-                                                        message:nil
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString( @"close", nil )
-                                              otherButtonTitles:nil];
-    [alertView show];
-    self.starButton.enabled = NO;
-}
 @end

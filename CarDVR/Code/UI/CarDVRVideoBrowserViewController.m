@@ -297,6 +297,10 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             {
                 playerViewController.starEnabled = YES;
             }
+            else
+            {
+                playerViewController.starEnabled = NO;
+            }
         }
     }
 }

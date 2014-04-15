@@ -865,13 +865,6 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="rb4-bJ-ajK"/>
-                        <barButtonItem image="TabStarred25x25" id="iic-oH-o0i" userLabel="Bar Button Item - Star">
-                            <connections>
-                                <action selector="starButtonTouched:" destination="cBt-M7-Yka" id="mLr-el-huB"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Nfl-Wx-lhf"/>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="om0-Ad-BSY"/>
                         <barButtonItem image="ButtonTracks25x25" id="UpL-dC-w7W" userLabel="Bar Button Item - Tracks">
                             <connections>
@@ -898,7 +891,6 @@
                         <outlet property="sizeLabel" destination="Lzg-8D-x9m" id="L3F-Rj-pBI"/>
                         <outlet property="sizeValueLabel" destination="s1x-Fh-MYb" id="N8f-RD-POR"/>
                         <outlet property="srtFileValueLabel" destination="788-TP-lhf" id="9Le-ao-p69"/>
-                        <outlet property="starButton" destination="iic-oH-o0i" id="ftg-3E-2hI"/>
                         <outlet property="videoFileValueLabel" destination="aDe-CB-wmw" id="LUP-FA-irs"/>
                     </connections>
                 </tableViewController>
