@@ -48,6 +48,8 @@ static NSString *const kVideoItemsKey = @"kVideoItemsKey";
 - (NSMutableArray *)addStarredVideos:(NSArray *)starredVideos;
 - (void)addStarredVideosAsync:(NSArray *)starredVideos;
 
+- (void)updateToolbarButtonItemsState;
+
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
 
@@ -275,15 +277,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         {
             [self.markedIndexes addObject:indexPath];
         }
-        self.deleteButtonItem.enabled = self.markedIndexes.count > 0;
-        if ( self.type == kCarDVRVideoBrowserViewControllerTypeRecents )
-        {
-            self.starButtonItem.enabled = self.deleteButtonItem.enabled;
-        }
-        else
-        {
-            self.starButtonItem.enabled = NO;
-        }
+        [self updateToolbarButtonItemsState];
         [tableView reloadData];
     }
 }
@@ -537,6 +531,8 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     }
     [self.videoTableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
     [self.videoTableView endUpdates];
+    
+    [self updateToolbarButtonItemsState];
 }
 
 - (void)starVideoClipAtIndexPath:(NSIndexPath *)indexPath
@@ -653,6 +649,8 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     [[NSNotificationCenter defaultCenter] postNotificationName:kStarDidCompleteNotification
                                                         object:self
                                                       userInfo:@{kVideoItemsKey: starredVideos}];
+    
+    [self updateToolbarButtonItemsState];
 }
 
 - (NSMutableArray *)addStarredVideos:(NSArray *)starredVideos
@@ -705,6 +703,22 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
             [self.videoTableView reloadData];
         }
     });
+}
+
+- (void)updateToolbarButtonItemsState
+{
+    if ( self.isEditable )
+    {
+        self.deleteButtonItem.enabled = self.markedIndexes.count > 0;
+        if ( self.type == kCarDVRVideoBrowserViewControllerTypeRecents )
+        {
+            self.starButtonItem.enabled = self.deleteButtonItem.enabled;
+        }
+        else
+        {
+            self.starButtonItem.enabled = NO;
+        }
+    }
 }
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
