@@ -93,22 +93,22 @@ CarDVRResolutionSettingViewControllerDelegate
         NSString *storageUsage;
         if ( freeBytes < 1024 )
         {
-            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %lluB",
+            storageUsage = [NSString stringWithFormat:NSLocalizedString( @"storageInfoByteFormat", nil ),
                             freePercent, freeBytes];
         }
         else if ( freeBytes < 1024 * 1024 )
         {
-            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %.2fKB",
+            storageUsage = [NSString stringWithFormat:NSLocalizedString( @"storageInfoKBFormat", nil ),
                             freePercent, freeBytes/1024.0];
         }
         else if ( freeBytes < 1024 * 1024 * 1024 )
         {
-            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %.2fMB",
+            storageUsage = [NSString stringWithFormat:NSLocalizedString( @"storageInfoMBFormat", nil ),
                             freePercent, freeBytes/(1024.0*1024.0)];
         }
         else
         {
-            storageUsage = [NSString stringWithFormat:@"Free: %.2f%%, %.2fGB",
+            storageUsage = [NSString stringWithFormat:NSLocalizedString( @"storageInfoGBFormat", nil ),
                             freePercent, freeBytes/(1024.0*1024.0*1024.0)];
         }
         dispatch_async( dispatch_get_main_queue(), ^{
@@ -135,30 +135,6 @@ CarDVRResolutionSettingViewControllerDelegate
     NSUInteger maxRecordingClipsCount = (NSUInteger)stepper.value;
     [self.settings setMaxCountOfRecordingClips:[NSNumber numberWithUnsignedInteger:maxRecordingClipsCount]];
     [self setMaxRecordingClipsValue:maxRecordingClipsCount andUpdateStepper:NO];
-}
-
-- (IBAction)resolutionValueChanged:(id)sender
-{
-//    UIStepper *stepper = sender;
-//    NSInteger value = stepper.value;
-    CarDVRVideoResolution videoResolution = kCarDVRVideoResolutionHigh;
-//    switch (value)
-//    {
-//        case 0:
-//            videoResolution = kCarDVRVideoResolutionLow;
-//            break;
-//        case 1:
-//            videoResolution = kCarDVRVideoResolutionMiddle;
-//            break;
-//        case 2:
-//            videoResolution = kCarDVRVideoResolutionHigh;
-//            break;
-//        default:
-//            NSAssert1( NO, @"[Error] Unsupported video quality level: %d", value );
-//            break;
-//    }
-    [self.settings setVideoResolution:[NSNumber numberWithUnsignedInteger:videoResolution]];
-//    [self setResolutionValue:videoResolution andUpdateStepper:NO];
 }
 
 - (IBAction)frameRateValueChanged:(id)sender

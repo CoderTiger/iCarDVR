@@ -38,6 +38,10 @@
 "settingsSectionStorageInfo"="内存信息";
 "settingsSectionAbout"="关于";
 "aboutBriefLabel"="%@ %@";
+"storageInfoByteFormat"="可用存储：%.2f%%，%lluB";
+"storageInfoKBFormat"="可用存储：%.2f%%，%.2fKB";
+"storageInfoMBFormat"="可用存储：%.2f%%，%.2fMB";
+"storageInfoGBFormat"="可用存储：%.2f%%，%.2fGB";
 
 //
 // CarDVRVideoTableViewCell

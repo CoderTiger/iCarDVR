@@ -38,6 +38,10 @@
 "settingsSectionStorageInfo"="Memory Info";
 "settingsSectionAbout"="About";
 "aboutBriefLabel"="%@ %@";
+"storageInfoByteFormat"="Free: %.2f%%, %lluB";
+"storageInfoKBFormat"="Free: %.2f%%, %.2fKB";
+"storageInfoMBFormat"="Free: %.2f%%, %.2fMB";
+"storageInfoGBFormat"="Free: %.2f%%, %.2fGB";
 
 //
 // CarDVRVideoTableViewCell
