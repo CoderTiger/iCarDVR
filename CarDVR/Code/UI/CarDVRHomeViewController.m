@@ -89,6 +89,11 @@ static NSString *const kShowPreVideoEditableBrowserSegueId = @"kShowPreVideoEdit
     if ( [segue.identifier isEqualToString:kShowPreVideoEditableBrowserSegueId] )
     {
         CarDVRVideoBrowserViewController *videoBrowserViewController = [[segue.destinationViewController viewControllers] objectAtIndex:0];
+        
+        videoBrowserViewController.switchFromRecordingCamera = self.switchFromRecordingCamera;
+        videoBrowserViewController.settins = self.settings;
+        videoBrowserViewController.pathHelper = self.pathHelper;
+        
         videoBrowserViewController.editable = YES;
         videoBrowserViewController.ownerViewController = [self.viewControllers objectAtIndex:self.selectedIndex];
         switch ( self.selectedIndex )

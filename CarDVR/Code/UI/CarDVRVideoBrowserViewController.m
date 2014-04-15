@@ -20,6 +20,8 @@ static NSDateFormatter *videoCreationDateFormatter;
 static NSString *const kVideoCellId = @"kVideoCellId";
 static NSString *const kShowVideoPlayerSegueId = @"kShowVideoPlayerSegueId";
 static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotification";
+static NSString *const kStarDidCompleteNotification = @"kStarDidCompleteNotification";
+static NSString *const kVideoItemsKey = @"kVideoItemsKey";
 
 @interface CarDVRVideoBrowserViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -41,11 +43,16 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
 - (void)editableVideoBrowserViewControllerDone:(CarDVRVideoBrowserViewController *)controller;
 - (void)deleteVideoClipAtIndexPath:(NSIndexPath *)indexPath;
 - (void)deleteVideoClipsAtIndexPaths:(NSArray *)indexPaths;
+- (void)starVideoClipAtIndexPath:(NSIndexPath *)indexPath;
+- (void)starVideoClipsAtIndexPaths:(NSArray *)indexPaths;
+- (NSMutableArray *)addStarredVideos:(NSArray *)starredVideos;
+- (void)addStarredVideosAsync:(NSArray *)starredVideos;
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification;
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification;
 
 - (void)handleLoadDidCompleteNotification;
+- (void)handleStarDidCompleteNotification:(NSNotification *)notification;
 
 @end
 
@@ -114,6 +121,14 @@ static NSString *const kLoadDidCompleteNotification = @"kLoadDidCompleteNotifica
                       selector:@selector(handleCarDVRVideoCapturerDidStopRecordingNotification)
                           name:kCarDVRVideoCapturerDidStopRecordingNotification
                         object:nil];
+        
+        if ( self.type == kCarDVRVideoBrowserViewControllerTypeStarred )
+        {
+            [defaultNC addObserver:self
+                          selector:@selector(handleStarDidCompleteNotification:)
+                              name:kStarDidCompleteNotification
+                            object:nil];
+        }
         
         // Prevent 'recents' list view from being covered by navigation bar and tab bar.
 //        self.navigationController.navigationBar.translucent = NO;
@@ -303,7 +318,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (IBAction)starButtonItemTouched:(id)sender
 {
 #pragma unused( sender )
-    // TODO: complete
+    [self starVideoClipsAtIndexPaths:[self.markedIndexes allObjects]];
 }
 
 - (IBAction)deleteButtonItemTouched:(id)sender
@@ -445,7 +460,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     //
     // mark video clips for deleting.
     //
-    NSMutableIndexSet *sectionSetToDelete = [NSMutableIndexSet indexSet];
     NSMutableDictionary *videosToDelete = [NSMutableDictionary dictionary];
     for ( NSIndexPath *indexPath in indexPaths )
     {
@@ -489,8 +503,9 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     }
     
     //
-    // delete marked video clips.
+    // delete marked video clip objects.
     //
+    NSMutableIndexSet *sectionSetToDelete = [NSMutableIndexSet indexSet];
     [videosToDelete enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         NSNumber *sectionNumber = key;
         NSIndexSet *videoClipIndexSet = obj;
@@ -524,6 +539,174 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
     [self.videoTableView endUpdates];
 }
 
+- (void)starVideoClipAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self starVideoClipsAtIndexPaths:@[indexPath]];
+}
+
+- (void)starVideoClipsAtIndexPaths:(NSArray *)indexPaths
+{
+    if ( self.type != kCarDVRVideoBrowserViewControllerTypeRecents )
+    {
+        return;
+    }
+    NSMutableArray *videos = self.isEditable ? self.ownerViewController.videos : self.videos;
+    //
+    // mark video clips that will be starred.
+    //
+    NSMutableDictionary *videosToMove = [NSMutableDictionary dictionary];
+    for ( NSIndexPath *indexPath in indexPaths )
+    {
+        CarDVRVideoItem *videoItem = [videos[indexPath.section] objectAtIndex:indexPath.row];
+        NSError *error;
+        NSFileManager *defaultManager = [NSFileManager defaultManager];
+        CarDVRVideoClipURLs *starredURLs = [[CarDVRVideoClipURLs alloc] initWithFolderURL:self.pathHelper.starredFolderURL
+                                                                                 clipName:videoItem.videoClipURLs.clipName];
+        [defaultManager moveItemAtURL:videoItem.videoClipURLs.videoFileURL
+                                toURL:starredURLs.videoFileURL
+                                error:&error];
+#ifdef DEBUG
+        if ( error )
+        {
+            NSLog( @"[Error]failed to move '%@' to '%@':\n%@",
+                  videoItem.videoClipURLs.videoFileURL, starredURLs.videoFileURL, error.description );
+        }
+#endif
+        [defaultManager moveItemAtURL:videoItem.videoClipURLs.srtFileURL
+                                toURL:starredURLs.srtFileURL
+                                error:&error];
+#ifdef DEBUG
+        if ( error )
+        {
+            NSLog( @"[Error]failed to move '%@' to '%@':\n%@",
+                  videoItem.videoClipURLs.srtFileURL, starredURLs.srtFileURL, error.description );
+        }
+#endif
+        [defaultManager moveItemAtURL:videoItem.videoClipURLs.gpxFileURL
+                                toURL:starredURLs.gpxFileURL
+                                error:&error];
+#ifdef DEBUG
+        if ( error )
+        {
+            NSLog( @"[Error]failed to move '%@' to '%@':\n%@",
+                  videoItem.videoClipURLs.gpxFileURL, starredURLs.gpxFileURL, error.description );
+        }
+#endif
+        videoItem.videoClipURLs.folderURL = self.pathHelper.starredFolderURL;
+        
+        NSNumber *sectionNumber = [NSNumber numberWithInteger:indexPath.section];
+        NSMutableIndexSet *videoClipIndexSet = [videosToMove objectForKey:sectionNumber];
+        if ( !videoClipIndexSet )
+        {
+            videoClipIndexSet = [NSMutableIndexSet indexSet];
+            [videosToMove setObject:videoClipIndexSet forKey:sectionNumber];
+        }
+        [videoClipIndexSet addIndex:indexPath.row];
+        
+        if ( self.isEditable )
+        {
+            [self.markedIndexes removeObject:indexPath];
+        }
+    }
+    
+    //
+    // cache marked video clip objects for 'star' notification.
+    //
+    NSMutableArray *starredVideos = [NSMutableArray array];
+    NSMutableIndexSet *sectionSetToDelete = [NSMutableIndexSet indexSet];
+    [videosToMove enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSNumber *sectionNumber = key;
+        NSIndexSet *videoClipIndexSet = obj;
+        [starredVideos addObjectsFromArray:[videos[sectionNumber.integerValue] objectsAtIndexes:videoClipIndexSet]];
+        [videos[sectionNumber.integerValue] removeObjectsAtIndexes:videoClipIndexSet];
+        if ( [videos[sectionNumber.integerValue] count] == 0 )
+        {
+            [sectionSetToDelete addIndex:sectionNumber.integerValue];
+        }
+    }];
+    [videos removeObjectsAtIndexes:sectionSetToDelete];
+    
+    //
+    // delete rows from video table view.
+    //
+    if ( self.isEditable )
+    {
+        [self.ownerViewController.videoTableView beginUpdates];
+        if ( sectionSetToDelete.count > 0 )
+        {
+            [self.ownerViewController.videoTableView deleteSections:sectionSetToDelete withRowAnimation:UITableViewRowAnimationNone];
+        }
+        [self.ownerViewController.videoTableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+        [self.ownerViewController.videoTableView endUpdates];
+    }
+    [self.videoTableView beginUpdates];
+    if ( sectionSetToDelete.count > 0 )
+    {
+        [self.videoTableView deleteSections:sectionSetToDelete withRowAnimation:UITableViewRowAnimationNone];
+    }
+    [self.videoTableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+    [self.videoTableView endUpdates];
+    
+    //
+    // post 'star' notification
+    //
+    [[NSNotificationCenter defaultCenter] postNotificationName:kStarDidCompleteNotification
+                                                        object:self
+                                                      userInfo:@{kVideoItemsKey: starredVideos}];
+}
+
+- (NSMutableArray *)addStarredVideos:(NSArray *)starredVideos
+{
+    NSMutableArray *sortedVideos = [[NSMutableArray alloc] init];
+    [sortedVideos addObjectsFromArray:starredVideos];
+    for ( NSArray *videoGroup in self.videos )
+    {
+        [sortedVideos addObjectsFromArray:videoGroup];
+    }
+    [sortedVideos sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        CarDVRVideoItem *videoItem1 = (CarDVRVideoItem *)obj1;
+        CarDVRVideoItem *videoItem2 = (CarDVRVideoItem *)obj2;
+        return [videoItem1.creationDate compare:videoItem2.creationDate];
+    }];
+    
+    NSMutableArray *newGroupedVideos = [[NSMutableArray alloc] init];
+    
+    NSDate *prevFileEndDate;
+    NSMutableArray *videoGroup;
+    for ( NSUInteger i = 0; i < sortedVideos.count; i++ )
+    {
+        CarDVRVideoItem *videoItem = [sortedVideos objectAtIndex:i];
+        if ( prevFileEndDate )
+        {
+            NSComparisonResult comparisonResult = [videoItem.creationDate compare:prevFileEndDate];
+            if ( comparisonResult == NSOrderedDescending )// later than prevFileEndDate
+            {
+                videoGroup = [NSMutableArray array];
+                [newGroupedVideos insertObject:videoGroup atIndex:0];
+            }
+        }
+        else
+        {
+            videoGroup = [NSMutableArray array];
+            [newGroupedVideos insertObject:videoGroup atIndex:0];
+        }
+        [videoGroup addObject:videoItem];
+        prevFileEndDate = [NSDate dateWithTimeInterval:videoItem.duration sinceDate:videoItem.creationDate];
+    }
+    return ( newGroupedVideos.count > 0 ? newGroupedVideos : nil );
+}
+
+- (void)addStarredVideosAsync:(NSArray *)starredVideos
+{
+    dispatch_async( dispatch_get_current_queue(), ^{
+        if ( self.type == kCarDVRVideoBrowserViewControllerTypeStarred )
+        {
+            self.videos = [self addStarredVideos:starredVideos];
+            [self.videoTableView reloadData];
+        }
+    });
+}
+
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
 {
     self.videos = nil;
@@ -538,6 +721,27 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)handleLoadDidCompleteNotification
 {
     [self.videoTableView reloadData];
+}
+
+- (void)handleStarDidCompleteNotification:(NSNotification *)notification
+{
+    if ( self.type != kCarDVRVideoBrowserViewControllerTypeStarred )
+    {
+        NSAssert1( NO, @"[Error]Wrong type (%d) for handleStarDidCompleteNotification", (NSInteger)self.type );
+        return;
+    }
+    if ( self.isEditable )
+    {
+        NSAssert( NO, @"[Error]handleStarDidCompleteNotification should NOT run under 'editable' mode" );
+        return;
+    }
+    NSArray *starredVideos = [notification.userInfo objectForKey:kVideoItemsKey];
+    if ( starredVideos.count == 0 )
+    {
+        return;
+    }
+    
+    [self addStarredVideosAsync:starredVideos];
 }
 
 @end

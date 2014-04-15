@@ -62,7 +62,6 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 - (void)installAVCaptureObjects;
 - (void)setOrientation:(UIInterfaceOrientation)anOrientation
     forMovieFileOutput:(AVCaptureMovieFileOutput *)aMovieFileOutput;
-- (NSURL *)newRecordingClipURL;
 - (NSString *)newRecordingClipName;
 - (void)handleAVCaptureSessionRuntimeErrorNotification:(NSNotification *)aNotification;
 - (void)handleAVCaptureSessionDidStopRunningNotification:(NSNotification *)aNotification;
@@ -707,15 +706,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     
     [self fitDeviceOrientation];
     [_captureSession startRunning];
-}
-
-- (NSURL *)newRecordingClipURL
-{
-    NSDate *currentDate = [NSDate date];
-    NSString *clipName = [NSString stringWithFormat:@"%@.MOV", [CarDVRPathHelper fileNameFromDate:currentDate]];
-    NSURL *clipURL =  [NSURL fileURLWithPath:[self.pathHelper.recentsFolderURL.path stringByAppendingPathComponent:clipName]
-                                 isDirectory:NO];
-    return clipURL;
 }
 
 - (NSString *)newRecordingClipName

@@ -10,9 +10,6 @@
 
 @interface CarDVRVideoClipURLs ()
 
-@property (strong, nonatomic) NSURL *folderURL;
-@property (strong, nonatomic) NSString *clipName;
-
 #pragma mark - Private methods
 - (NSURL *)fileURLWithExtension:(NSString *)anExtension;
 
