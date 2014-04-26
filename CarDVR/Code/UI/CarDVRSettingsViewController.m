@@ -230,7 +230,7 @@ CarDVRResolutionSettingViewControllerDelegate
     {
         self.maxClipDurationValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"minuteDuration", nil ), 1];
     }
-    else if ( ( seconds % 60 )== 0 )
+    else if ( ( seconds % 60 ) == 0 )
     {
         self.maxClipDurationValueLabel.text = [NSString stringWithFormat:NSLocalizedString( @"minutesDuration", nil ), seconds / 60];
     }
