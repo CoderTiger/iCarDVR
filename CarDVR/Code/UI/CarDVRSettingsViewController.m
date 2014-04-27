@@ -139,10 +139,21 @@ CarDVRResolutionSettingViewControllerDelegate
 
 - (IBAction)frameRateValueChanged:(id)sender
 {
+#ifdef IS_CARDVR_FREE_EDITION
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString( @"freeEditionAlert", nil )
+                                                        message:NSLocalizedString( @"cannotSetFrameRateMessage", nil )
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString( @"freeEditionAlertCancelButtonTitle", nil )
+                                              otherButtonTitles:nil];
+    [alertView show];
+    NSUInteger frameRateLevel = self.settings.videoFrameRate.unsignedIntegerValue / kVideoFrameRateRangePerLevel - 1;
+    [self setFrameRateLevelValue:frameRateLevel andUpdateStepper:YES];
+#else// !IS_CARDVR_FREE_EDITION
     UIStepper *stepper = sender;
     NSUInteger frameRateLevel = (NSUInteger)stepper.value;
     [self.settings setVideoFrameRate:[NSNumber numberWithUnsignedInteger:( frameRateLevel + 1 ) * kVideoFrameRateRangePerLevel]];
     [self setFrameRateLevelValue:frameRateLevel andUpdateStepper:NO];
+#endif// IS_CARDVR_FREE_EDITION
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -185,6 +196,23 @@ CarDVRResolutionSettingViewControllerDelegate
         resolutionSettingViewController.videoResolution = self.settings.videoResolution.intValue;
         resolutionSettingViewController.delegate = self;
     }
+}
+
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+#ifdef IS_CARDVR_FREE_EDITION
+    if ( [identifier isEqualToString:kShowResolutionSettingSegueId] )
+    {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString( @"freeEditionAlert", nil )
+                                                            message:NSLocalizedString( @"cannotSetResolutionMessage", nil )
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString( @"freeEditionAlertCancelButtonTitle", nil )
+                                                  otherButtonTitles:nil];
+        [alertView show];
+        return NO;
+    }
+#endif// IS_CARDVR_FREE_EDITION
+    return YES;
 }
 
 #pragma mark - from CarDVRMaxClipDurationSettingViewControllerDelegate

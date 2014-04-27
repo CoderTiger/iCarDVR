@@ -87,3 +87,11 @@
 // video subtitles
 //
 locationStringFormat="%.4f° %@, %.4f° %@";
+
+//
+// free edition
+//
+freeEditionAlert="This is free edition";
+freeEditionAlertCancelButtonTitle="OK";
+cannotSetResolutionMessage="Sorry, it is not supported to set resolution in free edition of iCarDVR.";
+cannotSetFrameRateMessage="Sorry, it is not supported to set frame rate in free edition of iCarDVR.";

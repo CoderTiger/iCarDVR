@@ -87,3 +87,11 @@
 // video subtitles
 //
 locationStringFormat="%.4f° %@, %.4f° %@";
+
+//
+// free edition
+//
+freeEditionAlert="免费版声明";
+freeEditionAlertCancelButtonTitle="关闭";
+cannotSetResolutionMessage="对不起，免费版不能设置分辨率。";
+cannotSetFrameRateMessage="对不起，免费版不能设置帧率。";
