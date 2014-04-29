@@ -134,9 +134,10 @@ static NSString *const kVideoItemsKey = @"kVideoItemsKey";
         
         // Prevent 'recents' list view from being covered by navigation bar and tab bar.
 //        self.navigationController.navigationBar.translucent = NO;
-        self.tabBarController.tabBar.translucent = NO;
+        if ( [self.tabBarController.tabBar respondsToSelector:@selector( setTranslucent: )] )
+            self.tabBarController.tabBar.translucent = NO;// iOS 7 specific
         if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
-            self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
+            self.edgesForExtendedLayout = UIRectEdgeNone;// iOS 7 specific
     }
     
     [self loadVideosAsync];
