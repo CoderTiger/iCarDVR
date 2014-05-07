@@ -23,6 +23,7 @@ NSString *const kCarDVRSettingsKeyVideoFrameRate = @"videoFrameRate";
 NSString *const kCarDVRSettingsKeyStarred = @"isStarred";
 NSString *const kCarDVRSettingsKeyTracksMapType = @"tracksMapType";
 NSString *const kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording = @"removeClipsInRecentsBeforeRecording";
+NSString *const kCarDVRSettingsKeyTrackLogOn = @"isTrackLogOn";
 
 static NSNumber *defaultMaxRecordingDurationPerClip;// 60 seconds
 static NSNumber *minMaxRecordingDurationPerClip;// 30 seconds
@@ -33,6 +34,7 @@ static NSNumber *minVideoFrameRate;// 5 fps
 static NSNumber *defaultStarredValue;// NO
 static NSNumber *defaultTracksMapType;// kCarDVRMapTypeStandard
 static NSNumber *defaultRemoveClipsInRecentsBeforeRecording;// NO
+static NSNumber *defaultTrackLogOnValue;// YES
 
 @interface CarDVRSettings ()
 {
@@ -73,6 +75,7 @@ static NSNumber *defaultRemoveClipsInRecentsBeforeRecording;// NO
     defaultStarredValue = @NO;
     defaultTracksMapType = [NSNumber numberWithInteger:kCarDVRMapTypeStandard];
     defaultRemoveClipsInRecentsBeforeRecording = @NO;
+    defaultTrackLogOnValue = @YES;
     if ( !defaultMaxRecordingDurationPerClip
         || !minMaxRecordingDurationPerClip
         || !defaultOverlappedRecordingDuration
@@ -81,7 +84,8 @@ static NSNumber *defaultRemoveClipsInRecentsBeforeRecording;// NO
         || !minVideoFrameRate
         || !defaultStarredValue
         || !defaultTracksMapType
-        || !defaultRemoveClipsInRecentsBeforeRecording )
+        || !defaultRemoveClipsInRecentsBeforeRecording
+        || !defaultTrackLogOnValue )
     {
         NSException *exception = [NSException exceptionWithName:NSMallocException
                                                          reason:@"Fault on CarDVRSettings::initialize due to out of memory"
@@ -376,6 +380,29 @@ static NSNumber *defaultRemoveClipsInRecentsBeforeRecording;// NO
         return;
     }
     [self setSettingValue:removeClipsInRecentsBeforeRecording forKey:kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording];
+}
+
+- (NSNumber *)isTrackLogOn
+{
+    NSNumber *trackLogOn = [self settingValueForKey:kCarDVRSettingsKeyTrackLogOn];
+    if ( !trackLogOn )
+    {
+        trackLogOn = defaultTrackLogOnValue;
+        if ( trackLogOn )
+        {
+            [self setSettingValue:trackLogOn forKey:kCarDVRSettingsKeyTrackLogOn mutely:YES];
+        }
+    }
+    return trackLogOn;
+}
+
+- (void)setTrackLogOn:(NSNumber *)trackLogOn
+{
+    if ( !trackLogOn )
+    {
+        return;
+    }
+    [self setSettingValue:trackLogOn forKey:kCarDVRSettingsKeyTrackLogOn];
 }
 
 - (void)addObserver:(id)anObserver selector:(SEL)aSelector forKey:(NSString *)aKey
