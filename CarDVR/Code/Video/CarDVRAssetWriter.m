@@ -9,6 +9,7 @@
 #import "CarDVRAssetWriter.h"
 #import <GPX/GPX.h>
 #import "CarDVRSettings.h"
+#import "CarDVRVideoClipURLs.h"
 
 static NSString *const kSrtRecordFormat = @"%u\r\n%02d:%02d:%02d,%03lld --> %02d:%02d:%02d,%03lld\r\n%@\r\n\r\n";
 
@@ -23,7 +24,6 @@ static NSDateFormatter *subtitleDateFormatter;
     
     GPXRoot *_gpxRoot;
     GPXTrack *_gpxTrack;
-    NSURL *_gpxFileURL;
 }
 
 @property (weak, nonatomic, readonly) CarDVRSettings *settings;
@@ -62,20 +62,17 @@ static NSDateFormatter *subtitleDateFormatter;
         _subtitlesSequenceId = 1;
         _creationTime = [NSDate date];
         
-        NSString *videoFileName = [aClipName stringByAppendingPathExtension:@"mov"];
-        NSString *srtFileName = [aClipName stringByAppendingPathExtension:@"srt"];
-        NSString *gpxFileName = [aClipName stringByAppendingPathExtension:@"gpx"];
-        NSURL *videoFileURL = [NSURL fileURLWithPath:[aFolderPath stringByAppendingPathComponent:videoFileName] isDirectory:NO];
-        NSURL *srtFileURL = [NSURL fileURLWithPath:[aFolderPath stringByAppendingPathComponent:srtFileName] isDirectory:NO];
-        _gpxFileURL = [NSURL fileURLWithPath:[aFolderPath stringByAppendingPathComponent:gpxFileName] isDirectory:NO];
-        _writer = [[AVAssetWriter alloc] initWithURL:videoFileURL fileType:AVFileTypeQuickTimeMovie error:anOutError];
+        _clipURLs = [[CarDVRVideoClipURLs alloc] initWithFolderURL:[NSURL fileURLWithPath:aFolderPath isDirectory:YES]
+                                                          clipName:aClipName];
+        
+        _writer = [[AVAssetWriter alloc] initWithURL:_clipURLs.videoFileURL fileType:AVFileTypeQuickTimeMovie error:anOutError];
         if ( !_writer )
         {
             NSLog( @"[Error] Failed to create AVAssetWriter object with error: \"%@\"", (*anOutError).description );
             return nil;
         }
-        [[NSFileManager defaultManager] createFileAtPath:srtFileURL.path contents:nil attributes:nil];
-        _srtFileHandle = [NSFileHandle fileHandleForWritingToURL:srtFileURL error:anOutError];
+        [[NSFileManager defaultManager] createFileAtPath:_clipURLs.srtFileURL.path contents:nil attributes:nil];
+        _srtFileHandle = [NSFileHandle fileHandleForWritingToURL:_clipURLs.srtFileURL error:anOutError];
         if ( !_srtFileHandle )
         {
             NSLog( @"[Error] Failed to create subtitles file with error: \"%@\"",
@@ -99,7 +96,7 @@ static NSDateFormatter *subtitleDateFormatter;
         if ( self.settings.isTrackLogOn.boolValue )
         {
             NSError *error;
-            [_gpxRoot.gpx writeToURL:_gpxFileURL atomically:YES encoding:NSUTF8StringEncoding error:&error];
+            [_gpxRoot.gpx writeToURL:_clipURLs.gpxFileURL atomically:YES encoding:NSUTF8StringEncoding error:&error];
             if ( error )
             {
                 NSLog( @"[Error]failed to write GPX file due to: %@", error.description );

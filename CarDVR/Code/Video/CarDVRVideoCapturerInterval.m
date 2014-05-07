@@ -87,6 +87,8 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 - (void)stopRecordingOfAssetWriter:(CarDVRAssetWriter *)anAssetWriter
              withCompletionHandler:(void (^)(NSException *aException)) aBlock;
 
+- (void)moveClipWithURLs:(CarDVRVideoClipURLs *)aClipURLs toFolderURL:(NSURL *)aFolderURL;
+
 #pragma mark - methods processing video
 - (void)processVideoSample:(CMSampleBufferRef)aSampleBuffer withFormat:(CMFormatDescriptionRef)aFormatDescription;
 
@@ -910,6 +912,21 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             // ignore aException
 #pragma unused( aException )
             didStop = YES;
+            
+            if ( _isStarred )
+            {
+                if ( ![anAssetWriter.clipURLs.folderURL isEqual:self.pathHelper.starredFolderURL] )
+                {
+                    [self moveClipWithURLs:anAssetWriter.clipURLs toFolderURL:self.pathHelper.starredFolderURL];
+                }
+            }
+            else
+            {
+                if ( [anAssetWriter.clipURLs.folderURL isEqual:self.pathHelper.starredFolderURL] )
+                {
+                    [self moveClipWithURLs:anAssetWriter.clipURLs toFolderURL:self.pathHelper.recentsFolderURL];
+                }
+            }
         }
     }];
 #ifdef DEBUG
@@ -1175,6 +1192,39 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     {
         aBlock( outException );
     }
+}
+
+- (void)moveClipWithURLs:(CarDVRVideoClipURLs *)aClipURLs toFolderURL:(NSURL *)aFolderURL
+{
+    if ( !aClipURLs || !aFolderURL || [aClipURLs.folderURL isEqual:aFolderURL] )
+    {
+        return;
+    }
+    CarDVRVideoClipURLs *targetURLs = [[CarDVRVideoClipURLs alloc] initWithFolderURL:aFolderURL
+                                                                            clipName:aClipURLs.clipName];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    [fileManager moveItemAtURL:aClipURLs.videoFileURL toURL:targetURLs.videoFileURL error:&error];
+#ifdef DEBUG
+    if ( error )
+    {
+        NSLog( @"[Debug][Error] %@", error.description );
+    }
+#endif// DEBUG
+    [fileManager moveItemAtURL:aClipURLs.srtFileURL toURL:targetURLs.srtFileURL error:&error];
+#ifdef DEBUG
+    if ( error )
+    {
+        NSLog( @"[Debug][Error] %@", error.description );
+    }
+#endif// DEBUG
+    [fileManager moveItemAtURL:aClipURLs.gpxFileURL toURL:targetURLs.gpxFileURL error:&error];
+#ifdef DEBUG
+    if ( error )
+    {
+        NSLog( @"[Debug][Error] %@", error.description );
+    }
+#endif// DEBUG
 }
 
 #pragma mark - methods processing video

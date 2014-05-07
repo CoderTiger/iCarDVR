@@ -11,12 +11,15 @@
 #import <CoreLocation/CoreLocation.h>
 
 @class CarDVRSettings;
+@class CarDVRVideoClipURLs;
 
 @interface CarDVRAssetWriter : NSObject
 
 @property (strong, readonly, nonatomic) AVAssetWriter *writer;
 @property (strong, nonatomic) AVAssetWriterInput *videoInput;
 @property (strong, nonatomic) AVAssetWriterInput *audioInput;
+
+@property (strong, readonly, nonatomic) CarDVRVideoClipURLs *clipURLs;
 
 @property (assign) BOOL readyToRecordAudio;
 @property (assign) BOOL readyToRecordVideo;

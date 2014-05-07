@@ -68,7 +68,7 @@
         return nil;
     }
     NSString *clipPath = [_folderURL.path stringByAppendingPathComponent:_clipName];
-    NSURL *fileURL = [NSURL fileURLWithPath:[clipPath stringByAppendingPathExtension:anExtension]];
+    NSURL *fileURL = [NSURL fileURLWithPath:[clipPath stringByAppendingPathExtension:anExtension] isDirectory:NO];
     return fileURL;
 }
 
