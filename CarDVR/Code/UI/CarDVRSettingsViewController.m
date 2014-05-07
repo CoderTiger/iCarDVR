@@ -14,7 +14,8 @@
 
 static const NSInteger kCarDVRSettingsSectionStorageInfo = 0;
 static const NSInteger kCarDVRSettingsSectionVideo = 1;
-static const NSInteger kCarDVRSettingsSectionAbout = 2;
+static const NSInteger kCarDVRSettingsSectionTrack = 2;
+static const NSInteger kCarDVRSettingsSectionAbout = 3;
 static NSString *const kShowMaxClipDurationSettingSegueId = @"kShowMaxClipDurationSettingSegueId";
 static NSString *const kShowResolutionSettingSegueId = @"kShowResolutionSettingSegueId";
 static const NSUInteger kVideoFrameRateRangePerLevel = 5;
@@ -42,11 +43,15 @@ CarDVRResolutionSettingViewControllerDelegate
 @property (weak, nonatomic) IBOutlet UILabel *frameRateValueLabel;
 @property (weak, nonatomic) IBOutlet UIStepper *frameRateStepper;
 @property (weak, nonatomic) IBOutlet UILabel *aboutBriefLabel;
+@property (weak, nonatomic) IBOutlet UILabel *recordTracksLabel;
+@property (weak, nonatomic) IBOutlet UILabel *recordTracksDescriptionLable;
+@property (weak, nonatomic) IBOutlet UISwitch *recordTracksSwitch;
 
 - (IBAction)doneBarButtonItemTouched:(id)sender;
 - (IBAction)cancelBarButtonItemTouched:(id)sender;
 - (IBAction)maxRecordingClipsValueChanged:(id)sender;
 - (IBAction)frameRateValueChanged:(id)sender;
+- (IBAction)recordTracksValueChanged:(id)sender;
 
 #pragma mark - Private methods
 - (void)loadVideoSettings;
@@ -54,6 +59,8 @@ CarDVRResolutionSettingViewControllerDelegate
 - (void)setMaxClipDurationValue:(NSUInteger)seconds;
 - (void)setResolutionValueLabelValue:(CarDVRVideoResolution)videoResolution;
 - (void)setFrameRateLevelValue:(NSUInteger)frameRateLevel andUpdateStepper:(BOOL)update;
+- (void)loadTrackSettings;
+- (void)setRecordTracksValue:(BOOL)recordTracks;
 
 @end
 
@@ -68,12 +75,15 @@ CarDVRResolutionSettingViewControllerDelegate
     self.maxClipDurationLabel.text = NSLocalizedString( @"maxClipDurationLabel", nil );
     self.resolutionLabel.text = NSLocalizedString( @"resolutionLabel", nil );
     self.frameRateLabel.text = NSLocalizedString( @"frameRateLabel", nil );
+    self.recordTracksLabel.text = NSLocalizedString( @"recordTracksLabel", nil );
+    self.recordTracksDescriptionLable.text = NSLocalizedString( @"recordTracksDescriptionLabel", nil );
     NSBundle *mainBundle = [NSBundle mainBundle];
     NSString *appName = [mainBundle objectForInfoDictionaryKey:(__bridge NSString*)kCFBundleNameKey];
     NSString *appVersion = [mainBundle objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey];
     self.aboutBriefLabel.text = [NSString stringWithFormat:NSLocalizedString( @"aboutBriefLabel", nil ), appName, appVersion];
     [_settings beginEditing];
     [self loadVideoSettings];
+    [self loadTrackSettings];
 }
 
 - (void)didReceiveMemoryWarning
@@ -156,6 +166,12 @@ CarDVRResolutionSettingViewControllerDelegate
 #endif// IS_CARDVR_FREE_EDITION
 }
 
+- (IBAction)recordTracksValueChanged:(id)sender
+{
+    UISwitch *recordTracksSwitch = sender;
+    [self.settings setTrackLogOn:[NSNumber numberWithBool:recordTracksSwitch.isOn]];
+}
+
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
 #pragma unused( tableView )
@@ -167,6 +183,9 @@ CarDVRResolutionSettingViewControllerDelegate
             break;
         case kCarDVRSettingsSectionStorageInfo:
             title = NSLocalizedString( @"settingsSectionStorageInfo", @"Memory Info" );
+            break;
+        case kCarDVRSettingsSectionTrack:
+            title = NSLocalizedString( @"settingsSectionTrack", @"Track" );
             break;
         case kCarDVRSettingsSectionAbout:
             title = NSLocalizedString( @"settingsSectionAbout", @"About" );
@@ -319,6 +338,16 @@ CarDVRResolutionSettingViewControllerDelegate
     {
         [self.frameRateStepper setValue:frameRateLevel];
     }
+}
+
+- (void)loadTrackSettings
+{
+    [self setRecordTracksValue:self.settings.isTrackLogOn.boolValue];
+}
+
+- (void)setRecordTracksValue:(BOOL)recordTracks
+{
+    self.recordTracksSwitch.on = recordTracks;
 }
 
 @end

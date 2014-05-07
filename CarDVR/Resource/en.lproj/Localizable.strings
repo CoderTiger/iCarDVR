@@ -36,12 +36,15 @@
 "frameRateFormat"="%u fps";
 "maxClipDurationValueLabel"="%d min %d sec";
 "settingsSectionStorageInfo"="Memory Info";
+"settingsSectionTrack"="Track";
 "settingsSectionAbout"="About";
 "aboutBriefLabel"="%@ %@";
 "storageInfoByteFormat"="Free: %.2f%%, %lluB";
 "storageInfoKBFormat"="Free: %.2f%%, %.2fKB";
 "storageInfoMBFormat"="Free: %.2f%%, %.2fMB";
 "storageInfoGBFormat"="Free: %.2f%%, %.2fGB";
+"recordTracksLabel"="Record tracks";
+"recordTracksDescriptionLabel"="Record tracks when recording video";
 
 //
 // CarDVRVideoTableViewCell
@@ -86,12 +89,12 @@
 //
 // video subtitles
 //
-locationStringFormat="%.4f° %@, %.4f° %@";
+"locationStringFormat"="%.4f° %@, %.4f° %@";
 
 //
 // free edition
 //
-freeEditionAlert="This is free edition";
-freeEditionAlertCancelButtonTitle="OK";
-cannotSetResolutionMessage="Sorry, it is not supported to set resolution in free edition of iCarDVR.";
-cannotSetFrameRateMessage="Sorry, it is not supported to set frame rate in free edition of iCarDVR.";
+"freeEditionAlert"="This is free edition";
+"freeEditionAlertCancelButtonTitle"="OK";
+"cannotSetResolutionMessage"="Sorry, it is not supported to set resolution in free edition of iCarDVR.";
+"cannotSetFrameRateMessage"="Sorry, it is not supported to set frame rate in free edition of iCarDVR.";

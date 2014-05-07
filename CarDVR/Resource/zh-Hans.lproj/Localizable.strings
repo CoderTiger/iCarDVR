@@ -36,12 +36,15 @@
 "frameRateFormat"="%u fps";
 "maxClipDurationValueLabel"="%d 分 %d 秒";
 "settingsSectionStorageInfo"="内存信息";
+"settingsSectionTrack"="路径";
 "settingsSectionAbout"="关于";
 "aboutBriefLabel"="%@ %@";
 "storageInfoByteFormat"="可用存储：%.2f%%，%lluB";
 "storageInfoKBFormat"="可用存储：%.2f%%，%.2fKB";
 "storageInfoMBFormat"="可用存储：%.2f%%，%.2fMB";
 "storageInfoGBFormat"="可用存储：%.2f%%，%.2fGB";
+"recordTracksLabel"="记录路径";
+"recordTracksDescriptionLabel"="拍摄视频时也记录行驶路径";
 
 //
 // CarDVRVideoTableViewCell
@@ -86,12 +89,12 @@
 //
 // video subtitles
 //
-locationStringFormat="%.4f° %@, %.4f° %@";
+"locationStringFormat"="%.4f° %@, %.4f° %@";
 
 //
 // free edition
 //
-freeEditionAlert="免费版声明";
-freeEditionAlertCancelButtonTitle="关闭";
-cannotSetResolutionMessage="对不起，免费版不能设置分辨率。";
-cannotSetFrameRateMessage="对不起，免费版不能设置帧率。";
+"freeEditionAlert"="免费版声明";
+"freeEditionAlertCancelButtonTitle"="关闭";
+"cannotSetResolutionMessage"="对不起，免费版不能设置分辨率。";
+"cannotSetFrameRateMessage"="对不起，免费版不能设置帧率。";
