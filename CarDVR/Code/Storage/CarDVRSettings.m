@@ -29,8 +29,9 @@ static NSNumber *defaultMaxRecordingDurationPerClip;// 60 seconds
 static NSNumber *minMaxRecordingDurationPerClip;// 30 seconds
 static NSNumber *defaultOverlappedRecordingDuration;// 1 second
 static NSNumber *defaultMaxCountOfRecordingClips;// 2 clips
-static NSNumber *maxVideoFrameRate ;// 30 fps
+static NSNumber *maxVideoFrameRate;// 30 fps
 static NSNumber *minVideoFrameRate;// 5 fps
+static NSNumber *defaultVideoFrameRate;// 20 fps
 static NSNumber *defaultStarredValue;// NO
 static NSNumber *defaultTracksMapType;// kCarDVRMapTypeStandard
 static NSNumber *defaultRemoveClipsInRecentsBeforeRecording;// NO
@@ -72,6 +73,7 @@ static NSNumber *defaultTrackLogOnValue;// YES
     defaultMaxCountOfRecordingClips = @3;// 2 clips
     maxVideoFrameRate = @30;// 30 fps
     minVideoFrameRate = @5;// 10 fps
+    defaultVideoFrameRate = @20;// 20 fps
     defaultStarredValue = @NO;
     defaultTracksMapType = [NSNumber numberWithInteger:kCarDVRMapTypeStandard];
     defaultRemoveClipsInRecentsBeforeRecording = @NO;
@@ -82,6 +84,7 @@ static NSNumber *defaultTrackLogOnValue;// YES
         || !defaultMaxCountOfRecordingClips
         || !maxVideoFrameRate
         || !minVideoFrameRate
+        || !defaultVideoFrameRate
         || !defaultStarredValue
         || !defaultTracksMapType
         || !defaultRemoveClipsInRecentsBeforeRecording
@@ -243,11 +246,27 @@ static NSNumber *defaultTrackLogOnValue;// YES
             [self setSettingValue:videoResolution forKey:kCarDVRSettingsKeyVideoResolution mutely:YES];
         }
     }
+#ifdef IS_CARDVR_FREE_EDITION
+    else
+    {
+        if ( videoResolution.integerValue != kCarDVRVideoResolutionHigh )
+        {
+            videoResolution = [NSNumber numberWithInteger:kCarDVRVideoResolutionHigh];
+            if ( videoResolution )
+            {
+                [self setSettingValue:videoResolution forKey:kCarDVRSettingsKeyVideoResolution mutely:YES];
+            }
+        }
+    }
+#endif// IS_CARDVR_FREE_EDITION
     return videoResolution;
 }
 
 - (void)setVideoResolution:(NSNumber *)videoResolution
 {
+#ifdef IS_CARDVR_FREE_EDITION
+    return;
+#endif// IS_CARDVR_FREE_EDITION
     NSInteger videoResolutionValue = videoResolution.integerValue;
     switch ( videoResolutionValue )
     {
@@ -272,17 +291,33 @@ static NSNumber *defaultTrackLogOnValue;// YES
     NSNumber *videoFrameRate = [self settingValueForKey:kCarDVRSettingsKeyVideoFrameRate];
     if ( !videoFrameRate )
     {
-        videoFrameRate = maxVideoFrameRate;
+        videoFrameRate = defaultVideoFrameRate;
         if ( videoFrameRate )
         {
             [self setSettingValue:videoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate mutely:YES];
         }
     }
+#ifdef IS_CARDVR_FREE_EDITION
+    else
+    {
+        if ( ![defaultVideoFrameRate isEqualToNumber:videoFrameRate] )
+        {
+            videoFrameRate = defaultVideoFrameRate;
+            if ( videoFrameRate )
+            {
+                [self setSettingValue:videoFrameRate forKey:kCarDVRSettingsKeyVideoFrameRate mutely:YES];
+            }
+        }
+    }
+#endif// IS_CARDVR_FREE_EDITION
     return videoFrameRate;
 }
 
 - (void)setVideoFrameRate:(NSNumber *)videoFrameRate
 {
+#ifdef IS_CARDVR_FREE_EDITION
+    return;
+#endif// IS_CARDVR_FREE_EDITION
     if ( !videoFrameRate )
     {
         return;
