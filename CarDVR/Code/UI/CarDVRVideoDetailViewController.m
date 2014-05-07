@@ -32,6 +32,7 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
 @property (weak, nonatomic) IBOutlet UILabel *videoFileValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *srtFileValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gpxFileValueLabel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *trackButtonItem;
 
 #pragma mark - private methods
 - (void)installDetailsInfo;
@@ -187,6 +188,7 @@ static NSString *const kShowTracksViewSegueId = @"kShowTracksViewSegueId";
     if ( ![defaultManager fileExistsAtPath:self.videoItem.videoClipURLs.gpxFileURL.path] )
     {
         self.gpxFileValueLabel.textColor = [UIColor lightGrayColor];
+        self.trackButtonItem.enabled = NO;
     }
 }
 

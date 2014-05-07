@@ -96,11 +96,14 @@ static NSDateFormatter *subtitleDateFormatter;
     {
         [self writePreviousSubtitle];
         _srtFileHandle = nil;
-        NSError *error;
-        [_gpxRoot.gpx writeToURL:_gpxFileURL atomically:YES encoding:NSUTF8StringEncoding error:&error];
-        if ( error )
+        if ( self.settings.isTrackLogOn.boolValue )
         {
-            NSLog( @"[Error]failed to write GPX file due to: %@", error.description );
+            NSError *error;
+            [_gpxRoot.gpx writeToURL:_gpxFileURL atomically:YES encoding:NSUTF8StringEncoding error:&error];
+            if ( error )
+            {
+                NSLog( @"[Error]failed to write GPX file due to: %@", error.description );
+            }
         }
     }
     return finished;

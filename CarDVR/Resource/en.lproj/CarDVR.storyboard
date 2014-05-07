@@ -928,6 +928,7 @@
                         <outlet property="sizeLabel" destination="Lzg-8D-x9m" id="L3F-Rj-pBI"/>
                         <outlet property="sizeValueLabel" destination="s1x-Fh-MYb" id="N8f-RD-POR"/>
                         <outlet property="srtFileValueLabel" destination="788-TP-lhf" id="9Le-ao-p69"/>
+                        <outlet property="trackButtonItem" destination="UpL-dC-w7W" id="DM3-g4-jJS"/>
                         <outlet property="videoFileValueLabel" destination="aDe-CB-wmw" id="LUP-FA-irs"/>
                     </connections>
                 </tableViewController>

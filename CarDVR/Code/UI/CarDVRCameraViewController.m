@@ -300,7 +300,10 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 
 - (void)handleCarDVRVideoCapturerDidStartRecordingNotification
 {
-    [self.locationDetector start];
+    if ( self.settings.isTrackLogOn.boolValue )
+    {
+        [self.locationDetector start];
+    }
     self.startRecordingDate = [NSDate date];
     self.startButton.hidden = YES;
     self.stopButton.hidden = NO;
@@ -314,7 +317,10 @@ static const CGFloat kRecordingStatusTivViewCornerRadius = 5.0f;
 
 - (void)handleCarDVRVideoCapturerDidStopRecordingNotification
 {
-    [self.locationDetector stop];
+    if ( self.settings.isTrackLogOn.boolValue )
+    {
+        [self.locationDetector stop];
+    }
     self.startButton.hidden = NO;
     self.stopButton.hidden = YES;
     self.recordingStatusTipView.alpha = 0;
