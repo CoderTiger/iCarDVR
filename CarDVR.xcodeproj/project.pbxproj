@@ -17,6 +17,8 @@
 		F632827718C9D948007EE5D1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F632827618C9D948007EE5D1 /* ImageIO.framework */; };
 		F632827B18C9DC25007EE5D1 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F632827A18C9DC25007EE5D1 /* AssetsLibrary.framework */; };
 		F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */; };
+		F685B48A192B53A0005F0BC9 /* CarDVRApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = F685B489192B53A0005F0BC9 /* CarDVRApplication.m */; };
+		F685B48B192B53A0005F0BC9 /* CarDVRApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = F685B489192B53A0005F0BC9 /* CarDVRApplication.m */; };
 		F6AD6E8118951B6F0006DA59 /* CarDVRMeasurementConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F6AD6E8018951B6F0006DA59 /* CarDVRMeasurementConverter.m */; };
 		F6B0F9D61820AAA200A46E3C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0F9D41820AAA100A46E3C /* Localizable.strings */; };
 		F6B0F9F41820CB1800A46E3C /* CarDVRVideoBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0F9F21820CB1800A46E3C /* CarDVRVideoBrowserViewController.m */; };
@@ -141,6 +143,8 @@
 		F632827A18C9DC25007EE5D1 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		F677D92E1819636300C57AE0 /* CarDVRHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRHomeViewController.h; sourceTree = "<group>"; };
 		F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRHomeViewController.m; sourceTree = "<group>"; };
+		F685B488192B53A0005F0BC9 /* CarDVRApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRApplication.h; sourceTree = "<group>"; };
+		F685B489192B53A0005F0BC9 /* CarDVRApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRApplication.m; sourceTree = "<group>"; };
 		F6AD6E7F18951B6F0006DA59 /* CarDVRMeasurementConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRMeasurementConverter.h; sourceTree = "<group>"; };
 		F6AD6E8018951B6F0006DA59 /* CarDVRMeasurementConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRMeasurementConverter.m; sourceTree = "<group>"; };
 		F6B0F9D51820AAA200A46E3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
@@ -361,6 +365,8 @@
 				F6D3723B180BEB970076B2EC /* CarDVR-Prefix.pch */,
 				F6D3723C180BEB970076B2EC /* CarDVRAppDelegate.h */,
 				F6D3723D180BEB970076B2EC /* CarDVRAppDelegate.m */,
+				F685B488192B53A0005F0BC9 /* CarDVRApplication.h */,
+				F685B489192B53A0005F0BC9 /* CarDVRApplication.m */,
 				F6D3723E180BEB970076B2EC /* main.m */,
 			);
 			path = Code;
@@ -637,6 +643,7 @@
 				F6B0FA041820EC0300A46E3C /* CarDVRSettingsViewController.m in Sources */,
 				F6D37240180BEB970076B2EC /* main.m in Sources */,
 				F6D17D8B1826970A003D965C /* CarDVRVideoDetailViewController.m in Sources */,
+				F685B48A192B53A0005F0BC9 /* CarDVRApplication.m in Sources */,
 				F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */,
 				F6FEE820180D9CDE00034B6A /* CarDVRPathHelper.m in Sources */,
 				F62323EC186C421600123109 /* CarDVRLocationDetector.m in Sources */,
@@ -677,6 +684,7 @@
 				F6DF190F190C0F1A00303349 /* CarDVRSettingsViewController.m in Sources */,
 				F6DF1910190C0F1A00303349 /* main.m in Sources */,
 				F6DF1911190C0F1A00303349 /* CarDVRVideoDetailViewController.m in Sources */,
+				F685B48B192B53A0005F0BC9 /* CarDVRApplication.m in Sources */,
 				F6DF1912190C0F1A00303349 /* CarDVRHomeViewController.m in Sources */,
 				F6DF1913190C0F1A00303349 /* CarDVRPathHelper.m in Sources */,
 				F6DF1914190C0F1A00303349 /* CarDVRLocationDetector.m in Sources */,

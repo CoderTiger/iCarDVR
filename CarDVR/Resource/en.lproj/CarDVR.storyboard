@@ -487,6 +487,54 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="O8B-FC-dMv" userLabel="Table View Cell - Support Email">
+                                        <rect key="frame" x="0.0" y="656" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="O8B-FC-dMv" id="Mkv-Zn-GAC">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Email:" id="9T0-vq-UnW" userLabel="Text View - Email:">
+                                                    <rect key="frame" x="14" y="5" width="59" height="33"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                </textView>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="com.iautod.icardvr@gmail.com" id="LcD-35-xXG" userLabel="Text View - Email Address">
+                                                    <rect key="frame" x="81" y="5" width="227" height="33"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    <dataDetectorType key="dataDetectorTypes" link="YES"/>
+                                                </textView>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Dib-dh-Euk" userLabel="Table View Cell - Weibo">
+                                        <rect key="frame" x="0.0" y="700" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Dib-dh-Euk" id="Yod-rn-Bal">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LogoWeibo32x32" id="h2b-Sj-DE8" userLabel="Image View - Weibo Logo">
+                                                    <rect key="frame" x="20" y="6" width="32" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="weibo.com/icardvr" id="aZa-M8-NVR" userLabel="Text View - Weibo">
+                                                    <rect key="frame" x="81" y="5" width="225" height="33"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    <dataDetectorType key="dataDetectorTypes" link="YES"/>
+                                                </textView>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -512,6 +560,8 @@
                         <outlet property="aboutBriefLabel" destination="zxW-XT-00v" id="TF8-0t-Fh1"/>
                         <outlet property="cancelBarButtonItem" destination="XJg-VK-97g" id="xnb-A1-kAr"/>
                         <outlet property="doneBarButtonItem" destination="Qba-Aq-KSz" id="7De-RP-hq0"/>
+                        <outlet property="emailLabelTextView" destination="9T0-vq-UnW" id="8tm-qf-GyK"/>
+                        <outlet property="emailTextView" destination="LcD-35-xXG" id="ybG-tE-gyl"/>
                         <outlet property="frameRateLabel" destination="usY-wO-yUo" id="F2i-72-aDR"/>
                         <outlet property="frameRateStepper" destination="Oh6-AV-sYc" id="fc2-6G-aau"/>
                         <outlet property="frameRateValueLabel" destination="AKx-zh-2k7" id="h4Q-RL-R1A"/>
@@ -1187,6 +1237,7 @@
         <image name="ButtonStart50x50" width="50" height="50"/>
         <image name="ButtonStop50x50" width="50" height="50"/>
         <image name="ButtonTracks25x25" width="25" height="25"/>
+        <image name="LogoWeibo32x32" width="32" height="32"/>
         <image name="TabRecents25x25" width="25" height="25"/>
         <image name="TabStarred25x25" width="25" height="25"/>
     </resources>

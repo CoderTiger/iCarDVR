@@ -9,10 +9,14 @@
 #import <UIKit/UIKit.h>
 
 #import "CarDVRAppDelegate.h"
+#import "CarDVRApplication.h"
 
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([CarDVRAppDelegate class]));
+        return UIApplicationMain(argc,
+                                 argv,
+                                 NSStringFromClass([CarDVRApplication class]),
+                                 NSStringFromClass([CarDVRAppDelegate class]));
     }
 }

@@ -45,6 +45,7 @@
 "storageInfoGBFormat"="可用存储：%.2f%%，%.2fGB";
 "recordTracksLabel"="记录路径";
 "recordTracksDescriptionLabel"="拍摄视频时也记录行驶路径";
+"emailLable"="电邮：";
 
 //
 // CarDVRVideoTableViewCell

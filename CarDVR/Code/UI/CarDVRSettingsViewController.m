@@ -46,6 +46,8 @@ CarDVRResolutionSettingViewControllerDelegate
 @property (weak, nonatomic) IBOutlet UILabel *recordTracksLabel;
 @property (weak, nonatomic) IBOutlet UILabel *recordTracksDescriptionLable;
 @property (weak, nonatomic) IBOutlet UISwitch *recordTracksSwitch;
+@property (weak, nonatomic) IBOutlet UITextView *emailLabelTextView;
+@property (weak, nonatomic) IBOutlet UITextView *emailTextView;
 
 - (IBAction)doneBarButtonItemTouched:(id)sender;
 - (IBAction)cancelBarButtonItemTouched:(id)sender;
@@ -81,6 +83,8 @@ CarDVRResolutionSettingViewControllerDelegate
     NSString *appName = [mainBundle objectForInfoDictionaryKey:(__bridge NSString*)kCFBundleNameKey];
     NSString *appVersion = [mainBundle objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey];
     self.aboutBriefLabel.text = [NSString stringWithFormat:NSLocalizedString( @"aboutBriefLabel", nil ), appName, appVersion];
+    self.emailLabelTextView.text = NSLocalizedString( @"emailLable", @"Email:" );
+    
     [_settings beginEditing];
     [self loadVideoSettings];
     [self loadTrackSettings];
