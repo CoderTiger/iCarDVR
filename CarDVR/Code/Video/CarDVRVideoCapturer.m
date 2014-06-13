@@ -8,7 +8,7 @@
 
 #import "CarDVRVideoCapturer.h"
 #import <AVFoundation/AVFoundation.h>
-#import "CarDVRVideoCapturerInterval.h"
+#import "CarDVRVideoCapturerInternal.h"
 
 NSString *const kCarDVRVideoCapturerDidStartRecordingNotification = @"kCarDVRVideoCapturerDidStartRecordingNotification";
 NSString *const kCarDVRVideoCapturerDidStopRecordingNotification = @"kCarDVRVideoCapturerDidStopRecordingNotification";
@@ -20,7 +20,7 @@ NSString *const kCarDVRClipURLListKey = @"kCarDVRClipURLListKey";
 
 @interface CarDVRVideoCapturer ()
 {
-    CarDVRVideoCapturerInterval *_interval;
+    CarDVRVideoCapturerInternal *_internal;
 }
 @end
 
@@ -28,37 +28,37 @@ NSString *const kCarDVRClipURLListKey = @"kCarDVRClipURLListKey";
 
 - (void)setPreviewerView:(UIView *)previewerView
 {
-    [_interval setPreviewerView:previewerView];
+    [_internal setPreviewerView:previewerView];
 }
 
 - (UIView *)previewerView
 {
-    return _interval.previewerView;
+    return _internal.previewerView;
 }
 
 - (BOOL)isRecording
 {
-    return _interval.isRecording;
+    return _internal.isRecording;
 }
 
 - (BOOL)hasBackCamera
 {
-    return _interval.hasBackCamera;
+    return _internal.hasBackCamera;
 }
 
 - (BOOL)hasFrontCamera
 {
-    return _interval.hasFrontCamera;
+    return _internal.hasFrontCamera;
 }
 
 - (void)setCameraFlashMode:(CarDVRCameraFlashMode)cameraFlashMode
 {
-    [_interval setCameraFlashMode:cameraFlashMode];
+    [_internal setCameraFlashMode:cameraFlashMode];
 }
 
 - (CarDVRCameraFlashMode)cameraFlashMode
 {
-    return _interval.cameraFlashMode;
+    return _internal.cameraFlashMode;
 }
 
 - (id)init
@@ -88,7 +88,7 @@ NSString *const kCarDVRClipURLListKey = @"kCarDVRClipURLListKey";
                                                            userInfo:nil];
             @throw exception;
         }
-        _interval = [[CarDVRVideoCapturerInterval alloc] initWithCapturer:self
+        _internal = [[CarDVRVideoCapturerInternal alloc] initWithCapturer:self
                                                                pathHelper:aPathHelper
                                                                  settings:aSettings];
     }
@@ -97,32 +97,32 @@ NSString *const kCarDVRClipURLListKey = @"kCarDVRClipURLListKey";
 
 - (void)startRecording
 {
-    [_interval startRecording];
+    [_internal startRecording];
 }
 
 - (void)stopRecording
 {
-    [_interval stopRecording];
+    [_internal stopRecording];
 }
 
 - (void)captureStillImage
 {
-    [_interval captureStillImage];
+    [_internal captureStillImage];
 }
 
 - (void)fitDeviceOrientation
 {
-    [_interval fitDeviceOrientation];
+    [_internal fitDeviceOrientation];
 }
 
 - (void)focus
 {
-    [_interval focus];
+    [_internal focus];
 }
 
 - (void)didUpdateToLocation:(CLLocation *)aLocation
 {
-    [_interval didUpdateToLocation:aLocation];
+    [_internal didUpdateToLocation:aLocation];
 }
 
 @end

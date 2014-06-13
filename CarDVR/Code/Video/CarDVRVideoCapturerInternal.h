@@ -12,7 +12,7 @@
 
 @class CarDVRPathHelper;
 @class CarDVRSettings;
-@interface CarDVRVideoCapturerInterval : NSObject
+@interface CarDVRVideoCapturerInternal : NSObject
 
 @property (weak, nonatomic) UIView *previewerView;
 @property (readonly, getter = isRecording, nonatomic) BOOL recording;

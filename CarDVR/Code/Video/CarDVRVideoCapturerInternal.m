@@ -6,7 +6,7 @@
 //  Copyright (c) 2013年 iautod. All rights reserved.
 //
 
-#import "CarDVRVideoCapturerInterval.h"
+#import "CarDVRVideoCapturerInternal.h"
 #import <AVFoundation/AVFoundation.h>
 #import <ImageIO/CGImageProperties.h>
 #import <AssetsLibrary/AssetsLibrary.h>
@@ -21,7 +21,7 @@ static const char kAudioCaptureQueueName[] = "com.iAutoD.audioCaptureQueue";
 static const char kClipWriterQueueName[] = "com.iAutoD.clipWriterQueue";
 static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
-@interface CarDVRVideoCapturerInterval ()<AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
+@interface CarDVRVideoCapturerInternal ()<AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate>
 {
     dispatch_queue_t _clipWriterQueue;
     AVCaptureSession *_captureSession;
@@ -94,7 +94,7 @@ static const NSTimeInterval kSubtitlesUpdatingInterval = 1.0f;// 1 second
 
 @end
 
-@implementation CarDVRVideoCapturerInterval
+@implementation CarDVRVideoCapturerInternal
 
 @synthesize hasBackCamera = _hasBackCamera;
 @synthesize hasFrontCamera = _hasFrontCamera;
