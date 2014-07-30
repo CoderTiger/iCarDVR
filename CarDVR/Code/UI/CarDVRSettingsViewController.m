@@ -46,8 +46,9 @@ CarDVRResolutionSettingViewControllerDelegate
 @property (weak, nonatomic) IBOutlet UILabel *recordTracksLabel;
 @property (weak, nonatomic) IBOutlet UILabel *recordTracksDescriptionLable;
 @property (weak, nonatomic) IBOutlet UISwitch *recordTracksSwitch;
-@property (weak, nonatomic) IBOutlet UITextView *emailLabelTextView;
-@property (weak, nonatomic) IBOutlet UITextView *emailTextView;
+@property (weak, nonatomic) IBOutlet UILabel *emailLabel;
+@property (weak, nonatomic) IBOutlet UITableViewCell *emailCell;
+@property (weak, nonatomic) IBOutlet UITableViewCell *weiboCell;
 
 - (IBAction)doneBarButtonItemTouched:(id)sender;
 - (IBAction)cancelBarButtonItemTouched:(id)sender;
@@ -83,7 +84,7 @@ CarDVRResolutionSettingViewControllerDelegate
     NSString *appName = [mainBundle objectForInfoDictionaryKey:(__bridge NSString*)kCFBundleNameKey];
     NSString *appVersion = [mainBundle objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleVersionKey];
     self.aboutBriefLabel.text = [NSString stringWithFormat:NSLocalizedString( @"aboutBriefLabel", nil ), appName, appVersion];
-    self.emailLabelTextView.text = NSLocalizedString( @"emailLable", @"Email:" );
+    self.emailLabel.text = NSLocalizedString( @"emailLable", @"Email:" );
     
     [_settings beginEditing];
     [self loadVideoSettings];
@@ -176,6 +177,7 @@ CarDVRResolutionSettingViewControllerDelegate
     [self.settings setTrackLogOn:[NSNumber numberWithBool:recordTracksSwitch.isOn]];
 }
 
+#pragma mark - from UITableViewDataSource
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
 #pragma unused( tableView )
@@ -201,6 +203,23 @@ CarDVRResolutionSettingViewControllerDelegate
     return title;
 }
 
+#pragma mark - from UITableViewDelegate
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+    if ( selectedCell == self.emailCell )
+    {
+        static NSString *const kCarDVRSupportMailLinkString = @"mailto:com.iautod.icardvr@gmail.com?subject=iCarDVR-support-request";
+        NSURL *supportMailURL = [NSURL URLWithString:kCarDVRSupportMailLinkString];
+        [[UIApplication sharedApplication] openURL:supportMailURL];
+    }
+    else if ( selectedCell == self.weiboCell )
+    {
+        static NSString *const kCarDVRWeiboLinkString = @"http://weibo.com/icardvr";
+        NSURL *weiboURL = [NSURL URLWithString:kCarDVRWeiboLinkString];
+        [[UIApplication sharedApplication] openURL:weiboURL];
+    }
+}
 
 #pragma mark - Navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
