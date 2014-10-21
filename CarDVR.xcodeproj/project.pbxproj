@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		47A1BD6F14BAF46E98364822 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED18FE28DC3B831829AB4955 /* libPods.a */; };
 		F6066CFC18683F6800D0C051 /* CarDVRStorageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F6066CFB18683F6800D0C051 /* CarDVRStorageInfo.m */; };
 		F6137559188698F200B479DE /* CarDVRVideoClipURLs.m in Sources */ = {isa = PBXBuildFile; fileRef = F6137558188698F200B479DE /* CarDVRVideoClipURLs.m */; };
 		F6214005183DB2EF004630FE /* CarDVRAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = F6214004183DB2EE004630FE /* CarDVRAssetWriter.m */; };
@@ -16,6 +17,7 @@
 		F6298749184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */; };
 		F632827718C9D948007EE5D1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F632827618C9D948007EE5D1 /* ImageIO.framework */; };
 		F632827B18C9DC25007EE5D1 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F632827A18C9DC25007EE5D1 /* AssetsLibrary.framework */; };
+		F647510E19F6642B00311415 /* CarDVRVideoDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = F647510D19F6642B00311415 /* CarDVRVideoDepot.m */; };
 		F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */; };
 		F685B48A192B53A0005F0BC9 /* CarDVRApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = F685B489192B53A0005F0BC9 /* CarDVRApplication.m */; };
 		F685B48B192B53A0005F0BC9 /* CarDVRApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = F685B489192B53A0005F0BC9 /* CarDVRApplication.m */; };
@@ -125,6 +127,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		27E020C8F9FB018BA40C3094 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		D75C8437D543D2DB08EFA584 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		ED18FE28DC3B831829AB4955 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6066CFA18683F6800D0C051 /* CarDVRStorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRStorageInfo.h; sourceTree = "<group>"; };
 		F6066CFB18683F6800D0C051 /* CarDVRStorageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRStorageInfo.m; sourceTree = "<group>"; };
 		F60D0B9318237848004162C6 /* Coverage.geojson */ = {isa = PBXFileReference; lastKnownFileType = text; path = Coverage.geojson; sourceTree = "<group>"; };
@@ -141,6 +146,8 @@
 		F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRMaxClipDurationSettingViewController.m; sourceTree = "<group>"; };
 		F632827618C9D948007EE5D1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		F632827A18C9DC25007EE5D1 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		F647510C19F6642B00311415 /* CarDVRVideoDepot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRVideoDepot.h; sourceTree = "<group>"; };
+		F647510D19F6642B00311415 /* CarDVRVideoDepot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRVideoDepot.m; sourceTree = "<group>"; };
 		F677D92E1819636300C57AE0 /* CarDVRHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRHomeViewController.h; sourceTree = "<group>"; };
 		F677D92F1819636300C57AE0 /* CarDVRHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRHomeViewController.m; sourceTree = "<group>"; };
 		F685B488192B53A0005F0BC9 /* CarDVRApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRApplication.h; sourceTree = "<group>"; };
@@ -224,6 +231,7 @@
 				F6B0FA0D1821F72900A46E3C /* StoreKit.framework in Frameworks */,
 				F6D37210180BE9C00076B2EC /* UIKit.framework in Frameworks */,
 				F6D3720C180BE9C00076B2EC /* Foundation.framework in Frameworks */,
+				47A1BD6F14BAF46E98364822 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +302,7 @@
 				F6D3722A180BE9C00076B2EC /* CarDVRTests */,
 				F6D3720A180BE9C00076B2EC /* Frameworks */,
 				F6D37209180BE9C00076B2EC /* Products */,
+				FD29295338BA29D0F80CF706 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -322,6 +331,7 @@
 				F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */,
 				F6D3720F180BE9C00076B2EC /* UIKit.framework */,
 				F6D37224180BE9C00076B2EC /* XCTest.framework */,
+				ED18FE28DC3B831829AB4955 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -462,8 +472,19 @@
 				F6F0FC24181F589F000562DF /* CarDVRSettings.m */,
 				F6066CFA18683F6800D0C051 /* CarDVRStorageInfo.h */,
 				F6066CFB18683F6800D0C051 /* CarDVRStorageInfo.m */,
+				F647510C19F6642B00311415 /* CarDVRVideoDepot.h */,
+				F647510D19F6642B00311415 /* CarDVRVideoDepot.m */,
 			);
 			path = Storage;
+			sourceTree = "<group>";
+		};
+		FD29295338BA29D0F80CF706 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D75C8437D543D2DB08EFA584 /* Pods.debug.xcconfig */,
+				27E020C8F9FB018BA40C3094 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -473,9 +494,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F6D37234180BE9C00076B2EC /* Build configuration list for PBXNativeTarget "CarDVR" */;
 			buildPhases = (
+				DC8F3C3372B82B8188BEDFFA /* Check Pods Manifest.lock */,
 				F6D37204180BE9C00076B2EC /* Sources */,
 				F6D37205180BE9C00076B2EC /* Frameworks */,
 				F6D37206180BE9C00076B2EC /* Resources */,
+				02B24D643B4E12C620348BCD /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -632,6 +655,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		02B24D643B4E12C620348BCD /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DC8F3C3372B82B8188BEDFFA /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		F6D37204180BE9C00076B2EC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -643,6 +699,7 @@
 				F6B0FA041820EC0300A46E3C /* CarDVRSettingsViewController.m in Sources */,
 				F6D37240180BEB970076B2EC /* main.m in Sources */,
 				F6D17D8B1826970A003D965C /* CarDVRVideoDetailViewController.m in Sources */,
+				F647510E19F6642B00311415 /* CarDVRVideoDepot.m in Sources */,
 				F685B48A192B53A0005F0BC9 /* CarDVRApplication.m in Sources */,
 				F677D9311819636300C57AE0 /* CarDVRHomeViewController.m in Sources */,
 				F6FEE820180D9CDE00034B6A /* CarDVRPathHelper.m in Sources */,
@@ -847,6 +904,7 @@
 		};
 		F6D37235180BE9C00076B2EC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D75C8437D543D2DB08EFA584 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -866,6 +924,7 @@
 		};
 		F6D37236180BE9C00076B2EC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 27E020C8F9FB018BA40C3094 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

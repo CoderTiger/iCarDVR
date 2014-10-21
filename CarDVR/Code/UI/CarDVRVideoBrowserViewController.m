@@ -14,6 +14,7 @@
 #import "CarDVRVideoTableViewCell.h"
 #import "CarDVRVideoClipURLs.h"
 #import "CarDVRPathHelper.h"
+#import "CarDVRVideoDepot.h"
 
 static NSDateFormatter *videoCreationDateFormatter;
 
@@ -38,7 +39,7 @@ static NSString *const kVideoItemsKey = @"kVideoItemsKey";
 
 #pragma mark - private methods
 - (void)loadVideosAsync;
-- (NSMutableArray *)loadVideos;
+//- (NSMutableArray *)loadVideos;
 - (void)typeChanged;
 - (void)editableVideoBrowserViewControllerDone:(CarDVRVideoBrowserViewController *)controller;
 - (void)deleteVideoClipAtIndexPath:(NSIndexPath *)indexPath;
@@ -339,92 +340,32 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
         }
         else
         {
-            self.videos = [self loadVideos];
+            CarDVRVideoDepot *videoDepot = [[CarDVRVideoDepot alloc] initWithPathHelper:self.pathHelper];
+            videoDepot.needCleanTruncatedVideo = !self.switchFromRecordingCamera;
+            NSArray *videos;
+            switch ( self.type )
+            {
+                case kCarDVRVideoBrowserViewControllerTypeRecents:
+                    videos = videoDepot.recentVideos;
+                    break;
+                case kCarDVRVideoBrowserViewControllerTypeStarred:
+                    videos = videoDepot.starredVideos;
+                    break;
+                default:
+                    break;
+            }
+            
+            if ( videos )
+            {
+                self.videos = [NSMutableArray arrayWithArray:videos];
+            }
+            else
+            {
+                self.videos = nil;
+            }
             [self.videoTableView reloadData];
         }
     });
-}
-
-- (NSMutableArray *)loadVideos
-{
-    NSMutableArray *videos = [NSMutableArray array];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    
-    NSURL *videoFolderURL;
-    switch ( self.type )
-    {
-        case kCarDVRVideoBrowserViewControllerTypeRecents:
-            videoFolderURL = self.pathHelper.recentsFolderURL;
-            break;
-        case kCarDVRVideoBrowserViewControllerTypeStarred:
-            videoFolderURL = self.pathHelper.starredFolderURL;
-            break;
-        default:
-            break;
-    }
-    NSDirectoryEnumerator *dirEnum = [fileManager enumeratorAtURL:videoFolderURL
-                                       includingPropertiesForKeys:@[NSURLCreationDateKey]
-                                                          options:NSDirectoryEnumerationSkipsSubdirectoryDescendants
-                                                     errorHandler:^BOOL(NSURL *url, NSError *error) {
-                                                         NSLog( @"[Error] %@, %@", url, error.description );
-                                                         return YES;
-                                                     }];//[fileManager enumeratorAtPath:videoFolderURL.path];
-    
-    NSMutableDictionary *fileURLWithDateDict = [NSMutableDictionary dictionary];
-    for ( NSURL *fileURL in dirEnum )
-    {
-        NSDate *creationgDate;
-        if ( [fileURL getResourceValue:&creationgDate forKey:NSURLCreationDateKey error:nil] )
-        {
-            [fileURLWithDateDict setObject:creationgDate forKey:fileURL];
-        }
-    }
-    
-    NSDate *prevFileEndDate;
-    NSMutableArray *videoGroup;
-    for ( NSURL *fileURL in [fileURLWithDateDict keysSortedByValueUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [obj1 compare:obj2];
-    }])
-    {
-        if ( ![CarDVRVideoClipURLs isValidVideoPathExtension:fileURL.pathExtension] )
-        {
-            continue;
-        }
-        NSString *videoClipName = [fileURL.lastPathComponent stringByDeletingPathExtension];
-        CarDVRVideoClipURLs *videoClipURLs = [[CarDVRVideoClipURLs alloc] initWithFolderURL:videoFolderURL
-                                                                                   clipName:videoClipName];
-        CarDVRVideoItem *videoItem = [[CarDVRVideoItem alloc] initWithVideoClipURLs:videoClipURLs];
-        if ( !videoItem )
-        {
-            if ( !self.switchFromRecordingCamera )
-            {
-                // remove truncated or invalid video files
-                NSFileManager *defaultFileManager = [NSFileManager defaultManager];
-                [defaultFileManager removeItemAtURL:videoClipURLs.videoFileURL error:nil];
-                [defaultFileManager removeItemAtURL:videoClipURLs.srtFileURL error:nil];
-                [defaultFileManager removeItemAtURL:videoClipURLs.gpxFileURL error:nil];
-            }
-            continue;
-        }
-        
-        if ( prevFileEndDate )
-        {
-            NSComparisonResult comparisonResult = [videoItem.creationDate compare:prevFileEndDate];
-            if ( comparisonResult == NSOrderedDescending )// later than prevFileEndDate
-            {
-                videoGroup = [NSMutableArray array];
-                [videos insertObject:videoGroup atIndex:0];
-            }
-        }
-        else
-        {
-            videoGroup = [NSMutableArray array];
-            [videos insertObject:videoGroup atIndex:0];
-        }
-        [videoGroup addObject:videoItem];
-        prevFileEndDate = [NSDate dateWithTimeInterval:videoItem.duration sinceDate:videoItem.creationDate];
-    }
-    return ( videos.count > 0 ? videos : nil );
 }
 
 - (void)typeChanged
