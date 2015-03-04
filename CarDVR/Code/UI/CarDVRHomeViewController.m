@@ -63,7 +63,22 @@ static NSString *const kShowPreVideoEditableBrowserSegueId = @"kShowPreVideoEdit
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
         self.edgesForExtendedLayout = UIRectEdgeNone;   // iOS 7 specific
-   
+    
+    // todo: create wifi share button.
+    /*
+    UIBarButtonItem *editButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
+                                                                                    target:self
+                                                                                    action:nil];
+    UIBarButtonItem *shareOverWifiButtonItem = [[UIBarButtonItem alloc] initWithImage:nil
+                                                                                style:UIBarButtonItemStylePlain
+                                                                               target:self
+                                                                               action:nil];
+    shareOverWifiButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
+                                                                            target:self
+                                                                            action:nil];
+    [self.navigationItem setRightBarButtonItems:@[shareOverWifiButtonItem, editButtonItem]];
+    */
+    
     for ( CarDVRVideoBrowserViewController *videoBrowserViewController in self.viewControllers )
     {
         videoBrowserViewController.switchFromRecordingCamera = self.switchFromRecordingCamera;
