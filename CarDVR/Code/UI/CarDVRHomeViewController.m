@@ -58,7 +58,7 @@ static NSString *const kShowPreVideoEditableBrowserSegueId = @"kShowPreVideoEdit
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any addit ional setup after loading the view from its nib.
+    // Do any additional setup after loading the view from its nib.
     self.title = NSLocalizedString( @"homeViewTitle", @"Home" );
     self.navigationController.navigationBar.translucent = NO;
     if ( [self respondsToSelector:@selector( edgesForExtendedLayout )] )
