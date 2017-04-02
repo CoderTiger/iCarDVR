@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		47A1BD6F14BAF46E98364822 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED18FE28DC3B831829AB4955 /* libPods.a */; };
 		F6066CFC18683F6800D0C051 /* CarDVRStorageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F6066CFB18683F6800D0C051 /* CarDVRStorageInfo.m */; };
 		F6137559188698F200B479DE /* CarDVRVideoClipURLs.m in Sources */ = {isa = PBXBuildFile; fileRef = F6137558188698F200B479DE /* CarDVRVideoClipURLs.m */; };
 		F6214005183DB2EF004630FE /* CarDVRAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = F6214004183DB2EE004630FE /* CarDVRAssetWriter.m */; };
@@ -28,7 +27,6 @@
 		F6B0F9F41820CB1800A46E3C /* CarDVRVideoBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0F9F21820CB1800A46E3C /* CarDVRVideoBrowserViewController.m */; };
 		F6B0FA041820EC0300A46E3C /* CarDVRSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B0FA021820EC0300A46E3C /* CarDVRSettingsViewController.m */; };
 		F6B0FA0A1821F6F400A46E3C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA091821F6F400A46E3C /* MapKit.framework */; };
-		F6B0FA0D1821F72900A46E3C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA0C1821F72900A46E3C /* StoreKit.framework */; };
 		F6B0FA54182224CD00A46E3C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0FA50182224CD00A46E3C /* InfoPlist.strings */; };
 		F6B0FA55182224CD00A46E3C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0FA52182224CD00A46E3C /* Localizable.strings */; };
 		F6BBF37418D7449D0080D2BA /* CarDVRTracksLayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = F6BBF37318D7449D0080D2BA /* CarDVRTracksLayerView.m */; };
@@ -85,7 +83,6 @@
 		F6DF192B190C0F1A00303349 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D37257180BF90B0076B2EC /* AVFoundation.framework */; };
 		F6DF192C190C0F1A00303349 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720D180BE9C00076B2EC /* CoreGraphics.framework */; };
 		F6DF192D190C0F1A00303349 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA091821F6F400A46E3C /* MapKit.framework */; };
-		F6DF192E190C0F1A00303349 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B0FA0C1821F72900A46E3C /* StoreKit.framework */; };
 		F6DF192F190C0F1A00303349 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720F180BE9C00076B2EC /* UIKit.framework */; };
 		F6DF1930190C0F1A00303349 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D3720B180BE9C00076B2EC /* Foundation.framework */; };
 		F6DF1932190C0F1A00303349 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B0F9D41820AAA100A46E3C /* Localizable.strings */; };
@@ -164,7 +161,6 @@
 		F6B0FA021820EC0300A46E3C /* CarDVRSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarDVRSettingsViewController.m; sourceTree = "<group>"; };
 		F6B0FA091821F6F400A46E3C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		F6B0FA0B1821F71900A46E3C /* CarDVR.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CarDVR.entitlements; sourceTree = "<group>"; };
-		F6B0FA0C1821F72900A46E3C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F6B0FA51182224CD00A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = InfoPlist.strings; sourceTree = "<group>"; };
 		F6B0FA53182224CD00A46E3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Localizable.strings; sourceTree = "<group>"; };
 		F6BBF37218D7449D0080D2BA /* CarDVRTracksLayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarDVRTracksLayerView.h; sourceTree = "<group>"; };
@@ -231,10 +227,8 @@
 				F6D37258180BF90B0076B2EC /* AVFoundation.framework in Frameworks */,
 				F6D3720E180BE9C00076B2EC /* CoreGraphics.framework in Frameworks */,
 				F6B0FA0A1821F6F400A46E3C /* MapKit.framework in Frameworks */,
-				F6B0FA0D1821F72900A46E3C /* StoreKit.framework in Frameworks */,
 				F6D37210180BE9C00076B2EC /* UIKit.framework in Frameworks */,
 				F6D3720C180BE9C00076B2EC /* Foundation.framework in Frameworks */,
-				47A1BD6F14BAF46E98364822 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,7 +254,6 @@
 				F6DF192B190C0F1A00303349 /* AVFoundation.framework in Frameworks */,
 				F6DF192C190C0F1A00303349 /* CoreGraphics.framework in Frameworks */,
 				F6DF192D190C0F1A00303349 /* MapKit.framework in Frameworks */,
-				F6DF192E190C0F1A00303349 /* StoreKit.framework in Frameworks */,
 				F6DF192F190C0F1A00303349 /* UIKit.framework in Frameworks */,
 				F6DF1930190C0F1A00303349 /* Foundation.framework in Frameworks */,
 			);
@@ -335,7 +328,6 @@
 				F6FB967F18C8B5CB00857BA2 /* GPX.xcodeproj */,
 				F62323E7186C34BB00123109 /* CoreLocation.framework */,
 				F6D17D9018279931003D965C /* MediaPlayer.framework */,
-				F6B0FA0C1821F72900A46E3C /* StoreKit.framework */,
 				F6B0FA091821F6F400A46E3C /* MapKit.framework */,
 				F6D37257180BF90B0076B2EC /* AVFoundation.framework */,
 				F6D3720B180BE9C00076B2EC /* Foundation.framework */,
@@ -510,7 +502,6 @@
 				F6D37204180BE9C00076B2EC /* Sources */,
 				F6D37205180BE9C00076B2EC /* Frameworks */,
 				F6D37206180BE9C00076B2EC /* Resources */,
-				02B24D643B4E12C620348BCD /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -562,14 +553,14 @@
 		F6D37200180BE9C00076B2EC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = iautod;
 				TargetAttributes = {
 					F6D37207180BE9C00076B2EC = {
 						DevelopmentTeam = X5V64ZC28Q;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.iCloud = {
 								enabled = 1;
@@ -670,21 +661,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		02B24D643B4E12C620348BCD /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		DC8F3C3372B82B8188BEDFFA /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -844,6 +820,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -853,14 +830,20 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -873,7 +856,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "";
 				PROVISIONING_PROFILE = "";
@@ -885,6 +868,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -894,21 +878,26 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
@@ -918,17 +907,18 @@
 		};
 		F6D37235180BE9C00076B2EC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D75C8437D543D2DB08EFA584 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = CarDVR/CarDVR.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = X5V64ZC28Q;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVR/Resource/CarDVR-Info.plist";
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "i$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "armv7 armv7s";
@@ -938,16 +928,17 @@
 		};
 		F6D37236180BE9C00076B2EC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 27E020C8F9FB018BA40C3094 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = CarDVR/CarDVR.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = X5V64ZC28Q;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVR/Resource/CarDVR-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "i$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "armv7 armv7s";
@@ -971,6 +962,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "CarDVRTests/CarDVRTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -989,6 +981,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVRTests/CarDVRTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -1011,6 +1004,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/CarDVR/Resource/CarDVR-Free-Info.plist";
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "iCarDVR Free";
 				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "armv7 armv7s";
@@ -1030,6 +1024,7 @@
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "IS_CARDVR_FREE_EDITION=1";
 				INFOPLIST_FILE = "$(SRCROOT)/CarDVR/Resource/CarDVR-Free-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "iCarDVR Free";
 				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "armv7 armv7s";
