@@ -14,6 +14,7 @@
 		F62323EC186C421600123109 /* CarDVRLocationDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = F62323EB186C421600123109 /* CarDVRLocationDetector.m */; };
 		F62987461847A05C00CD25E7 /* CarDVRVideoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F62987451847A05C00CD25E7 /* CarDVRVideoTableViewCell.m */; };
 		F6298749184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6298748184860D700CD25E7 /* CarDVRMaxClipDurationSettingViewController.m */; };
+		F62D22D51E90E8060052078B /* CarDVRVideoDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = F647510D19F6642B00311415 /* CarDVRVideoDepot.m */; };
 		F632827718C9D948007EE5D1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F632827618C9D948007EE5D1 /* ImageIO.framework */; };
 		F632827B18C9DC25007EE5D1 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F632827A18C9DC25007EE5D1 /* AssetsLibrary.framework */; };
 		F647510E19F6642B00311415 /* CarDVRVideoDepot.m in Sources */ = {isa = PBXBuildFile; fileRef = F647510D19F6642B00311415 /* CarDVRVideoDepot.m */; };
@@ -498,7 +499,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F6D37234180BE9C00076B2EC /* Build configuration list for PBXNativeTarget "CarDVR" */;
 			buildPhases = (
-				DC8F3C3372B82B8188BEDFFA /* Check Pods Manifest.lock */,
 				F6D37204180BE9C00076B2EC /* Sources */,
 				F6D37205180BE9C00076B2EC /* Frameworks */,
 				F6D37206180BE9C00076B2EC /* Resources */,
@@ -660,24 +660,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		DC8F3C3372B82B8188BEDFFA /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		F6D37204180BE9C00076B2EC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -731,6 +713,7 @@
 				F6DF190F190C0F1A00303349 /* CarDVRSettingsViewController.m in Sources */,
 				F6DF1910190C0F1A00303349 /* main.m in Sources */,
 				F6DF1911190C0F1A00303349 /* CarDVRVideoDetailViewController.m in Sources */,
+				F62D22D51E90E8060052078B /* CarDVRVideoDepot.m in Sources */,
 				F685B48B192B53A0005F0BC9 /* CarDVRApplication.m in Sources */,
 				F6DF1912190C0F1A00303349 /* CarDVRHomeViewController.m in Sources */,
 				F6DF1913190C0F1A00303349 /* CarDVRPathHelper.m in Sources */,
@@ -917,6 +900,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVR/Resource/CarDVR-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "i$(TARGET_NAME)";
@@ -938,6 +922,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarDVR/Code/CarDVR-Prefix.pch";
 				INFOPLIST_FILE = "CarDVR/Resource/CarDVR-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.iautod.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "i$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

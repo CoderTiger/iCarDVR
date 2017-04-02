@@ -9,18 +9,18 @@
 #import <Foundation/Foundation.h>
 #import "CarDVRStorageInfo.h"
 
-NSString *const kCarDVRSettingsCommitEditingChangedKeys;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsCommitEditingChangedKeys;
 
-NSString *const kCarDVRSettingsKeyMaxRecordingDuration;
-NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration;
-NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips;
-NSString *const kCarDVRSettingsKeyCameraPosition;
-NSString *const kCarDVRSettingsKeyVideoResolution;
-NSString *const kCarDVRSettingsKeyVideoFrameRate;
-NSString *const kCarDVRSettingsKeyStarred;
-NSString *const kCarDVRSettingsKeyTracksMapType;
-NSString *const kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording;
-NSString *const kCarDVRSettingsKeyTrackLogOn;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyMaxRecordingDuration;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyOverlappedRecordingDuration;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyMaxCountOfRecordingClips;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyCameraPosition;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyVideoResolution;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyVideoFrameRate;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyStarred;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyTracksMapType;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyRemoveClipsInRecentsBeforeRecording;
+FOUNDATION_EXPORT NSString *const kCarDVRSettingsKeyTrackLogOn;
 
 typedef enum
 {
